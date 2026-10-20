@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App Hub 100</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --bg-2: #111827;
+        --panel: rgba(15, 23, 42, 0.8);
+        --panel-strong: #111827;
+        --card: #1f2937;
+        --card-alt: #0b1220;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #38bdf8;
+        --accent-2: #34d399;
+        --danger: #f87171;
+        --warning: #fbbf24;
+        --border: rgba(148, 163, 184, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        background: radial-gradient(circle at top, #172554 0%, var(--bg) 35%, #020817 100%);
+        color: var(--text);
+      }
+
+      body {
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        font-size: clamp(1.6rem, 2vw, 2.3rem);
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
+
+      .brand small {
+        color: var(--accent-2);
+        font-weight: 700;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 1px solid var(--border);
+        background: rgba(30, 41, 59, 0.8);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(56, 189, 248, 0.8);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.4fr 0.8fr;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 10px 24px rgba(2, 6, 23, 0.4);
+      }
+
+      .panel h2, .panel h3 {
+        margin: 0 0 12px;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+        gap: 12px;
+      }
+
+      .metric {
+        background: var(--card-alt);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      .metric .label {
+        color: var(--muted);
+        font-size: 0.82rem;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .metric .value {
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+
+      .subgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .tool {
+        background: rgba(15, 118, 110, 0.15);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 10px;
+      }
+
+      .section-title {
+        margin: 20px 0 12px;
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .apps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+      }
+
+      .app-card {
+        background: linear-gradient(180deg, rgba(31, 41, 55, 0.94), rgba(17, 24, 39, 0.9));
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 12px 10px;
+        min-height: 118px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .app-icon {
+        font-size: 1.7rem;
+      }
+
+      .app-name {
+        font-weight: 700;
+        margin-top: 8px;
+      }
+
+      .app-tag {
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 18px;
+        margin-top: 20px;
+      }
+
+      .editor-box {
+        border: 1px solid var(--border);
+        background: #020817;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .editor-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        background: #0f172a;
+        border-bottom: 1px solid var(--border);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 280px;
+        resize: vertical;
+        border: none;
+        background: #020817;
+        color: #e2e8f0;
+        padding: 14px;
+        font-family: Consolas, monospace;
+        line-height: 1.5;
+      }
+
+      .todo-list,
+      .calendar-box,
+      .calc-box,
+      .clock-box {
+        background: rgba(2, 6, 23, 0.35);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .todo-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0;
+      }
+
+      .todo-list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .calendar-box table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      .calendar-box th, .calendar-box td {
+        width: 14.28%;
+        text-align: center;
+        padding: 8px 4px;
+        border-radius: 6px;
+      }
+
+      .calendar-box td.today {
+        background: rgba(56, 189, 248, 0.18);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+
+      .calc-box input {
+        width: 100%;
+        background: #0f172a;
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      .calc-btns {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .calc-btns button {
+        padding: 12px 0;
+      }
+
+      .clock-box {
+        text-align: center;
+      }
+
+      #clock {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        margin: 10px 0;
+      }
+
+      @media (max-width: 860px) {
+        .hero, .workspace, .subgrid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">AppHub <small>100 tools</small></div>
+        <div class="actions">
+          <button onclick="toggleTheme()">Tema</button>
+          <button onclick="saveEditor()">Simpan</button>
+          <button onclick="window.location.reload()">Muat Ulang</button>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div class="panel">
+          <h2>Package Sistem</h2>
+          <div class="status-grid">
+            <div class="metric">
+              <span class="label">Status</span>
+              <span class="value" style="color: var(--accent-2);">Online</span>
+            </div>
+            <div class="metric">
+              <span class="label">Server</span>
+              <span class="value">localhost:8080</span>
+            </div>
+            <div class="metric">
+              <span class="label">Platform</span>
+              <span class="value">HTML5</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px;" class="tools">
+            <span class="tool">Node</span>
+            <span class="tool">Python</span>
+            <span class="tool">Editor</span>
+            <span class="tool">Calendar</span>
+            <span class="tool">Clock</span>
+            <span class="tool">Calculator</span>
+            <span class="tool">Terminal</span>
+            <span class="tool">Notebook</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Quick Access</h3>
+          <div class="tools">
+            <button onclick="showApp('Text Editor')">Text Editor</button>
+            <button onclick="showApp('Jam')">Jam</button>
+            <button onclick="showApp('Kalender')">Kalender</button>
+            <button onclick="showApp('Kalkulator')">Kalkulator</button>
+            <button onclick="showApp('Server')">Server</button>
+            <button onclick="showApp('Catatan')">Catatan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">100 Aplikasi Mini</div>
+      <div class="apps" id="appGrid"></div>
+
+      <div class="workspace">
+        <div class="panel">
+          <h3>Editor Kode / Teks</h3>
+          <div class="editor-box">
+            <div class="editor-toolbar">
+              <span>main.txt</span>
+              <span id="statusText">Autosave aktif</span>
+            </div>
+            <textarea id="textEditor" spellcheck="false"># AppHub Console
+# Sistem package mini
+
+print('Hello from AppHub')
+# gunakan untuk catatan, snippet, dan kode
+
+- jam
+- kalender
+- kalkulator
+- catatan
+- server
+- file system
+</textarea>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Widget</h3>
+          <div class="clock-box">
+            <div id="clock">00:00:00</div>
+            <div id="dateLabel">--</div>
+          </div>
+          <div class="calendar-box" style="margin-top: 12px;">
+            <div id="calendarMonth"></div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Min</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th>
+                </tr>
+              </thead>
+              <tbody id="calendarBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Alat Sistem</div>
+      <div class="subgrid">
+        <div class="panel">
+          <h3>Kalkulator Sederhana</h3>
+          <div class="calc-box">
+            <input id="calcDisplay" value="0" readonly />
+            <div class="calc-btns">
+              <button onclick="appendCalc('7')">7</button>
+              <button onclick="appendCalc('8')">8</button>
+              <button onclick="appendCalc('9')">9</button>
+              <button onclick="appendCalc('/')">/</button>
+              <button onclick="appendCalc('4')">4</button>
+              <button onclick="appendCalc('5')">5</button>
+              <button onclick="appendCalc('6')">6</button>
+              <button onclick="appendCalc('*')">×</button>
+              <button onclick="appendCalc('1')">1</button>
+              <button onclick="appendCalc('2')">2</button>
+              <button onclick="appendCalc('3')">3</button>
+              <button onclick="appendCalc('-')">−</button>
+              <button onclick="appendCalc('0')">0</button>
+              <button onclick="appendCalc('.')">.</button>
+              <button onclick="calculateResult()">=</button>
+              <button onclick="appendCalc('+')">+</button>
+              <button onclick="clearCalc()" style="grid-column: span 4;">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Catatan & Agenda</h3>
+          <div class="todo-list">
+            <ul>
+              <li><input type="checkbox" checked/> <span>Mulai package app</span></li>
+              <li><input type="checkbox" checked/> <span>Siapkan editor teks</span></li>
+              <li><input type="checkbox"/> <span>Aktifkan kalender</span></li>
+              <li><input type="checkbox"/> <span>Deploy ke server</span></li>
+              <li><input type="checkbox"/> <span>Jalankan kalkulator</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const appNames = [
+        'Text Editor','Jam','Kalender','Kalkulator','Catatan','Server','File System','Terminal','Browser','Console',
+        'Notepad','Todo','Timer','Stopwatch','Weather','Mail','Chat','Maps','Music','Video','Gallery','Image','PDF',
+        'Word','Excel','PowerPoint','Code Studio','Compiler','Preview','Terminal Linux','System Info','CPU','RAM','Disk',
+        'SSH','HTTP','DNS','Ping','Port Check','Memory','Process','Task Manager','Launcher','App Store','Settings','Theme',
+        'Package Manager','Backup','Recovery','Archive','Extractor','Encrypt','Decrypt','Hash','QR','Barcode','Camera','Voice',
+        'Calendar','Planner','Reminder','Alarm','Pomodoro','Focus','Notes','Journal','Survey','Checklist','Kanban','Board',
+        'Banking','Finance','Calculator','Budget','Savings','Wallet','Stocks','Market','News','Travel','Map','Route','Weather',
+        'Books','Library','Ebook','Reader','Dictionary','Translator','Recipe','Cooking','Fitness','Gym','Yoga','Health',
+        'Chat GPT','AI Lab','Prompt','Image Lab','Code Snippet','API Tester','Mock Server','Data Table','CSV','JSON','XML',
+        'Dark Mode','Light Mode','Shortcut','Keyboard','Mouse','Monitor','Printer','Network','Wifi','Bluetooth','USB','Device',
+        'Search','Explorer','Download','Upload','Share','Link','Cloud','Drive','Sync','Backup','Restore','Security','Firewall',
+        'Game Lite','Puzzle','Snake','Tetris','2048','Memory','Sudoku','Quiz','Trivia','Color Picker','Palette','Canvas','Draw',
+        'System','App Hub','Package','Utility','Tools','Dashboard','Control Panel','Admin','User','Profile','Lang','Info'
+      ];
+
+      const appGrid = document.getElementById('appGrid');
+      appNames.forEach((name, index) => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        const icon = ['📝','⏰','📅','🧮','📁','🖥️','📦','💻','📡','📊','🧾','🔒','📚','🎵','📷','🔐','📈','💬'][index % 18];
+        card.innerHTML = `
+          <div>
+            <div class="app-icon">${icon}</div>
+            <div class="app-name">${name}</div>
+          </div>
+          <div class="app-tag">app #${index + 1}</div>
+        `;
+        appGrid.appendChild(card);
+      });
+
+      function showApp(name) {
+        const editor = document.getElementById('textEditor');
+        const current = editor.value.trim();
+        editor.value = current + '\n\n# ' + name + '\n- aktif\n- siap digunakan\n';
+        editor.focus();
+      }
+
+      function updateClock() {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`;
+        document.getElementById('dateLabel').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      }
+
+      function renderCalendar() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const firstWeekDay = (firstDay.getDay() + 6) % 7;
+        const totalDays = lastDay.getDate();
+
+        document.getElementById('calendarMonth').textContent = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+        const body = document.getElementById('calendarBody');
+        body.innerHTML = '';
+
+        let row = document.createElement('tr');
+        for (let i = 0; i < firstWeekDay; i++) {
+          row.appendChild(document.createElement('td'));
+        }
+
+        for (let d = 1; d <= totalDays; d++) {
+          const cell = document.createElement('td');
+          if (d === now.getDate()) cell.classList.add('today');
+          cell.textContent = d;
+          row.appendChild(cell);
+          if (row.children.length === 7) {
+            body.appendChild(row);
+            row = document.createElement('tr');
+          }
+        }
+
+        while (row.children.length < 7) {
+          row.appendChild(document.createElement('td'));
+        }
+        body.appendChild(row);
+      }
+
+      function clearCalc() {
+        document.getElementById('calcDisplay').value = '0';
+      }
+
+      function appendCalc(val) {
+        const display = document.getElementById('calcDisplay');
+        const current = display.value;
+        display.value = current === '0' && !['+','-','*','/','.'].includes(val) ? val : current + val;
+      }
+
+      function calculateResult() {
+        const display = document.getElementById('calcDisplay');
+        try {
+          display.value = Function('"use strict"; return (' + display.value + ')')();
+        } catch (e) {
+          display.value = 'Error';
+        }
+      }
+
+      function saveEditor() {
+        const text = document.getElementById('textEditor').value;
+        localStorage.setItem('apphub-editor', text);
+        document.getElementById('statusText').textContent = 'Disimpan di browser';
+      }
+
+      function loadEditor() {
+        const saved = localStorage.getItem('apphub-editor');
+        if (saved) {
+          document.getElementById('textEditor').value = saved;
+        }
+      }
+
+      function toggleTheme() {
+        const root = document.documentElement;
+        const isDark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0f172a';
+        root.style.setProperty('--bg', isDark ? '#f8fafc' : '#0f172a');
+        root.style.setProperty('--bg-2', isDark ? '#e2e8f0' : '#111827');
+        root.style.setProperty('--panel', isDark ? 'rgba(255,255,255,0.8)' : 'rgba(15, 23, 42, 0.8)');
+        root.style.setProperty('--text', isDark ? '#0f172a' : '#e5e7eb');
+        root.style.setProperty('--muted', isDark ? '#475569' : '#9ca3af');
+        root.style.setProperty('--card', isDark ? '#e2e8f0' : '#1f2937');
+        root.style.setProperty('--card-alt', isDark ? '#f1f5f9' : '#0b1220');
+      }
+
+      updateClock();
+      renderCalendar();
+      loadEditor();
+      setInterval(updateClock, 1000);
+    </script>
+  </body>
+</html>

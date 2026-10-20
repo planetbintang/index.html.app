@@ -80,7 +80,59 @@
       .calc-btns button { padding: 12px 0; }
       .clock-box { text-align: center; }
       #clock { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin: 10px 0; }
-      @media (max-width: 860px){ .desktop, .workspace { grid-template-columns: 1fr; } }
+      .browser-shell {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(2,6,23,.8);
+        overflow: hidden;
+        box-shadow: 0 18px 35px rgba(2,6,23,.35);
+      }
+      .browser-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(15,23,42,.96);
+        border-bottom: 1px solid var(--border);
+      }
+      .traffic { display: flex; gap: 8px; }
+      .traffic span {
+        display: inline-block;
+        width: 12px; height: 12px; border-radius: 50%;
+      }
+      .traffic .red { background: #f87171; }
+      .traffic .yellow { background: #fbbf24; }
+      .traffic .green { background: #34d399; }
+      .browser-address {
+        flex: 1;
+        background: rgba(15,23,42,.75);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        color: var(--text);
+        padding: 9px 14px;
+        font-size: 0.9rem;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .browser-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+      #githubFrame {
+        width: 100%;
+        height: 620px;
+        border: none;
+        background: white;
+        display: block;
+      }
+      .browser-fallback {
+        padding: 16px 18px;
+        background: rgba(15,23,42,.75);
+        color: var(--text);
+        border-top: 1px solid var(--border);
+      }
+      @media (max-width: 860px){ .desktop, .workspace { grid-template-columns: 1fr; } #githubFrame { height: 480px; } }
     </style>
   </head>
   <body>
@@ -115,6 +167,7 @@
             <button onclick="openModule('apps/21-timer.html')">Timer</button>
             <button onclick="openModule('apps/22-stopwatch.html')">Stopwatch</button>
             <button onclick="openModule('apps/25-unit.html')">Unit</button>
+            <button onclick="showGitHubBrowser()">GitHub</button>
             <button onclick="openModule('apps/31-workspace.html')">Workspace</button>
           </div>
         </div>
@@ -196,6 +249,25 @@ print('Hello from AppHub')
         </div>
       </div>
 
+      <div class="section-title">Browser GitHub</div>
+      <div class="panel" id="browserGitHub">
+        <div class="browser-shell">
+          <div class="browser-toolbar">
+            <div class="traffic">
+              <span class="red"></span>
+              <span class="yellow"></span>
+              <span class="green"></span>
+            </div>
+            <div class="browser-address">https://github.com</div>
+            <button type="button" class="browser-btn" onclick="window.open('https://github.com', '_blank', 'noopener,noreferrer')">Buka</button>
+          </div>
+          <iframe id="githubFrame" src="https://github.com" title="GitHub Browser" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <div id="githubFallback" class="browser-fallback" hidden>
+            GitHub tidak dapat dimuat di iframe karena kebijakan keamanan browser. <a href="https://github.com" target="_blank" rel="noopener noreferrer">Buka GitHub di tab baru</a>
+          </div>
+        </div>
+      </div>
+
       <div class="section-title">Alat Sistem</div>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;">
         <div class="panel">
@@ -228,9 +300,9 @@ print('Hello from AppHub')
 
     <script>
       const appNames = [
-        'Text Editor','Jam','Kalender','Kalkulator','Catatan','Server','File System','Terminal','Music','Gallery','Chat','Cuaca','Translator','Markdown','UUID','QR','Paint','Kanban','SSH','Settings','Timer','Stopwatch','Password','Random','Unit','Color','Dictionary','Currency','JSON','BMI','Workspace','Lottery','Speech','Analytics','Check','Base64','Encoder','Resize','Quote','Launcher'
+        'Text Editor','Jam','Kalender','Kalkulator','Catatan','Server','File System','Terminal','Music','Gallery','Chat','Cuaca','Translator','Markdown','UUID','QR','Paint','Kanban','SSH','Settings','Timer','Stopwatch','Password','Randomizer','Unit','Color','Dictionary','Currency','JSON','BMI','Workspace','Lottery','Speech','Analytics','Password Check','Base64','Encoder','Image Scaler','Quote','Launcher'
       ];
-      const icons = ['📝','⏰','📅','🧮','📁','🖥️','📦','💻','🎵','🖼️','💬','⛅','🌐','📝','🧩','📷','🎨','📋','🔐','⚙️','⏱️','⏲️','🔑','🎲','📏','🎨','📚','💱','🧾','⚖️','📁','🎯','🗣️','📊','✅','🔒','🔄','🖼️','💬','🧭'];
+      const icons = ['📝','⏰','📅','🧮','📁','🖥️','📦','💻','🎵','🖼️','💬','⛅','🌐','📝','🧩','📷','🎨','📋','🔐','⚙️','⏱️','⏲️','🔑','🎲','📏','🎯','📚','💰','{}','📊','🧰','🎰','🔊','📈','🛡️','🔤','🧠','🖍️','💬','🚀'];
       const launcher = document.getElementById('launcher');
       appNames.forEach((name, index) => {
         const card = document.createElement('div');
@@ -259,15 +331,38 @@ print('Hello from AppHub')
         35: 'apps/36-base64.html', 36: 'apps/37-encoder.html', 37: 'apps/38-image-scaler.html', 38: 'apps/39-quote.html', 39: 'apps/40-launcher.html'
       };
       function openModule(path) { window.location.href = path; }
-      function showApp(name) { const editor = document.getElementById('textEditor'); const current = editor.value.trim(); editor.value = current + '\n\n# ' + name + '\n- aktif\n- siap digunakan\n'; editor.focus(); }
-      function updateClock() { const now = new Date(); const hh = String(now.getHours()).padStart(2,'0'); const mm = String(now.getMinutes()).padStart(2,'0'); const ss = String(now.getSeconds()).padStart(2,'0'); document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`; document.getElementById('dateLabel').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
-      function renderCalendar(){ const now = new Date(); const year = now.getFullYear(); const month = now.getMonth(); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const firstWeekDay = (firstDay.getDay() + 6) % 7; const totalDays = lastDay.getDate(); document.getElementById('calendarMonth').textContent = now.toLocaleDateString('id-ID', { month:'long', year:'numeric' }); const body = document.getElementById('calendarBody'); body.innerHTML=''; let row=document.createElement('tr'); for(let i=0;i<firstWeekDay;i++) row.appendChild(document.createElement('td')); for(let d=1; d<=totalDays; d++){ const cell = document.createElement('td'); if(d===now.getDate()) cell.classList.add('today'); cell.textContent = d; row.appendChild(cell); if(row.children.length===7){ body.appendChild(row); row=document.createElement('tr'); } } while(row.children.length<7) row.appendChild(document.createElement('td')); body.appendChild(row); }
+      function showApp(name) { const editor = document.getElementById('textEditor'); const current = editor.value.trim(); editor.value = current + '\n\n# ' + name + '\n- aktif\n- siap digunakan'; }
+      function updateClock() { const now = new Date(); const hh = String(now.getHours()).padStart(2,'0'); const mm = String(now.getMinutes()).padStart(2,'0'); const ss = String(now.getSeconds()).padStart(2,'0'); document.getElementById('clock').textContent = hh + ':' + mm + ':' + ss; document.getElementById('dateLabel').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+      function renderCalendar(){ const now = new Date(); const year = now.getFullYear(); const month = now.getMonth(); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const startOffset = firstDay.getDay(); const rows = []; let day = 1; const calendarBody = document.getElementById('calendarBody'); const monthLabel = document.getElementById('calendarMonth'); const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; monthLabel.textContent = monthNames[month] + ' ' + year; for (let week = 0; week < 5; week++) { const cells = []; for (let i = 0; i < 7; i++) { if (week === 0 && i < startOffset || day > lastDay.getDate()) { cells.push('<td></td>'); } else { const isToday = day === now.getDate() && month === now.getMonth() && year === now.getFullYear(); cells.push(`<td class="${isToday ? 'today' : ''}">${day}</td>`); day++; } } rows.push('<tr>' + cells.join('') + '</tr>'); } calendarBody.innerHTML = rows.join(''); }
       function clearCalc(){ document.getElementById('calcDisplay').value='0'; }
       function appendCalc(val){ const display = document.getElementById('calcDisplay'); const current = display.value; display.value = current === '0' && !['+','-','*','/','.'].includes(val) ? val : current + val; }
       function calculateResult(){ const display = document.getElementById('calcDisplay'); try { display.value = Function('"use strict"; return (' + display.value + ')')(); } catch { display.value = 'Error'; } }
       function saveEditor(){ const text = document.getElementById('textEditor').value; localStorage.setItem('apphub-editor', text); document.getElementById('statusText').textContent = 'Disimpan di browser'; }
       function loadEditor(){ const saved = localStorage.getItem('apphub-editor'); if(saved) document.getElementById('textEditor').value = saved; }
-      function toggleTheme(){ const root = document.documentElement; const isDark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0f172a'; root.style.setProperty('--bg', isDark ? '#f8fafc' : '#0f172a'); root.style.setProperty('--panel', isDark ? 'rgba(255,255,255,.8)' : 'rgba(15,23,42,.8)'); root.style.setProperty('--text', isDark ? '#0f172a' : '#e2e8f0'); root.style.setProperty('--muted', isDark ? '#475569' : '#9ca3af'); }
+      function toggleTheme(){ const root = document.documentElement; const isDark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0f172a'; root.style.setProperty('--bg', isDark ? '#e2e8f0' : '#0f172a'); root.style.setProperty('--text', isDark ? '#0f172a' : '#e2e8f0'); root.style.setProperty('--panel', isDark ? 'rgba(255,255,255,0.8)' : 'rgba(15, 23, 42, 0.8)'); root.style.setProperty('--card', isDark ? 'rgba(255,255,255,0.7)' : 'rgba(15, 23, 42, 0.68)'); }
+      function showGitHubBrowser(){
+        const frame = document.getElementById('githubFrame');
+        const fallback = document.getElementById('githubFallback');
+        const panel = document.getElementById('browserGitHub');
+        if (frame) frame.src = 'https://github.com';
+        if (fallback) fallback.hidden = true;
+        if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const githubFrame = document.getElementById('githubFrame');
+      const githubFallback = document.getElementById('githubFallback');
+      if (githubFrame) {
+        githubFrame.addEventListener('load', () => {
+          try {
+            if (!githubFrame.contentWindow || !githubFrame.contentWindow.location || githubFrame.contentWindow.location.href === 'about:blank') {
+              if (githubFallback) githubFallback.hidden = false;
+            } else if (githubFallback) {
+              githubFallback.hidden = true;
+            }
+          } catch (error) {
+            if (githubFallback) githubFallback.hidden = false;
+          }
+        });
+      }
       const isLocal = ['localhost','127.0.0.1'].includes(window.location.hostname);
       document.getElementById('domainAlias').textContent = isLocal ? 'localhost' : 'github.com/sumberkode';
       updateClock(); renderCalendar(); loadEditor(); setInterval(updateClock, 1000);

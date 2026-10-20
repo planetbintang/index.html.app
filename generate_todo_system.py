@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Generate a todo-driven code system with 50,000 source files.
+"""Generate a todo-driven code system with 150,000 source files.
 
-This script creates a repository-like structure with 500 systems.
-Each system contains 100 Python source files, giving a total of 50,000 files.
+This script creates a repository-like structure with 1,500 systems.
+Each system contains 100 Python source files, giving a total of 150,000 files.
 It is designed to generate large-scale scaffolding for AI-managed project
 backlogs, validation pipelines, and modular repository layouts.
 """
@@ -12,7 +12,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-DEFAULT_SYSTEM_COUNT = 500
+DEFAULT_SYSTEM_COUNT = 1500
 DEFAULT_FILES_PER_SYSTEM = 100
 
 
@@ -124,7 +124,7 @@ This repo was generated as a code ecosystem with a total of {total_files} source
 
 ## Commands
 ```bash
-python generate_todo_system.py --root . --output-dir generated_todo_system --systems 500 --files-per-system 100
+python generate_todo_system.py --root . --output-dir generated_todo_system --systems 1500 --files-per-system 100
 ```
 
 ## Objective
@@ -135,7 +135,7 @@ modular source-code inventory that follows todo-based development.
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate 50,000 todo-based source files.")
+    parser = argparse.ArgumentParser(description="Generate 150,000 todo-based source files.")
     parser.add_argument("--root", type=str, default=".", help="Repository root")
     parser.add_argument("--output-dir", type=str, default="generated_todo_system", help="Directory to generate")
     parser.add_argument("--systems", type=int, default=DEFAULT_SYSTEM_COUNT, help="Number of systems to generate")

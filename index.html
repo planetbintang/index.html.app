@@ -1,777 +1,1119 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Machine Launcher System</title>
-  <style>
-    :root {
-      --bg-0: #010b14;
-      --bg-1: #071827;
-      --bg-2: #0a1f2d;
-      --panel: rgba(10, 18, 27, 0.9);
-      --panel-2: rgba(15, 23, 42, 0.8);
-      --surface: rgba(15, 23, 42, 0.9);
-      --surface-2: rgba(30, 41, 59, 0.75);
-      --line: rgba(148, 163, 184, 0.26);
-      --text: #e2e8f0;
-      --soft: #cbd5e1;
-      --muted: #94a3b8;
-      --cyan: #67e8f9;
-      --green: #34d399;
-      --lime: #a3e635;
-      --yellow: #facc15;
-      --orange: #fb923c;
-      --pink: #f472b6;
-      --purple: #a78bfa;
-      --red: #f87171;
-      --shadow: rgba(2, 6, 23, 0.7);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --radius-xs: 10px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machine OS Launcher</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --bg-2: #edf3ff;
+        --bg-3: #dfeafc;
+        --panel: rgba(255,255,255,0.74);
+        --panel-strong: rgba(255,255,255,0.9);
+        --panel-alt: rgba(232,240,255,0.9);
+        --surface: rgba(11, 18, 36, 0.92);
+        --surface-2: rgba(17, 24, 39, 0.9);
+        --surface-3: rgba(30, 41, 59, 0.88);
+        --text: #0f172a;
+        --text-2: #1e293b;
+        --muted: #475569;
+        --soft: #64748b;
+        --line: rgba(100, 116, 139, 0.22);
+        --line-strong: rgba(37, 99, 235, 0.28);
+        --cyan: #0ea5e9;
+        --blue: #2563eb;
+        --indigo: #4f46e5;
+        --pink: #ec4899;
+        --purple: #8b5cf6;
+        --green: #16a34a;
+        --lime: #84cc16;
+        --amber: #f59e0b;
+        --orange: #f97316;
+        --red: #ef4444;
+        --shadow: rgba(15, 23, 42, 0.14);
+        --dot: rgba(37, 99, 235, 0.16);
+        --taskbar: rgba(255,255,255,0.8);
+        --input: rgba(240,245,255,0.9);
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * { box-sizing: border-box; }
 
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(103, 232, 249, 0.12), transparent 18%),
-        radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.12), transparent 25%),
-        linear-gradient(150deg, var(--bg-0) 0%, var(--bg-1) 40%, var(--bg-2) 100%);
-      color: var(--text);
-    }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(14,165,233,0.18), transparent 20%),
+          radial-gradient(circle at 80% 8%, rgba(168,85,247,0.18), transparent 18%),
+          radial-gradient(circle at 65% 80%, rgba(59,130,246,0.10), transparent 22%),
+          linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
+        color: var(--text);
+      }
 
-    body {
-      padding: 22px;
-    }
+      body {
+        overflow-x: hidden;
+      }
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
 
-    ul, ol {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
+      button, input {
+        font: inherit;
+      }
 
-    .container {
-      max-width: 1440px;
-      margin: 0 auto;
-    }
+      .desktop-shell {
+        min-height: calc(100vh - 72px);
+        display: flex;
+        flex-direction: column;
+        padding: 18px 18px 88px;
+      }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
 
-    .brand {
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-size: clamp(1.7rem, 2.8vw, 3rem);
-    }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text-2);
+      }
 
-    .brand .accent {
-      color: var(--green);
-    }
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background:
+          linear-gradient(145deg, rgba(37,99,235,.14), rgba(14,165,233,.08));
+        border: 1px solid var(--line-strong);
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 12px 22px rgba(37,99,235,0.08);
+      }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(15, 23, 42, 0.78);
-      color: var(--soft);
-      font-size: 0.74rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+      .brand-mark::before,
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: 7px;
+        border-radius: 10px;
+        background-image:
+          radial-gradient(circle, rgba(37,99,235,0.5) 0 1.8px, transparent 2px),
+          linear-gradient(rgba(14,165,233,0.2), rgba(14,165,233,0.2));
+        background-size: 12px 12px, 100% 100%;
+        opacity: 0.9;
+      }
 
-    .live-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 16px rgba(52, 211, 153, 0.9);
-    }
+      .brand .name {
+        font-size: clamp(1.1rem, 2vw, 1.7rem);
+      }
 
-    .grid-6 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+      .brand .name .dot {
+        color: var(--blue);
+      }
 
-    .machine-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 180px;
-      padding: 18px;
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.92));
-      border: 1px solid var(--line);
-      box-shadow: 0 26px 46px rgba(2, 6, 23, 0.42);
-    }
+      .sysbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.6);
+        box-shadow: 0 10px 20px rgba(15,23,42,0.04);
+      }
 
-    .machine-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(103, 232, 249, 0.85), rgba(167, 139, 250, 0.7), transparent);
-    }
+      .sys-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(255,255,255,0.6);
+        border: 1px solid var(--line);
+      }
 
-    .machine-label {
-      color: var(--muted);
-      font-size: 0.73rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
+      .dot-live {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 14px rgba(22,163,74,0.75);
+      }
 
-    .machine-name {
-      margin-top: 12px;
-      font-size: clamp(1.15rem, 1.8vw, 1.8rem);
-      font-weight: 800;
-      line-height: 1.2;
-    }
+      .desktop-grid {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr) 320px;
+        gap: 18px;
+        min-height: 0;
+      }
 
-    .machine-meta {
-      margin-top: 12px;
-      font-size: 0.9rem;
-      color: var(--cyan);
-      font-weight: 700;
-    }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+      }
 
-    .machine-pill {
-      position: absolute;
-      right: 14px;
-      bottom: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(103, 232, 249, 0.4);
-      background: rgba(14, 116, 144, 0.18);
-      color: var(--cyan);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+      .panel-inner {
+        padding: 14px;
+      }
 
-    .section-title {
-      margin: 18px 0 12px;
-      color: var(--soft);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.76rem;
-      font-weight: 800;
-    }
+      .left-stack,
+      .right-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-    .launcher-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
+      .widget {
+        padding: 14px;
+      }
 
-    .app-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 132px;
-      background: linear-gradient(180deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.88));
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px 12px;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 12px 24px rgba(2, 6, 23, 0.18);
-    }
+      .widget-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
 
-    .app-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(103, 232, 249, 0.75);
-      box-shadow: 0 18px 28px rgba(103, 232, 249, 0.12);
-    }
+      .widget-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        font-weight: 800;
+      }
 
-    .app-icon {
-      font-size: 1.9rem;
-    }
+      .tiny-tag {
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        padding: 4px 8px;
+        font-size: 0.62rem;
+        color: var(--soft);
+        background: rgba(255,255,255,0.4);
+      }
 
-    .app-name {
-      margin-top: 10px;
-      font-weight: 800;
-      font-size: 1rem;
-    }
+      .machine-block {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
 
-    .app-tag {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
+      .machine-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.35);
+      }
 
-    .panel {
-      margin-top: 18px;
-      background: rgba(9, 18, 28, 0.92);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 18px 36px rgba(2, 6, 23, 0.38);
-    }
+      .machine-row .name {
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
 
-    .shell {
-      background: rgba(2, 6, 23, 0.98);
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      padding: 14px 16px;
-      color: var(--soft);
-      font-family: Consolas, "Courier New", monospace;
-      white-space: pre-wrap;
-      line-height: 1.7;
-      font-size: 0.92rem;
-    }
+      .machine-row .alias {
+        font-size: 0.72rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
 
-    .cyan { color: var(--cyan); }
-    .green { color: var(--green); }
-    .yellow { color: var(--yellow); }
-    .pink { color: var(--pink); }
-    .purple { color: var(--purple); }
-    .orange { color: var(--orange); }
-    .red { color: var(--red); }
+      .signal {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-    }
+      .bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 3px;
+        height: 20px;
+      }
 
-    .navbar {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+      .bars span {
+        display: block;
+        width: 4px;
+        border-radius: 3px 3px 0 0;
+        background: linear-gradient(180deg, var(--cyan), var(--blue));
+      }
 
-    .nav-btn {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--line);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+      .bars span:nth-child(1) { height: 7px; }
+      .bars span:nth-child(2) { height: 12px; }
+      .bars span:nth-child(3) { height: 16px; }
+      .bars span:nth-child(4) { height: 20px; }
 
-    .nav-btn:hover {
-      border-color: rgba(103, 232, 249, 0.7);
-    }
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
 
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
+      .mini-card {
+        background: rgba(255,255,255,0.34);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 9px 10px;
+      }
 
-    .metric-box {
-      padding: 14px 12px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-    }
+      .mini-label {
+        display: block;
+        font-size: 0.62rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
 
-    .metric-label {
-      color: var(--muted);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      display: block;
-      margin-bottom: 8px;
-    }
+      .mini-value {
+        font-weight: 800;
+        font-size: 1rem;
+      }
 
-    .metric-value {
-      font-size: clamp(1.3rem, 2vw, 2rem);
-      font-weight: 800;
-    }
+      .apps-area {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
 
-    .terminal-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 4px 0;
-    }
+      .hero {
+        padding: 18px;
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(238,245,255,0.8));
+        border: 1px solid var(--line);
+        box-shadow: 0 18px 35px rgba(15,23,42,0.08);
+      }
 
-    .terminal-prompt {
-      color: var(--green);
-      font-weight: 700;
-    }
+      .hero-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
 
-    .system-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      margin-top: 18px;
-    }
+      .hero-title {
+        font-size: clamp(1.6rem, 3vw, 2.7rem);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
 
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+      .hero-title .accent {
+        color: var(--blue);
+      }
 
-    .module-box {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-    }
+      .hero-sub {
+        color: var(--muted);
+        font-size: 0.92rem;
+        margin-top: 8px;
+      }
 
-    .module-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 8px;
-      margin-top: 10px;
-    }
+      .hero-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
 
-    .module-item {
-      border: 1px solid var(--line);
-      background: rgba(2, 6, 23, 0.52);
-      border-radius: 10px;
-      padding: 8px 10px;
-      color: var(--text);
-      font-size: 0.8rem;
-      text-align: center;
-    }
+      .action-btn {
+        border: 1px solid var(--line-strong);
+        background: rgba(255,255,255,0.65);
+        color: var(--text-2);
+        padding: 9px 12px;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+      }
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
+      .action-btn.primary {
+        background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08));
+      }
 
-    .dash-card {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px;
-    }
+      .launch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
 
-    .dash-label {
-      color: var(--muted);
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      display: block;
-      margin-bottom: 8px;
-    }
+      .app-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 136px;
+        padding: 13px 12px;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255,255,255,0.66), rgba(235,242,255,0.9));
+        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      }
 
-    .dash-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-    }
+      .app-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(37,99,235,0.35);
+        box-shadow: 0 18px 32px rgba(37,99,235,0.08);
+      }
 
-    @media (max-width: 700px) {
-      body { padding: 14px; }
-      .launcher-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .system-grid { grid-template-columns: 1fr; }
-    }
+      .app-icon {
+        font-size: 1.9rem;
+      }
 
-    @media (max-width: 480px) {
-      .launcher-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="topbar">
-      <div class="brand">Machine <span class="accent">Launcher</span></div>
-      <div class="status-pill"><span class="live-dot"></span> runtime online</div>
-    </div>
+      .app-name {
+        margin-top: 10px;
+        font-weight: 800;
+        font-size: 0.98rem;
+        color: var(--text-2);
+      }
 
-    <div class="grid-6" id="machineGrid"></div>
+      .app-tag {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.63rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
 
-    <div class="toolbar">
-      <div class="navbar">
-        <button class="nav-btn">boot</button>
-        <button class="nav-btn">runtime</button>
-        <button class="nav-btn">kernel</button>
-        <button class="nav-btn">coretxt</button>
-        <button class="nav-btn">launcher</button>
+      .desktop-rows {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      .terminal-box {
+        position: relative;
+        padding: 14px;
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(2,6,23,0.96), rgba(15,23,42,0.94));
+        border: 1px solid rgba(148,163,184,0.3);
+        box-shadow: 0 18px 35px rgba(15,23,42,0.1);
+      }
+
+      .terminal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .traffic {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .traffic span {
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .traffic .red { background: #f87171; }
+      .traffic .yellow { background: #fbbf24; }
+      .traffic .green { background: #34d399; }
+
+      .terminal-area {
+        min-height: 240px;
+        max-height: 340px;
+        overflow: auto;
+        background: rgba(2,6,23,0.86);
+        border: 1px solid rgba(148,163,184,0.18);
+        border-radius: 12px;
+        padding: 12px;
+        font-family: Consolas, "Courier New", monospace;
+        color: #dbeafe;
+      }
+
+      .terminal-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 4px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .prompt {
+        color: var(--green);
+        font-weight: 800;
+      }
+
+      .terminal-input {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        background: rgba(2,6,23,0.78);
+        border: 1px solid rgba(148,163,184,0.18);
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+
+      .terminal-input .symbol {
+        color: var(--cyan);
+        font-weight: 800;
+      }
+
+      .terminal-input input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #dbeafe;
+        font-family: Consolas, "Courier New", monospace;
+      }
+
+      .weather-box,
+      .notification-box,
+      .log-box {
+        padding: 14px;
+      }
+
+      .weather-header,
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .weather-main {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.56), rgba(221,236,255,0.86));
+      }
+
+      .weather-icon {
+        font-size: 2.4rem;
+      }
+
+      .weather-temp {
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 900;
+      }
+
+      .weather-meta {
+        color: var(--muted);
+        font-size: 0.8rem;
+        margin-top: 6px;
+      }
+
+      .weather-small-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .small-box {
+        background: rgba(255,255,255,0.35);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+
+      .small-box .label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .small-box .value {
+        font-weight: 800;
+      }
+
+      .notification-list,
+      .log-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .notif-item,
+      .log-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 11px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.36);
+      }
+
+      .notif-badge {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-top: 5px;
+      }
+
+      .notif-badge.blue { background: var(--blue); }
+      .notif-badge.green { background: var(--green); }
+      .notif-badge.orange { background: var(--orange); }
+      .notif-badge.pink { background: var(--pink); }
+
+      .notif-text,
+      .log-text {
+        flex: 1;
+        line-height: 1.5;
+      }
+
+      .notif-time,
+      .log-time {
+        color: var(--muted);
+        font-size: 0.68rem;
+        white-space: nowrap;
+      }
+
+      .log-item {
+        align-items: center;
+      }
+
+      .log-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--purple);
+      }
+
+      .activity-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 14px;
+      }
+
+      .taskbar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 10px 16px;
+        background: rgba(255,255,255,0.8);
+        border-top: 1px solid var(--line);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 -10px 24px rgba(15,23,42,0.08);
+      }
+
+      .taskbar-left,
+      .taskbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .start-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line-strong);
+        background: linear-gradient(180deg, rgba(37,99,235,0.08), rgba(14,165,233,0.08));
+        color: var(--text-2);
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .task-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255,255,255,0.64);
+        font-weight: 700;
+      }
+
+      .clock-mini {
+        font-family: Consolas, "Courier New", monospace;
+        font-weight: 800;
+        color: var(--text-2);
+      }
+
+      @media (max-width: 1100px) {
+        .desktop-grid {
+          grid-template-columns: 240px 1fr;
+        }
+
+        .right-stack {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .desktop-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .desktop-rows {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 540px) {
+        .topbar {
+          align-items: flex-start;
+        }
+
+        .taskbar {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+
+        .taskbar-left, .taskbar-right {
+          gap: 6px;
+        }
+
+        .task-chip {
+          padding: 7px 8px;
+          font-size: 0.72rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="desktop-shell">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div class="name">Machine <span class="dot">.</span> OS</div>
+        </div>
+
+        <div class="sysbar">
+          <div class="sys-pill"><span class="dot-live"></span> online</div>
+          <div class="sys-pill">runtime stable</div>
+          <div class="sys-pill">kernel 0.9.2</div>
+          <div class="sys-pill" id="topDate">--</div>
+        </div>
       </div>
-      <div class="status-pill"><span class="live-dot"></span> all systems ready</div>
-    </div>
 
-    <div class="section-title">desktop apps</div>
-    <div class="launcher-grid" id="launcherGrid"></div>
+      <div class="desktop-grid">
+        <aside class="left-stack">
+          <div class="panel widget">
+            <div class="widget-header">
+              <div class="widget-title">System</div>
+              <div class="tiny-tag">live</div>
+            </div>
+            <div class="machine-block">
+              <div class="machine-row">
+                <div>
+                  <div class="alias">alias</div>
+                  <div class="name">.=localhost</div>
+                </div>
+                <div class="signal">
+                  <div class="bars"><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
 
-    <div class="metrics">
-      <div class="metric-box">
-        <span class="metric-label">boot time</span>
-        <div class="metric-value cyan">0.842s</div>
-      </div>
-      <div class="metric-box">
-        <span class="metric-label">runtime</span>
-        <div class="metric-value green">stable</div>
-      </div>
-      <div class="metric-box">
-        <span class="metric-label">kernel</span>
-        <div class="metric-value purple">active</div>
-      </div>
-      <div class="metric-box">
-        <span class="metric-label">session</span>
-        <div class="metric-value yellow">live</div>
-      </div>
-    </div>
+              <div class="machine-row">
+                <div>
+                  <div class="alias">origin</div>
+                  <div class="name">.=github.com/sumberkode</div>
+                </div>
+                <div class="tiny-tag">repo</div>
+              </div>
 
-    <div class="panel">
-      <div class="section-title" style="margin-top: 0;">system boot log</div>
-      <div class="shell" id="bootShell"></div>
-    </div>
-
-    <div class="system-grid">
-      <div class="panel">
-        <div class="section-title" style="margin-top: 0;">runtime stack</div>
-        <div class="stack">
-          <div class="module-box">
-            <strong>Machine Layer</strong>
-            <div class="module-list">
-              <div class="module-item">localhost</div>
-              <div class="module-item">github.com/sumberkode</div>
-              <div class="module-item">runtime</div>
-              <div class="module-item">kernel</div>
-              <div class="module-item">coretxt</div>
-              <div class="module-item">launcher</div>
+              <div class="machine-row">
+                <div>
+                  <div class="alias">runtime</div>
+                  <div class="name">.=runtime</div>
+                </div>
+                <div class="tiny-tag">boot</div>
+              </div>
             </div>
           </div>
-          <div class="module-box">
-            <strong>Service Modules</strong>
-            <div class="module-list">
-              <div class="module-item">editor</div>
-              <div class="module-item">terminal</div>
-              <div class="module-item">notes</div>
-              <div class="module-item">files</div>
-              <div class="module-item">calendar</div>
-              <div class="module-item">analytics</div>
+
+          <div class="panel widget">
+            <div class="widget-header">
+              <div class="widget-title">Core</div>
+              <div class="tiny-tag">status</div>
+            </div>
+            <div class="status-grid">
+              <div class="mini-card">
+                <span class="mini-label">cpu</span>
+                <div class="mini-value">90%</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">mem</span>
+                <div class="mini-value">68%</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">net</span>
+                <div class="mini-value">ok</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">disk</span>
+                <div class="mini-value">1.2T</div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="panel">
-        <div class="section-title" style="margin-top: 0;">dashboard</div>
-        <div class="dashboard">
-          <div class="dash-card">
-            <span class="dash-label">core status</span>
-            <div class="dash-value green">OK</div>
+          <div class="panel widget">
+            <div class="widget-header">
+              <div class="widget-title">Modules</div>
+              <div class="tiny-tag">10</div>
+            </div>
+            <div class="status-grid">
+              <div class="mini-card"><span class="mini-label">kernel</span><div class="mini-value">on</div></div>
+              <div class="mini-card"><span class="mini-label">txt</span><div class="mini-value">on</div></div>
+              <div class="mini-card"><span class="mini-label">shell</span><div class="mini-value">on</div></div>
+              <div class="mini-card"><span class="mini-label">apps</span><div class="mini-value">40</div></div>
+            </div>
           </div>
-          <div class="dash-card">
-            <span class="dash-label">signal</span>
-            <div class="dash-value cyan">89%</div>
+        </aside>
+
+        <main class="apps-area">
+          <div class="hero panel">
+            <div class="hero-top">
+              <div>
+                <div class="hero-title">Machine <span class="accent">Launch</span></div>
+                <div class="hero-sub">Desktop OS launcher / runtime / coretxt / kernel / dots & components</div>
+              </div>
+              <div class="hero-actions">
+                <button class="action-btn primary">Open shell</button>
+                <button class="action-btn">Refresh</button>
+              </div>
+            </div>
+            <div class="launch-grid" id="appGrid"></div>
           </div>
-          <div class="dash-card">
-            <span class="dash-label">latency</span>
-            <div class="dash-value yellow">12ms</div>
+
+          <div class="desktop-rows">
+            <div class="panel terminal-box">
+              <div class="terminal-header">
+                <div class="widget-title">Terminal</div>
+                <div class="traffic">
+                  <span class="red"></span>
+                  <span class="yellow"></span>
+                  <span class="green"></span>
+                </div>
+              </div>
+              <div class="terminal-area" id="terminalArea"></div>
+              <div class="terminal-input">
+                <div class="symbol">$</div>
+                <input id="terminalInput" type="text" placeholder="type command..." spellcheck="false" />
+              </div>
+            </div>
+
+            <div class="panel weather-box">
+              <div class="weather-header">
+                <div class="widget-title">Weather</div>
+                <div class="tiny-tag">bandung</div>
+              </div>
+
+              <div class="weather-main">
+                <div>
+                  <div class="weather-icon">☀️</div>
+                </div>
+                <div>
+                  <div class="weather-temp">28°</div>
+                  <div class="weather-meta">Sunny & bright</div>
+                </div>
+              </div>
+
+              <div class="weather-small-grid">
+                <div class="small-box">
+                  <span class="label">wind</span>
+                  <div class="value">7 km/h</div>
+                </div>
+                <div class="small-box">
+                  <span class="label">humidity</span>
+                  <div class="value">61%</div>
+                </div>
+                <div class="small-box">
+                  <span class="label">rain</span>
+                  <div class="value">12%</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="dash-card">
-            <span class="dash-label">memory</span>
-            <div class="dash-value purple">64GB</div>
+        </main>
+
+        <aside class="right-stack">
+          <div class="panel widget notification-box">
+            <div class="section-head">
+              <div class="widget-title">Notifications</div>
+              <div class="tiny-tag">3</div>
+            </div>
+            <div class="notification-list" id="notificationList"></div>
           </div>
-        </div>
+
+          <div class="panel widget log-box">
+            <div class="section-head">
+              <div class="widget-title">Activity log</div>
+              <div class="tiny-tag">live</div>
+            </div>
+            <div class="log-list" id="logList"></div>
+          </div>
+
+          <div class="panel widget">
+            <div class="section-head">
+              <div class="widget-title">Quick status</div>
+              <div class="tiny-tag">dot</div>
+            </div>
+            <div class="status-grid">
+              <div class="mini-card">
+                <span class="mini-label">aliases</span>
+                <div class="mini-value">6</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">theme</span>
+                <div class="mini-value">light</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">launch</span>
+                <div class="mini-value">ok</div>
+              </div>
+              <div class="mini-card">
+                <span class="mini-label">text</span>
+                <div class="mini-value">32</div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
-  </div>
 
-  <script>
-    const machines = [
-      { label: 'alias', name: '.=localhost', meta: 'local runtime', pill: 'online' },
-      { label: 'origin', name: '.=github.com/sumberkode', meta: 'source repository', pill: 'repo' },
-      { label: 'runtime', name: '.=runtime', meta: 'execution layer', pill: 'boot' },
-      { label: 'kernel', name: '.=kernel', meta: 'host control', pill: 'core' },
-      { label: 'text core', name: '.=coretxt', meta: 'txt system shell', pill: 'read' },
-      { label: 'launcher', name: '.=txt launcher', meta: 'desktop control', pill: 'launch' }
-    ];
+    <div class="taskbar">
+      <div class="taskbar-left">
+        <button class="start-btn">start</button>
+        <div class="task-chip">.=localhost</div>
+        <div class="task-chip">.=runtime</div>
+        <div class="task-chip">.=kernel</div>
+      </div>
 
-    const apps = [
-      { name: 'Editor', file: 'apps/01-editor.html', icon: '📝' },
-      { name: 'Clock', file: 'apps/02-clock.html', icon: '⏰' },
-      { name: 'Calculator', file: 'apps/03-calculator.html', icon: '🧮' },
-      { name: 'Calendar', file: 'apps/04-calendar.html', icon: '📅' },
-      { name: 'To-Do', file: 'apps/05-todo.html', icon: '✅' },
-      { name: 'Notes', file: 'apps/06-notes.html', icon: '📒' },
-      { name: 'Files', file: 'apps/07-files.html', icon: '📁' },
-      { name: 'Terminal', file: 'apps/08-terminal.html', icon: '💻' },
-      { name: 'Music', file: 'apps/09-music.html', icon: '🎵' },
-      { name: 'Gallery', file: 'apps/10-gallery.html', icon: '🖼️' },
-      { name: 'Chat', file: 'apps/11-chat.html', icon: '💬' },
-      { name: 'Weather', file: 'apps/12-weather.html', icon: '⛅' },
-      { name: 'Translator', file: 'apps/13-translator.html', icon: '🌐' },
-      { name: 'Markdown', file: 'apps/14-markdown.html', icon: '📄' },
-      { name: 'UUID', file: 'apps/15-uuid.html', icon: '🧩' },
-      { name: 'QR', file: 'apps/16-qr.html', icon: '📷' },
-      { name: 'Paint', file: 'apps/17-paint.html', icon: '🎨' },
-      { name: 'Kanban', file: 'apps/18-kanban.html', icon: '📋' },
-      { name: 'SSH', file: 'apps/19-ssh.html', icon: '🔐' },
-      { name: 'Settings', file: 'apps/20-settings.html', icon: '⚙️' },
-      { name: 'Timer', file: 'apps/21-timer.html', icon: '⏱️' },
-      { name: 'Stopwatch', file: 'apps/22-stopwatch.html', icon: '⏲️' },
-      { name: 'Password', file: 'apps/23-password.html', icon: '🔑' },
-      { name: 'Randomizer', file: 'apps/24-randomizer.html', icon: '🎲' },
-      { name: 'Unit', file: 'apps/25-unit.html', icon: '📏' },
-      { name: 'Color', file: 'apps/26-color.html', icon: '🎯' },
-      { name: 'Dictionary', file: 'apps/27-dictionary.html', icon: '📚' },
-      { name: 'Currency', file: 'apps/28-currency.html', icon: '💰' },
-      { name: 'JSON', file: 'apps/29-json.html', icon: '{}' },
-      { name: 'BMI', file: 'apps/30-bmi.html', icon: '📊' },
-      { name: 'Workspace', file: 'apps/31-workspace.html', icon: '🧰' },
-      { name: 'Lottery', file: 'apps/32-lottery.html', icon: '🎰' },
-      { name: 'Speech', file: 'apps/33-speech.html', icon: '🔊' },
-      { name: 'Analytics', file: 'apps/34-analytics.html', icon: '📈' },
-      { name: 'Password Check', file: 'apps/35-password-check.html', icon: '🛡️' },
-      { name: 'Base64', file: 'apps/36-base64.html', icon: '🔤' },
-      { name: 'Encoder', file: 'apps/37-encoder.html', icon: '🧠' },
-      { name: 'Image Scaler', file: 'apps/38-image-scaler.html', icon: '🖍️' },
-      { name: 'Quote', file: 'apps/39-quote.html', icon: '💬' },
-      { name: 'Launcher', file: 'apps/40-launcher.html', icon: '🚀' }
-    ];
+      <div class="taskbar-right">
+        <div class="task-chip">wifi</div>
+        <div class="task-chip">battery 92%</div>
+        <div class="clock-mini" id="clockMini">00:00:00</div>
+      </div>
+    </div>
 
-    const machineGrid = document.getElementById('machineGrid');
-    const launcherGrid = document.getElementById('launcherGrid');
+    <script>
+      const appData = [
+        { name: 'Editor', file: 'apps/01-editor.html', icon: '📝' },
+        { name: 'Clock', file: 'apps/02-clock.html', icon: '⏰' },
+        { name: 'Calc', file: 'apps/03-calculator.html', icon: '🧮' },
+        { name: 'Calendar', file: 'apps/04-calendar.html', icon: '📅' },
+        { name: 'To-Do', file: 'apps/05-todo.html', icon: '✅' },
+        { name: 'Notes', file: 'apps/06-notes.html', icon: '📒' },
+        { name: 'Files', file: 'apps/07-files.html', icon: '📁' },
+        { name: 'Terminal', file: 'apps/08-terminal.html', icon: '💻' },
+        { name: 'Music', file: 'apps/09-music.html', icon: '🎵' },
+        { name: 'Gallery', file: 'apps/10-gallery.html', icon: '🖼️' },
+        { name: 'Chat', file: 'apps/11-chat.html', icon: '💬' },
+        { name: 'Weather', file: 'apps/12-weather.html', icon: '⛅' },
+        { name: 'Translator', file: 'apps/13-translator.html', icon: '🌐' },
+        { name: 'MD', file: 'apps/14-markdown.html', icon: '📄' },
+        { name: 'UUID', file: 'apps/15-uuid.html', icon: '🧩' },
+        { name: 'QR', file: 'apps/16-qr.html', icon: '📷' },
+        { name: 'Paint', file: 'apps/17-paint.html', icon: '🎨' },
+        { name: 'Kanban', file: 'apps/18-kanban.html', icon: '📋' },
+        { name: 'SSH', file: 'apps/19-ssh.html', icon: '🔐' },
+        { name: 'Settings', file: 'apps/20-settings.html', icon: '⚙️' },
+        { name: 'Timer', file: 'apps/21-timer.html', icon: '⏱️' },
+        { name: 'Stopwatch', file: 'apps/22-stopwatch.html', icon: '⏲️' },
+        { name: 'Pass', file: 'apps/23-password.html', icon: '🔑' },
+        { name: 'Random', file: 'apps/24-randomizer.html', icon: '🎲' },
+        { name: 'Unit', file: 'apps/25-unit.html', icon: '📏' },
+        { name: 'Color', file: 'apps/26-color.html', icon: '🎯' },
+        { name: 'Dict', file: 'apps/27-dictionary.html', icon: '📚' },
+        { name: 'Currency', file: 'apps/28-currency.html', icon: '💰' },
+        { name: 'JSON', file: 'apps/29-json.html', icon: '{} ' },
+        { name: 'BMI', file: 'apps/30-bmi.html', icon: '📊' },
+        { name: 'Workspace', file: 'apps/31-workspace.html', icon: '🧰' },
+        { name: 'Lottery', file: 'apps/32-lottery.html', icon: '🎰' },
+        { name: 'Speech', file: 'apps/33-speech.html', icon: '🔊' },
+        { name: 'Analytics', file: 'apps/34-analytics.html', icon: '📈' },
+        { name: 'Check', file: 'apps/35-password-check.html', icon: '🛡️' },
+        { name: 'Base64', file: 'apps/36-base64.html', icon: '🔤' },
+        { name: 'Encoder', file: 'apps/37-encoder.html', icon: '🧠' },
+        { name: 'Scaler', file: 'apps/38-image-scaler.html', icon: '🖍️' },
+        { name: 'Quote', file: 'apps/39-quote.html', icon: '💬' },
+        { name: 'Launcher', file: 'apps/40-launcher.html', icon: '🚀' }
+      ];
 
-    machines.forEach((machine) => {
-      const card = document.createElement('div');
-      card.className = 'machine-card';
-      card.innerHTML = `
-        <div class="machine-label">${machine.label}</div>
-        <div class="machine-name">${machine.name}</div>
-        <div class="machine-meta">${machine.meta}</div>
-        <div class="machine-pill">${machine.pill}</div>
-      `;
-      machineGrid.appendChild(card);
-    });
+      const notifications = [
+        { text: 'runtime scan completed successfully.', time: 'now', color: 'blue' },
+        { text: 'launch sequence synchronized with repo.', time: '2m', color: 'green' },
+        { text: 'weather sensor refreshed for Bandung.', time: '8m', color: 'orange' }
+      ];
 
-    apps.forEach((app) => {
-      const card = document.createElement('a');
-      card.href = app.file;
-      card.className = 'app-card';
-      card.innerHTML = `
-        <div>
-          <div class="app-icon">${app.icon}</div>
-          <div class="app-name">${app.name}</div>
-        </div>
-        <div class="app-tag">launch</div>
-      `;
-      launcherGrid.appendChild(card);
-    });
+      const logs = [
+        { text: 'startup: kernel initialized', time: '09:14:02' },
+        { text: 'gateway: repo synced to github.com/sumberkode', time: '09:14:18' },
+        { text: 'shell: launcher ready for input', time: '09:14:31' },
+        { text: 'service: local apps loaded', time: '09:14:43' },
+        { text: 'weather refresh: values updated', time: '09:15:02' }
+      ];
 
-    const bootShell = document.getElementById('bootShell');
-    const bootLog = [
-      '<span class="green">$</span> boot machine',
-      '<span class="cyan">[ok]</span> localhost : runtime connected',
-      '<span class="cyan">[ok]</span> github.com/sumberkode : repo synchronized',
-      '<span class="cyan">[ok]</span> runtime : service ready',
-      '<span class="cyan">[ok]</span> kernel : initialization complete',
-      '<span class="cyan">[ok]</span> coretxt : console active',
-      '<span class="yellow">[ready]</span> txt launcher : waiting for command',
-      '<span class="green">$</span> authorize sandbox',
-      '<span class="cyan">[ok]</span> security profile : official',
-      '<span class="cyan">[ok]</span> permissions : accepted',
-      '<span class="cyan">[ok]</span> environment : localhost',
-      '<span class="green">$</span> load workspace',
-      '<span class="cyan">[ok]</span> app registry : 40 modules',
-      '<span class="cyan">[ok]</span> launcher cache : initialized',
-      '<span class="cyan">[ok]</span> desktop shell : online',
-      '<span class="yellow">[ready]</span> machine status : stable',
-      '<span class="green">$</span> run system scan',
-      '<span class="cyan">[ok]</span> cpu : nominal',
-      '<span class="cyan">[ok]</span> ram : stable',
-      '<span class="cyan">[ok]</span> network : available',
-      '<span class="cyan">[ok]</span> storage : ready',
-      '<span class="green">$</span> activate launcher',
-      '<span class="cyan">[ok]</span> launcher interface : rendered',
-      '<span class="cyan">[ok]</span> shortcuts : ready',
-      '<span class="yellow">[ready]</span> machine operation : complete',
-      '<span class="green">$</span> system idle',
-      '<span class="cyan">[ok]</span> standby mode : armed',
-      '<span class="cyan">[ok]</span> user session : active',
-      '<span class="green">$</span> export environment',
-      '<span class="cyan">[ok]</span> alias list : generated',
-      '<span class="cyan">[ok]</span> command tree : available',
-      '<span class="cyan">[ok]</span> app chain : synced',
-      '<span class="yellow">[ready]</span> local system healthy',
-      '<span class="green">$</span> verify apps',
-      '<span class="cyan">[ok]</span> editor',
-      '<span class="cyan">[ok]</span> notes',
-      '<span class="cyan">[ok]</span> terminal',
-      '<span class="cyan">[ok]</span> weather',
-      '<span class="cyan">[ok]</span> analytics',
-      '<span class="cyan">[ok]</span> workspace',
-      '<span class="cyan">[ok]</span> launcher',
-      '<span class="yellow">[ready]</span> launch suite synchronized',
-      '<span class="green">$</span> validation complete',
-      '<span class="cyan">[ok]</span> boot integrity : 100%',
-      '<span class="cyan">[ok]</span> access scope : local',
-      '<span class="cyan">[ok]</span> repo scope : github.com/sumberkode',
-      '<span class="cyan">[ok]</span> runtime mode : desktop',
-      '<span class="yellow">[ready]</span> machine online',
-      '<span class="green">$</span> display shell',
-      '<span class="cyan">[ok]</span> coretxt : rendering',
-      '<span class="cyan">[ok]</span> ui : initialized',
-      '<span class="cyan">[ok]</span> symbol map : loaded',
-      '<span class="yellow">[ready]</span> terminal display : active'
-    ];
+      const terminalHistory = [
+        'boot machine',
+        'status runtime',
+        'list apps',
+        'weather',
+        'help'
+      ];
 
-    bootShell.innerHTML = bootLog.join('\n');
+      const terminalArea = document.getElementById('terminalArea');
+      const terminalInput = document.getElementById('terminalInput');
 
-    const extraText = [
-      'machine alias = localhost',
-      'machine alias = github.com/sumberkode',
-      'machine alias = runtime',
-      'machine alias = kernel',
-      'machine alias = coretxt',
-      'machine alias = txt launcher',
-      'package name = index.html.app',
-      'runtime mode = stable',
-      'console layer = enabled',
-      'desktop interface = active',
-      'app count = 40',
-      'session status = ready',
-      'status = online',
-      'launch order = init -> sync -> render -> ready',
-      'host classifier = local machine',
-      'shell type = txt desktop',
-      'origin = github pages',
-      'target = page launcher',
-      'system profile = default',
-      'permission check = authorized',
-      'machine identity = stable',
-      'console prompt = active',
-      'keyboard hook = enabled',
-      'responsive mode = desktop + mobile',
-      'main language = Indonesian',
-      'default theme = dark machine',
-      'app registry = generated',
-      'module chain = connected',
-      'gui status = ready',
-      'os layer = virtual',
-      'render engine = browser',
-      'module stack = html css javascript',
-      'user interaction = enabled',
-      'access right = local public',
-      'kernel path = root',
-      'runtime path = app runtime',
-      'core text = active',
-      'render profile = launcher',
-      'source stack = github repository',
-      'deployment = static hosting',
-      'cache = warm',
-      'link health = valid',
-      'object state = ready',
-      'content type = interactive machine-ui',
-      'display profile = compact',
-      'theme profile = futuristic console',
-      'machine style = system launcher',
-      'source branch = io',
-      'data layer = frontend',
-      'page scope = app hub',
-      'index file = root launcher',
-      'single page app = true',
-      'launch group = desktop packed',
-      'module layer = app catalog',
-      'launcher engine = DOM render',
-      'language pack = english + indonesian',
-      'resource pool = local assets',
-      'template mode = custom',
-      'boot process = final',
-      'workspace processing = idle',
-      'memory state = balanced',
-      'request handling = direct',
-      'network layer = direct static',
-      'module path = /apps',
-      'root path = /',
-      'name = machine launcher',
-      'design = app system desktop',
-      'system sound = muted',
-      'notification state = quiet',
-      'startup alert = none',
-      'handling mode = selfservice',
-      'page integrity = verified',
-      'asset load = ok',
-      'resource binding = consistent',
-      'link map = valid',
-      'module system = dynamic',
-      'visual theme = dark terminal',
-      'launch panel = active',
-      'runtime profile = offline ready',
-      'machine node = index.html.app',
-      'system id = apphub',
-      'boot key = complete',
-      'launch config = default',
-      'page title = Machine Launcher System',
-      'process queue = empty',
-      'render queue = steady',
-      'shell status = ready',
-      'stats = online',
-      'default startup = launcher',
-      'interactive modules = loaded',
-      'workspace app list = ready',
-      'screen feed = rendered',
-      'response speed = immediate',
-      'resource plan = static',
-      'core drive = ok',
-      'grid system = enabled',
-      'cards enabled = true',
-      'system font = Segoe UI',
-      'host status = operating',
-      'runtime trust = valid',
-      'machine environment = standard',
-      'app catalog = active',
-      'launcher style = compact',
-      'desktop palette = dark',
-      'signal count = stable',
-      'system summary = healthy',
-      'page state = active',
-      'launch target = home',
-      'status board = available',
-      'session list = active',
-      'stack map = complete',
-      'page registry = generated',
-      'system token = machine',
-      'module count = 40',
-      'launcher build = static',
-      'render output = browser',
-      'machine root = index',
-      'console status = ready',
-      'runtime token = online',
-      'feature set = large',
-      'shell job = active',
-      'resource health = healthy',
-      'app check = pass',
-      'final report = ok'
-    ];
+      function renderApps() {
+        const grid = document.getElementById('appGrid');
+        appData.forEach((app) => {
+          const a = document.createElement('a');
+          a.href = app.file;
+          a.className = 'app-card';
+          a.innerHTML = `
+            <div>
+              <div class="app-icon">${app.icon}</div>
+              <div class="app-name">${app.name}</div>
+            </div>
+            <div class="app-tag">launch</div>
+          `;
+          grid.appendChild(a);
+        });
+      }
 
-    const extraNodes = document.createElement('div');
-    extraNodes.style.display = 'none';
-    extraNodes.textContent = extraText.join('\n');
-    document.body.appendChild(extraNodes);
-  </script>
-</body>
+      function renderNotifications() {
+        const list = document.getElementById('notificationList');
+        notifications.forEach((n) => {
+          const item = document.createElement('div');
+          item.className = 'notif-item';
+          item.innerHTML = `
+            <div class="notif-badge ${n.color}"></div>
+            <div class="notif-text">${n.text}</div>
+            <div class="notif-time">${n.time}</div>
+          `;
+          list.appendChild(item);
+        });
+      }
+
+      function renderLogs() {
+        const list = document.getElementById('logList');
+        logs.forEach((l) => {
+          const item = document.createElement('div');
+          item.className = 'log-item';
+          item.innerHTML = `
+            <div class="log-dot"></div>
+            <div class="log-text">${l.text}</div>
+            <div class="log-time">${l.time}</div>
+          `;
+          list.appendChild(item);
+        });
+      }
+
+      function updateClock() {
+        const now = new Date();
+        const time = now.toLocaleTimeString('id-ID', { hour12: false });
+        document.getElementById('clockMini').textContent = time;
+        document.getElementById('topDate').textContent = now.toLocaleDateString('id-ID', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric'
+        });
+      }
+
+      function addTerminalLine(text, colorClass = '') {
+        const line = document.createElement('div');
+        line.className = 'terminal-line';
+        line.innerHTML = `<span class="prompt">$</span><span class="${colorClass}">${text}</span>`;
+        terminalArea.appendChild(line);
+        terminalArea.scrollTop = terminalArea.scrollHeight;
+      }
+
+      function processCommand(input) {
+        const cmd = input.trim();
+        if (!cmd) return;
+
+        const lower = cmd.toLowerCase();
+        addTerminalLine(cmd, 'cyan');
+
+        if (lower === 'help') {
+          addTerminalLine('commands: help, status, weather, list apps, open editor, clear, time, theme', 'green');
+        } else if (lower === 'status' || lower === 'system status') {
+          addTerminalLine('runtime: stable | kernel: active | coretxt: online | launcher: ready', 'green');
+        } else if (lower === 'weather') {
+          addTerminalLine('Bandung: 28°C, sunny, humidity 61%, wind 7 km/h', 'yellow');
+        } else if (lower === 'list apps' || lower === 'apps') {
+          addTerminalLine('apps available: editor, calculator, clock, workspace, notes, weather, terminal, launcher', 'cyan');
+        } else if (lower === 'open editor' || lower === 'editor') {
+          window.location.href = 'apps/01-editor.html';
+        } else if (lower === 'time') {
+          addTerminalLine(new Date().toLocaleTimeString('id-ID', { hour12: false }), 'yellow');
+        } else if (lower === 'theme') {
+          document.body.style.filter = 'contrast(1.04) saturate(1.1)';
+          addTerminalLine('theme switched to light machine palette', 'pink');
+        } else if (lower === 'clear') {
+          terminalArea.innerHTML = '';
+          return;
+        } else {
+          addTerminalLine(`command not found: ${cmd}`, 'red');
+        }
+      }
+
+      terminalInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          const value = terminalInput.value;
+          processCommand(value);
+          terminalInput.value = '';
+        }
+      });
+
+      function initTerminal() {
+        terminalArea.innerHTML = '';
+        terminalHistory.forEach((item) => {
+          addTerminalLine(item, 'green');
+        });
+        addTerminalLine('welcome to machine shell. type "help" to begin.', 'cyan');
+      }
+
+      renderApps();
+      renderNotifications();
+      renderLogs();
+      updateClock();
+      initTerminal();
+      setInterval(updateClock, 1000);
+    </script>
+  </body>
 </html>

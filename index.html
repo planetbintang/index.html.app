@@ -2,275 +2,80 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=https://github.com" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>App Hub Desktop</title>
+    <title>Redirecting to GitHub</title>
     <style>
       :root {
-        --bg: #0f172a;
+        --bg: #0b1020;
         --bg-2: #111827;
-        --panel: rgba(15, 23, 42, 0.8);
-        --card: rgba(15, 23, 42, 0.68);
-        --card-2: rgba(30, 41, 59, 0.75);
-        --text: #e2e8f0;
+        --panel: rgba(15, 23, 42, 0.86);
+        --text: #e5e7eb;
         --muted: #9ca3af;
         --accent: #7dd3fc;
-        --accent-2: #34d399;
-        --accent-3: #fbbf24;
-        --danger: #f87171;
-        --border: rgba(148,163,184,.25);
+        --border: rgba(148, 163, 184, 0.2);
       }
       * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, #172554 0%, var(--bg) 35%, #020817 100%); color: var(--text); }
-      body { padding: 24px; }
-      a { color: var(--accent); text-decoration: none; }
-      .container { max-width: 1440px; margin: 0 auto; }
-      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
-      .brand { font-size: clamp(1.6rem, 2vw, 2.4rem); font-weight: 800; }
-      .brand small { color: var(--accent-2); font-weight: 700; }
-      .domain-display { font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
-      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-      button { border: 1px solid var(--border); background: rgba(30,41,59,.8); color: var(--text); padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; }
-      button:hover { transform: translateY(-1px); border-color: rgba(125,211,252,.8); }
-      .desktop {
-        display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 18px; margin-bottom: 20px;
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
       }
-      .panel {
-        background: var(--panel); border: 1px solid var(--border); border-radius: 18px; padding: 18px;
-        box-shadow: 0 12px 30px rgba(2,6,23,.35);
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        padding: 24px;
       }
-      .status-grid { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 12px; }
-      .metric { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
-      .metric .label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
-      .metric .value { font-size: 1.15rem; font-weight: 700; }
-      .quick { display: flex; flex-wrap: wrap; gap: 10px; }
-      .tool { background: rgba(15,118,110,.14); border: 1px solid rgba(52,211,153,.42); padding: 9px 12px; border-radius: 10px; }
-      .launcher {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
-        margin-top: 20px;
+      .card {
+        width: min(100%, 560px);
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 28px 24px;
+        text-align: center;
+        box-shadow: 0 18px 40px rgba(2, 6, 23, 0.45);
       }
-      .app-card {
-        background: linear-gradient(180deg, rgba(31,41,55,.95), rgba(17,24,39,.9));
-        border: 1px solid var(--border); border-radius: 14px; padding: 14px 12px; min-height: 120px;
-        display: flex; flex-direction: column; justify-content: space-between;
-        transition: .22s ease;
+      .title {
+        font-size: clamp(1.5rem, 2vw, 2.1rem);
+        margin: 0 0 12px;
       }
-      .app-card:hover { transform: translateY(-2px); border-color: rgba(125,211,252,.8); }
-      .app-icon { font-size: 1.7rem; }
-      .app-name { font-weight: 700; margin-top: 8px; }
-      .app-tag { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
-      .section-title { margin: 22px 0 12px; font-size: 1.08rem; font-weight: 700; }
-      .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
-      .module-link {
-        display: block; background: rgba(15,23,42,.68); border: 1px solid var(--border); color: var(--text);
-        border-radius: 12px; padding: 12px; transition: .2s ease;
+      .muted {
+        color: var(--muted);
+        margin: 0 0 18px;
+        line-height: 1.6;
       }
-      .module-link:hover { border-color: rgba(125,211,252,.8); transform: translateY(-2px); }
-      .workspace { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 18px; margin-top: 20px; }
-      .editor-box { border: 1px solid var(--border); background: #020817; border-radius: 12px; overflow: hidden; }
-      .editor-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #0f172a; border-bottom: 1px solid var(--border); }
-      textarea { width: 100%; min-height: 280px; resize: vertical; border: none; background: #020817; color: #e2e8f0; padding: 14px; font-family: Consolas, monospace; line-height: 1.5; }
-      .todo-list, .calendar-box, .calc-box, .clock-box { background: rgba(2,6,23,.35); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
-      .todo-list ul { list-style: none; padding: 0; margin: 8px 0 0; }
-      .todo-list li { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-      .calendar-box table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      .calendar-box th, .calendar-box td { width: 14.28%; text-align: center; padding: 8px 4px; border-radius: 6px; }
-      .calendar-box td.today { background: rgba(56,189,248,.18); border: 1px solid rgba(56,189,248,.4); }
-      .calc-box input { width: 100%; background: #0f172a; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; font-size: 1.1rem; }
-      .calc-btns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-      .calc-btns button { padding: 12px 0; }
-      .clock-box { text-align: center; }
-      #clock { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin: 10px 0; }
-      @media (max-width: 860px){ .desktop, .workspace { grid-template-columns: 1fr; } }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255,255,255,0.15);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        margin: 0 auto 18px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="topbar">
-        <div class="brand">AppHub <small>Desktop Pack</small></div>
-        <div class="domain-display"><span>.</span> = <span id="domainAlias">domain</span></div>
-        <div class="actions">
-          <button onclick="toggleTheme()">Tema</button>
-          <button onclick="saveEditor()">Simpan</button>
-          <button onclick="window.location.reload()">Muat Ulang</button>
-        </div>
-      </div>
-
-      <div class="desktop">
-        <div class="panel">
-          <h2>Package Sistem</h2>
-          <div class="status-grid">
-            <div class="metric"><span class="label">Status</span><span class="value" style="color: var(--accent-2);">Online</span></div>
-            <div class="metric"><span class="label">Server</span><span class="value">localhost:8080</span></div>
-            <div class="metric"><span class="label">Platform</span><span class="value">HTML5</span></div>
-          </div>
-          <div class="quick" style="margin-top: 18px;">
-            <span class="tool">Desktop</span><span class="tool">Launcher</span><span class="tool">Editor</span><span class="tool">Tools</span>
-            <span class="tool">Jam</span><span class="tool">Kalender</span><span class="tool">Kalkulator</span><span class="tool">Apps</span>
-          </div>
-        </div>
-        <div class="panel">
-          <h3>Quick Launch</h3>
-          <div class="quick">
-            <button onclick="openModule('apps/01-editor.html')">Editor</button>
-            <button onclick="openModule('apps/21-timer.html')">Timer</button>
-            <button onclick="openModule('apps/22-stopwatch.html')">Stopwatch</button>
-            <button onclick="openModule('apps/25-unit.html')">Unit</button>
-            <button onclick="openModule('apps/31-workspace.html')">Workspace</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-title">Launcher Desktop</div>
-      <div class="launcher" id="launcher"></div>
-
-      <div class="section-title">Modul Tambahan</div>
-      <div class="module-grid">
-        <a class="module-link" href="apps/01-editor.html">01 Editor</a>
-        <a class="module-link" href="apps/02-clock.html">02 Jam</a>
-        <a class="module-link" href="apps/03-calculator.html">03 Kalkulator</a>
-        <a class="module-link" href="apps/04-calendar.html">04 Kalender</a>
-        <a class="module-link" href="apps/05-todo.html">05 To-Do</a>
-        <a class="module-link" href="apps/06-notes.html">06 Catatan</a>
-        <a class="module-link" href="apps/07-files.html">07 File</a>
-        <a class="module-link" href="apps/08-terminal.html">08 Terminal</a>
-        <a class="module-link" href="apps/09-music.html">09 Musik</a>
-        <a class="module-link" href="apps/10-gallery.html">10 Galeri</a>
-        <a class="module-link" href="apps/11-chat.html">11 Chat</a>
-        <a class="module-link" href="apps/12-weather.html">12 Cuaca</a>
-        <a class="module-link" href="apps/13-translator.html">13 Translator</a>
-        <a class="module-link" href="apps/14-markdown.html">14 Markdown</a>
-        <a class="module-link" href="apps/15-uuid.html">15 UUID</a>
-        <a class="module-link" href="apps/16-qr.html">16 QR</a>
-        <a class="module-link" href="apps/17-paint.html">17 Paint</a>
-        <a class="module-link" href="apps/18-kanban.html">18 Kanban</a>
-        <a class="module-link" href="apps/19-ssh.html">19 SSH</a>
-        <a class="module-link" href="apps/20-settings.html">20 Settings</a>
-        <a class="module-link" href="apps/21-timer.html">21 Timer</a>
-        <a class="module-link" href="apps/22-stopwatch.html">22 Stopwatch</a>
-        <a class="module-link" href="apps/23-password.html">23 Password</a>
-        <a class="module-link" href="apps/24-randomizer.html">24 Random</a>
-        <a class="module-link" href="apps/25-unit.html">25 Unit</a>
-        <a class="module-link" href="apps/26-color.html">26 Color</a>
-        <a class="module-link" href="apps/27-dictionary.html">27 Dict</a>
-        <a class="module-link" href="apps/28-currency.html">28 Currency</a>
-        <a class="module-link" href="apps/29-json.html">29 JSON</a>
-        <a class="module-link" href="apps/30-bmi.html">30 BMI</a>
-        <a class="module-link" href="apps/31-workspace.html">31 Workspace</a>
-        <a class="module-link" href="apps/32-lottery.html">32 Lottery</a>
-        <a class="module-link" href="apps/33-speech.html">33 Speech</a>
-        <a class="module-link" href="apps/34-analytics.html">34 Analytics</a>
-        <a class="module-link" href="apps/35-password-check.html">35 Check</a>
-        <a class="module-link" href="apps/36-base64.html">36 Base64</a>
-        <a class="module-link" href="apps/37-encoder.html">37 Encoder</a>
-        <a class="module-link" href="apps/38-image-scaler.html">38 Resize</a>
-        <a class="module-link" href="apps/39-quote.html">39 Quote</a>
-        <a class="module-link" href="apps/40-launcher.html">40 Launcher</a>
-      </div>
-
-      <div class="workspace">
-        <div class="panel">
-          <h3>Editor Kode / Teks</h3>
-          <div class="editor-box">
-            <div class="editor-toolbar"><span>main.txt</span><span id="statusText">Autosave aktif</span></div>
-            <textarea id="textEditor" spellcheck="false"># AppHub Console
-# Sistem package mini
-
-print('Hello from AppHub')
-# gunakan untuk catatan, snippet, dan kode
-
-- launch
-- timer
-- randomizer
-- color
-- widget
-</textarea>
-          </div>
-        </div>
-        <div class="panel">
-          <h3>Widget</h3>
-          <div class="clock-box"><div id="clock">00:00:00</div><div id="dateLabel">--</div></div>
-          <div class="calendar-box" style="margin-top:12px;">
-            <div id="calendarMonth"></div>
-            <table><thead><tr><th>Min</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th></tr></thead><tbody id="calendarBody"></tbody></table>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-title">Alat Sistem</div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;">
-        <div class="panel">
-          <h3>Kalkulator Sederhana</h3>
-          <div class="calc-box">
-            <input id="calcDisplay" value="0" readonly />
-            <div class="calc-btns">
-              <button onclick="appendCalc('7')">7</button><button onclick="appendCalc('8')">8</button><button onclick="appendCalc('9')">9</button><button onclick="appendCalc('/')">/</button>
-              <button onclick="appendCalc('4')">4</button><button onclick="appendCalc('5')">5</button><button onclick="appendCalc('6')">6</button><button onclick="appendCalc('*')">×</button>
-              <button onclick="appendCalc('1')">1</button><button onclick="appendCalc('2')">2</button><button onclick="appendCalc('3')">3</button><button onclick="appendCalc('-')">−</button>
-              <button onclick="appendCalc('0')">0</button><button onclick="appendCalc('.')">.</button><button onclick="calculateResult()">=</button><button onclick="appendCalc('+')">+</button>
-              <button onclick="clearCalc()" style="grid-column: span 4;">Clear</button>
-            </div>
-          </div>
-        </div>
-        <div class="panel">
-          <h3>Catatan & Agenda</h3>
-          <div class="todo-list">
-            <ul>
-              <li><input type="checkbox" checked/> <span>Mulai launcher</span></li>
-              <li><input type="checkbox" checked/> <span>Siapkan modul</span></li>
-              <li><input type="checkbox"/> <span>Aktifkan workspace</span></li>
-              <li><input type="checkbox"/> <span>Publikasi Pages</span></li>
-              <li><input type="checkbox"/> <span>Uji link utama</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <div class="card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h1 class="title">Mengarahkan ke GitHub</h1>
+      <p class="muted">Halaman ini akan dibawa ke <strong>https://github.com</strong> secara otomatis.</p>
+      <p><a href="https://github.com" target="_blank" rel="noopener noreferrer">Klik di sini jika tidak otomatis terbuka</a></p>
     </div>
 
     <script>
-      const appNames = [
-        'Text Editor','Jam','Kalender','Kalkulator','Catatan','Server','File System','Terminal','Music','Gallery','Chat','Cuaca','Translator','Markdown','UUID','QR','Paint','Kanban','SSH','Settings','Timer','Stopwatch','Password','Random','Unit','Color','Dictionary','Currency','JSON','BMI','Workspace','Lottery','Speech','Analytics','Check','Base64','Encoder','Resize','Quote','Launcher'
-      ];
-      const icons = ['📝','⏰','📅','🧮','📁','🖥️','📦','💻','🎵','🖼️','💬','⛅','🌐','📝','🧩','📷','🎨','📋','🔐','⚙️','⏱️','⏲️','🔑','🎲','📏','🎨','📚','💱','🧾','⚖️','📁','🎯','🗣️','📊','✅','🔒','🔄','🖼️','💬','🧭'];
-      const launcher = document.getElementById('launcher');
-      appNames.forEach((name, index) => {
-        const card = document.createElement('div');
-        card.className = 'app-card';
-        card.innerHTML = `
-          <div>
-            <div class="app-icon">${icons[index % icons.length]}</div>
-            <div class="app-name">${name}</div>
-          </div>
-          <div class="app-tag">app #${index + 1}</div>
-        `;
-        card.addEventListener('click', () => {
-          const href = moduleMap[index] || 'apps/01-editor.html';
-          openModule(href);
-        });
-        launcher.appendChild(card);
-      });
-      const moduleMap = {
-        0: 'apps/01-editor.html', 1: 'apps/02-clock.html', 2: 'apps/04-calendar.html', 3: 'apps/03-calculator.html', 4: 'apps/06-notes.html',
-        5: 'apps/08-terminal.html', 6: 'apps/07-files.html', 7: 'apps/08-terminal.html', 8: 'apps/09-music.html', 9: 'apps/10-gallery.html',
-        10: 'apps/11-chat.html', 11: 'apps/12-weather.html', 12: 'apps/13-translator.html', 13: 'apps/14-markdown.html', 14: 'apps/15-uuid.html',
-        15: 'apps/16-qr.html', 16: 'apps/17-paint.html', 17: 'apps/18-kanban.html', 18: 'apps/19-ssh.html', 19: 'apps/20-settings.html',
-        20: 'apps/21-timer.html', 21: 'apps/22-stopwatch.html', 22: 'apps/23-password.html', 23: 'apps/24-randomizer.html', 24: 'apps/25-unit.html',
-        25: 'apps/26-color.html', 26: 'apps/27-dictionary.html', 27: 'apps/28-currency.html', 28: 'apps/29-json.html', 29: 'apps/30-bmi.html',
-        30: 'apps/31-workspace.html', 31: 'apps/32-lottery.html', 32: 'apps/33-speech.html', 33: 'apps/34-analytics.html', 34: 'apps/35-password-check.html',
-        35: 'apps/36-base64.html', 36: 'apps/37-encoder.html', 37: 'apps/38-image-scaler.html', 38: 'apps/39-quote.html', 39: 'apps/40-launcher.html'
-      };
-      function openModule(path) { window.location.href = path; }
-      function showApp(name) { const editor = document.getElementById('textEditor'); const current = editor.value.trim(); editor.value = current + '\n\n# ' + name + '\n- aktif\n- siap digunakan\n'; editor.focus(); }
-      function updateClock() { const now = new Date(); const hh = String(now.getHours()).padStart(2,'0'); const mm = String(now.getMinutes()).padStart(2,'0'); const ss = String(now.getSeconds()).padStart(2,'0'); document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`; document.getElementById('dateLabel').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
-      function renderCalendar(){ const now = new Date(); const year = now.getFullYear(); const month = now.getMonth(); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const firstWeekDay = (firstDay.getDay() + 6) % 7; const totalDays = lastDay.getDate(); document.getElementById('calendarMonth').textContent = now.toLocaleDateString('id-ID', { month:'long', year:'numeric' }); const body = document.getElementById('calendarBody'); body.innerHTML=''; let row=document.createElement('tr'); for(let i=0;i<firstWeekDay;i++) row.appendChild(document.createElement('td')); for(let d=1; d<=totalDays; d++){ const cell = document.createElement('td'); if(d===now.getDate()) cell.classList.add('today'); cell.textContent = d; row.appendChild(cell); if(row.children.length===7){ body.appendChild(row); row=document.createElement('tr'); } } while(row.children.length<7) row.appendChild(document.createElement('td')); body.appendChild(row); }
-      function clearCalc(){ document.getElementById('calcDisplay').value='0'; }
-      function appendCalc(val){ const display = document.getElementById('calcDisplay'); const current = display.value; display.value = current === '0' && !['+','-','*','/','.'].includes(val) ? val : current + val; }
-      function calculateResult(){ const display = document.getElementById('calcDisplay'); try { display.value = Function('"use strict"; return (' + display.value + ')')(); } catch { display.value = 'Error'; } }
-      function saveEditor(){ const text = document.getElementById('textEditor').value; localStorage.setItem('apphub-editor', text); document.getElementById('statusText').textContent = 'Disimpan di browser'; }
-      function loadEditor(){ const saved = localStorage.getItem('apphub-editor'); if(saved) document.getElementById('textEditor').value = saved; }
-      function toggleTheme(){ const root = document.documentElement; const isDark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0f172a'; root.style.setProperty('--bg', isDark ? '#f8fafc' : '#0f172a'); root.style.setProperty('--panel', isDark ? 'rgba(255,255,255,.8)' : 'rgba(15,23,42,.8)'); root.style.setProperty('--text', isDark ? '#0f172a' : '#e2e8f0'); root.style.setProperty('--muted', isDark ? '#475569' : '#9ca3af'); }
-      const isLocal = ['localhost','127.0.0.1'].includes(window.location.hostname);
-      document.getElementById('domainAlias').textContent = isLocal ? 'localhost' : 'github.com/sumberkode';
-      updateClock(); renderCalendar(); loadEditor(); setInterval(updateClock, 1000);
+      window.location.replace('https://github.com');
     </script>
   </body>
 </html>

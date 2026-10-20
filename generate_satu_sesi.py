@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Generative Python scaffold for a modular repository.
+"""Generate a massive modular repository scaffold.
 
 Tujuan:
-- membuat folder sistem secara terstruktur
-- men-generate README, todo, dan modul Python di setiap sistem
-- menghasilkan struktur yang konsisten untuk workflow AI-assisted project
+- membuat 1.500 sistem
+- tiap sistem berisi 1.000 modul
+- total 1.500.000 file
+- nama file TIDAK memakai angka
 
-Contoh pemakaian:
-    python generate_satu_sesi.py --root . --systems 10 --files-per-system 5 --output-dir generated_repo
+Contoh:
+    python generate_satu_sesi.py --root . --systems 1500 --files-per-system 1000 --output-dir generated_repo
 """
 
 from __future__ import annotations
@@ -15,6 +16,9 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+
+DEFAULT_SYSTEM_COUNT = 1500
+DEFAULT_FILES_PER_SYSTEM = 1000
 
 SYSTEM_TYPES = [
     "analytics",
@@ -42,9 +46,274 @@ ROLE_TYPES = [
     "manager",
 ]
 
+SYSTEM_PREFIXES = [
+    "aether",
+    "alpine",
+    "amber",
+    "atlas",
+    "aurora",
+    "basil",
+    "beacon",
+    "brim",
+    "brook",
+    "cabin",
+    "calyx",
+    "cedar",
+    "cinder",
+    "cobalt",
+    "coral",
+    "crest",
+    "dawn",
+    "delta",
+    "drift",
+    "ember",
+    "falcon",
+    "field",
+    "flare",
+    "frost",
+    "glade",
+    "glimmer",
+    "harbor",
+    "horizon",
+    "icicle",
+    "jade",
+]
 
-def system_label(system_id: int) -> str:
-    return f"system-{system_id:03d}"
+SYSTEM_SUFFIXES = [
+    "atlas",
+    "aurora",
+    "bloom",
+    "bravo",
+    "brook",
+    "canyon",
+    "cedar",
+    "chime",
+    "cinder",
+    "cliff",
+    "cloud",
+    "crest",
+    "dune",
+    "echo",
+    "ember",
+    "field",
+    "flora",
+    "forge",
+    "foss",
+    "frost",
+    "glow",
+    "grain",
+    "grove",
+    "harbor",
+    "hollow",
+    "hush",
+    "ivy",
+    "jasmine",
+    "jet",
+    "lagoon",
+    "lark",
+    "lattice",
+    "lumen",
+    "meadow",
+    "mirth",
+    "moss",
+    "nectar",
+    "nexus",
+    "oasis",
+    "orbit",
+    "orchid",
+    "palm",
+    "pearl",
+    "petal",
+    "pine",
+    "quartz",
+    "raven",
+    "reef",
+    "river",
+    "rock",
+    "rose",
+    "sable",
+    "saffron",
+    "salt",
+    "satin",
+    "scout",
+    "shadow",
+    "silk",
+    "solace",
+    "sonar",
+    "spark",
+    "spruce",
+    "summit",
+    "terra",
+    "thistle",
+    "torrent",
+    "vale",
+    "vapor",
+    "vein",
+    "velvet",
+    "verve",
+    "willow",
+    "zephyr",
+]
+
+MODULE_PREFIXES = [
+    "alpha",
+    "amaranth",
+    "amber",
+    "apex",
+    "arc",
+    "atlas",
+    "aurora",
+    "beacon",
+    "bloom",
+    "brisk",
+    "brook",
+    "cabin",
+    "cinder",
+    "cliff",
+    "coral",
+    "crest",
+    "dawn",
+    "delta",
+    "drift",
+    "echo",
+    "ember",
+    "falcon",
+    "flora",
+    "forge",
+    "frost",
+    "glade",
+    "glow",
+    "harbor",
+    "hollow",
+    "hush",
+    "ivy",
+    "jasmine",
+    "lagoon",
+    "lark",
+    "lumen",
+    "meadow",
+    "mirth",
+    "moss",
+    "nectar",
+    "nexus",
+    "oasis",
+    "orbit",
+    "orchid",
+    "palm",
+    "pearl",
+    "petal",
+    "pine",
+    "quartz",
+    "raven",
+    "reef",
+    "river",
+    "rose",
+    "saffron",
+    "satin",
+    "scout",
+    "shadow",
+    "silk",
+    "solace",
+    "sonar",
+    "spark",
+    "spruce",
+    "summit",
+    "terra",
+    "thistle",
+    "torrent",
+    "vale",
+    "vapor",
+    "vein",
+    "velvet",
+    "verve",
+    "willow",
+    "zephyr",
+]
+
+MODULE_SUFFIXES = [
+    "atlas",
+    "aurora",
+    "bloom",
+    "brook",
+    "canopy",
+    "cedar",
+    "chime",
+    "cinder",
+    "crest",
+    "dune",
+    "echo",
+    "ember",
+    "field",
+    "flora",
+    "forge",
+    "foss",
+    "frost",
+    "glade",
+    "glow",
+    "grain",
+    "grove",
+    "harbor",
+    "hollow",
+    "hush",
+    "ivy",
+    "lagoon",
+    "lark",
+    "lattice",
+    "lumen",
+    "meadow",
+    "mirth",
+    "moss",
+    "nectar",
+    "nexus",
+    "oasis",
+    "orbit",
+    "orchid",
+    "palm",
+    "pearl",
+    "petal",
+    "pine",
+    "quartz",
+    "raven",
+    "reef",
+    "river",
+    "rose",
+    "saffron",
+    "satin",
+    "scout",
+    "shadow",
+    "silk",
+    "solace",
+    "sonar",
+    "spark",
+    "spruce",
+    "summit",
+    "terra",
+    "thistle",
+    "torrent",
+    "vale",
+    "vapor",
+    "vein",
+    "velvet",
+    "verve",
+    "willow",
+    "zephyr",
+]
+
+
+def system_alias(index: int) -> str:
+    prefix = SYSTEM_PREFIXES[(index - 1) // len(SYSTEM_SUFFIXES)]
+    suffix = SYSTEM_SUFFIXES[(index - 1) % len(SYSTEM_SUFFIXES)]
+    return f"{prefix}_{suffix}"
+
+
+def module_alias(module_id: int) -> str:
+    prefix = MODULE_PREFIXES[(module_id - 1) // len(MODULE_SUFFIXES)]
+    suffix = MODULE_SUFFIXES[(module_id - 1) % len(MODULE_SUFFIXES)]
+    return f"{prefix}_{suffix}"
+
+
+def system_label(index: int) -> str:
+    return f"system-{system_alias(index)}"
 
 
 def domain_for(system_id: int) -> str:
@@ -162,7 +431,7 @@ def build_python_module(system_id: int, module_id: int, domain: str, role: str) 
     ]
 
     while len(lines) < 30:
-        lines.append(f"# filler_{len(lines)}_{domain}_{role}")
+        lines.append(f"# filler_{domain}_{role}")
 
     return "\n".join(lines) + "\n"
 
@@ -172,9 +441,10 @@ def build_manifest(total_systems: int, total_files: int) -> dict:
         "total_systems": total_systems,
         "total_files": total_files,
         "structure": "system folders with src modules, todo.md, README.md",
+        "naming_rule": "no numeric characters in filenames or folder labels",
         "notes": [
-            "Setiap sistem dibuat untuk berdiri sendiri namun dapat diintegrasikan ke repo yang lebih besar.",
-            "Semua file Python berisi konten yang valid dan siap untuk review atau pengembangan lanjutan.",
+            "Setiap sistem dibangun dengan label kata, bukan angka.",
+            "Ketika 1.500.000 file dihasilkan, file tetap aman dibaca dan dipindahkan dalam batch terpisah.",
         ],
     }
 
@@ -193,9 +463,9 @@ def generate_system(base_dir: Path, system_id: int, files_per_system: int) -> No
 
     for module_id in range(1, files_per_system + 1):
         role = role_for(module_id)
-        filename = f"{domain}_{role}_{system_id:03d}_{module_id:03d}.py"
+        name = f"{domain}_{role}_{system_alias(system_id)}_{module_alias(module_id)}.py"
         content = build_python_module(system_id, module_id, domain, role)
-        (src_dir / filename).write_text(content, encoding="utf-8")
+        (src_dir / name).write_text(content, encoding="utf-8")
 
 
 def generate_root_docs(base_dir: Path, total_systems: int, total_files: int) -> None:
@@ -206,22 +476,23 @@ Repositori ini berisi {total_files} file modul dari {total_systems} sistem yang 
 ## Struktur
 - setiap sistem mempunyai `README.md` dan `todo.md`
 - setiap sistem mempunyai folder `src/`
-- file modul mengikuti pola: `<domain>_<role>_<system>_<module>.py`
+- file modul mengikuti pola: `<domain>_<role>_<system_alias>_<module_alias>.py`
+- nama file dan folder tidak menggunakan angka
 
 ## Cara generate
 ```bash
-python generate_satu_sesi.py --root . --systems 25 --files-per-system 10 --output-dir generated_repo
+python generate_satu_sesi.py --root . --systems 1500 --files-per-system 1000 --output-dir generated_repo
 ```
 '''
     (base_dir / "README_GENERATED.md").write_text(overview, encoding="utf-8")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate a modular repository scaffold in one session.")
+    parser = argparse.ArgumentParser(description="Generate a massive modular repository scaffold without numeric file names.")
     parser.add_argument("--root", type=str, default=".", help="Directory root project")
     parser.add_argument("--output-dir", type=str, default="generated_repo", help="Folder tujuan output")
-    parser.add_argument("--systems", type=int, default=12, help="Jumlah sistem yang ingin dibuat")
-    parser.add_argument("--files-per-system", type=int, default=6, help="Jumlah file per sistem")
+    parser.add_argument("--systems", type=int, default=DEFAULT_SYSTEM_COUNT, help="Jumlah sistem yang ingin dibuat")
+    parser.add_argument("--files-per-system", type=int, default=DEFAULT_FILES_PER_SYSTEM, help="Jumlah file per sistem")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
@@ -243,6 +514,7 @@ def main() -> None:
     print(f"Generated {total_systems} systems")
     print(f"Total files: {total_files}")
     print(f"Output directory: {output_dir}")
+    print("Nama file dan folder menggunakan kata, tanpa angka.")
 
 
 if __name__ == "__main__":

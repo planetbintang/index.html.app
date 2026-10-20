@@ -60,6 +60,13 @@
         font-weight: 700;
       }
 
+      .domain-display {
+        font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
       .actions {
         display: flex;
         gap: 10px;
@@ -302,6 +309,7 @@
     <div class="container">
       <div class="topbar">
         <div class="brand">AppHub <small>100 tools</small></div>
+        <div class="domain-display"><span class="dot">.</span> = <span id="domainAlias">domain</span></div>
         <div class="actions">
           <button onclick="toggleTheme()">Tema</button>
           <button onclick="saveEditor()">Simpan</button>
@@ -570,10 +578,10 @@ print('Hello from AppHub')
       }
 
       const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-      const domain = isLocal ? 'localhost' : 'github.com/sumberkode';
-      const domainNode = document.getElementById('domain');
+      const alias = isLocal ? 'localhost' : 'github.com/sumberkode';
+      const domainNode = document.getElementById('domainAlias');
       if (domainNode) {
-        domainNode.textContent = domain;
+        domainNode.textContent = alias;
       }
 
       updateClock();

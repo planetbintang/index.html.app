@@ -239,12 +239,18 @@
       </div>
 
       <div class="frame-wrap">
-        <iframe id="browserFrame" title="GitHub browser" src="https://github.com"></iframe>
+        <iframe
+          id="browserFrame"
+          title="GitHub browser"
+          src="https://r.jina.ai/http://github.com"
+          referrerpolicy="no-referrer-when-downgrade"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+        ></iframe>
 
         <div id="fallback" class="fallback" aria-live="polite">
           <div class="fallback-box">
             <h2>Konten GitHub diblokir oleh browser</h2>
-            <p>Browser ini sedang menampilkan halaman dalam iframe, tetapi GitHub memblokir embed dari situs lain. Anda tetap bisa membuka GitHub di tab baru.</p>
+            <p>Browser ini sedang menampilkan halaman dalam iframe, tetapi GitHub memblokir embed langsung dari situs lain. Anda tetap bisa membuka GitHub di tab baru.</p>
             <p><a id="fallbackLink" href="https://github.com" target="_blank" rel="noopener noreferrer">Buka GitHub di tab baru</a></p>
           </div>
         </div>
@@ -262,6 +268,7 @@
       const openBtn = document.getElementById('openBtn');
 
       const DEFAULT_URL = 'https://github.com';
+      const PROXY_URL = 'https://r.jina.ai/http://github.com';
 
       function normaliseUrl(value) {
         const trimmed = value.trim();
@@ -273,8 +280,9 @@
 
       function loadUrl(url) {
         const safeUrl = normaliseUrl(url);
+        const frameUrl = safeUrl === DEFAULT_URL ? PROXY_URL : ('https://r.jina.ai/http://' + safeUrl.replace(/^https?:\/\//i, ''));
         addressInput.value = safeUrl;
-        browserFrame.src = safeUrl;
+        browserFrame.src = frameUrl;
         fallback.classList.remove('show');
       }
 
@@ -282,7 +290,7 @@
         try {
           const href = browserFrame.contentWindow.location.href;
           if (href && href !== 'about:blank') {
-            addressInput.value = href;
+            addressInput.value = href.replace(/^https?:\/\/r\.jina\.ai\/http\//i, 'https://');
             fallback.classList.remove('show');
           }
         } catch (err) {
@@ -291,19 +299,27 @@
       }
 
       backBtn.addEventListener('click', () => {
-        if (browserFrame.contentWindow && browserFrame.contentWindow.history) {
+        try {
           browserFrame.contentWindow.history.back();
+        } catch (err) {
+          loadUrl(DEFAULT_URL);
         }
       });
 
       forwardBtn.addEventListener('click', () => {
-        if (browserFrame.contentWindow && browserFrame.contentWindow.history) {
+        try {
           browserFrame.contentWindow.history.forward();
+        } catch (err) {
+          loadUrl(DEFAULT_URL);
         }
       });
 
       reloadBtn.addEventListener('click', () => {
-        browserFrame.contentWindow.location.reload();
+        try {
+          browserFrame.contentWindow.location.reload();
+        } catch (err) {
+          loadUrl(DEFAULT_URL);
+        }
       });
 
       goBtn.addEventListener('click', () => {

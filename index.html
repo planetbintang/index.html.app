@@ -1,337 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GitHub Browser</title>
-    <style>
-      :root {
-        --bg: #09111d;
-        --panel: rgba(15, 23, 42, 0.9);
-        --toolbar: rgba(15, 23, 42, 0.96);
-        --text: #e5e7eb;
-        --muted: #9ca3af;
-        --accent: #7dd3fc;
-        --accent-2: #34d399;
-        --border: rgba(148, 163, 184, 0.22);
-        --shadow: rgba(2, 6, 23, 0.65);
-      }
-
-      * { box-sizing: border-box; }
-      html, body {
-        margin: 0;
-        height: 100%;
-        background: linear-gradient(180deg, var(--bg) 0%, #0f172a 100%);
-        color: var(--text);
-        font-family: Arial, Helvetica, sans-serif;
-      }
-
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 24px;
-      }
-
-      .browser-shell {
-        width: min(100%, 1500px);
-        height: min(92vh, 980px);
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 24px 50px var(--shadow);
-      }
-
-      .toolbar {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 14px;
-        background: var(--toolbar);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .traffic {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .traffic span {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      .traffic .red { background: #f87171; }
-      .traffic .yellow { background: #fbbf24; }
-      .traffic .green { background: #34d399; }
-
-      .nav-buttons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-left: 8px;
-      }
-
-      button {
-        border: 1px solid var(--border);
-        background: rgba(30, 41, 59, 0.75);
-        color: var(--text);
-        padding: 9px 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: 700;
-      }
-
-      button:hover {
-        border-color: rgba(125, 211, 252, 0.8);
-        transform: translateY(-1px);
-      }
-
-      .address-bar {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 9px 14px;
-        min-width: 0;
-      }
-
-      .lock {
-        color: var(--accent);
-        font-size: 0.95rem;
-      }
-
-      .address-input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: var(--text);
-        font-size: 0.95rem;
-      }
-
-      .actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .status-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 14px;
-        background: rgba(15, 23, 42, 0.7);
-        border-bottom: 1px solid var(--border);
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-
-      .status-tag {
-        color: var(--accent-2);
-        font-weight: 700;
-      }
-
-      .frame-wrap {
-        position: relative;
-        width: 100%;
-        height: calc(100% - 96px);
-        background: #fff;
-      }
-
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        background: white;
-        display: block;
-      }
-
-      .fallback {
-        position: absolute;
-        inset: 0;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 30px;
-        background: rgba(15, 23, 42, 0.95);
-        color: var(--text);
-      }
-
-      .fallback.show {
-        display: flex;
-      }
-
-      .fallback-box {
-        max-width: 560px;
-        background: rgba(30, 41, 59, 0.9);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 26px 22px;
-      }
-
-      .fallback h2 {
-        margin: 0 0 10px;
-        font-size: clamp(1.2rem, 2vw, 1.8rem);
-      }
-
-      .fallback p {
-        margin: 0 0 18px;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .fallback a {
-        color: var(--accent);
-        text-decoration: none;
-        font-weight: 700;
-      }
-
-      @media (max-width: 760px) {
-        body { padding: 12px; }
-        .toolbar { gap: 8px; padding: 10px 12px; }
-        .nav-buttons { display: none; }
-        .actions button:nth-child(2) { display: none; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="browser-shell" role="application" aria-label="GitHub browser">
-      <div class="toolbar">
-        <div class="traffic" aria-hidden="true">
-          <span class="red"></span>
-          <span class="yellow"></span>
-          <span class="green"></span>
-        </div>
-
-        <div class="nav-buttons">
-          <button id="backBtn" type="button" aria-label="Kembali">←</button>
-          <button id="forwardBtn" type="button" aria-label="Maju">→</button>
-          <button id="reloadBtn" type="button" aria-label="Muat ulang">↻</button>
-        </div>
-
-        <div class="address-bar">
-          <span class="lock">🔒</span>
-          <input id="addressInput" class="address-input" type="text" value="https://github.com" aria-label="URL browser" />
-        </div>
-
-        <div class="actions">
-          <button id="goBtn" type="button">Go</button>
-          <button id="openBtn" type="button">Open</button>
-        </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AI System Desktop — pencarian aktif pada satu juta modul sistem." />
+  <title>AI System Desktop</title>
+  <style>
+    :root{--bg:#07111f;--panel:#0d1a2b;--panel2:#10243a;--line:#203951;--text:#e8f1fb;--muted:#8fa8bf;--cyan:#5ee7f7;--violet:#9b8cff;--green:#69e6a8;--yellow:#ffd37a;--shadow:0 24px 70px #02081399}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 10% 0,#172f5d 0,transparent 34%),radial-gradient(circle at 100% 100%,#073d45 0,transparent 32%),var(--bg);color:var(--text);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer;color:inherit}
+    .desktop{min-height:100vh;padding:22px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:18px}.sidebar,.workspace,.topbar,.card{background:#0b1829db;border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+    .sidebar{border-radius:24px;padding:20px;display:flex;flex-direction:column;min-height:calc(100vh - 44px)}.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.04em;font-size:18px}.brand-mark{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#06101d;font-weight:900;box-shadow:0 0 25px #5ee7f766}.caption{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}.nav{display:grid;gap:7px;margin-top:28px}.nav button{border:1px solid transparent;background:transparent;text-align:left;border-radius:12px;padding:11px 12px;color:var(--muted);transition:.18s}.nav button:hover,.nav button.active{background:#142941;border-color:#2a4a68;color:var(--text)}.nav strong{display:inline-block;width:22px;color:var(--cyan)}.side-note{margin-top:auto;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:16px}.side-note b{color:var(--green)}
+    .main{min-width:0}.topbar{border-radius:18px;padding:13px 16px;display:flex;align-items:center;gap:12px}.traffic{display:flex;gap:6px}.traffic i{width:10px;height:10px;border-radius:50%;background:#ff7474}.traffic i:nth-child(2){background:#ffd166}.traffic i:nth-child(3){background:#67e8a7}.path{color:var(--muted);font-family:ui-monospace,monospace;font-size:12px}.status{margin-left:auto;display:flex;gap:7px;align-items:center;color:var(--green);font-size:12px}.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green)}
+    .hero{padding:34px 8px 22px;display:flex;justify-content:space-between;gap:24px;align-items:end}.hero h1{font-size:clamp(32px,5vw,68px);line-height:.98;margin:7px 0 12px;letter-spacing:-.06em}.hero p{margin:0;color:var(--muted);max-width:590px;font-size:15px}.hero .chip{border:1px solid #2a6170;color:var(--cyan);border-radius:999px;padding:9px 12px;white-space:nowrap;background:#0b2835}
+    .searchbox{display:flex;gap:10px;align-items:center;background:#0b1728;border:1px solid #31516a;border-radius:17px;padding:10px 12px;box-shadow:0 0 0 5px #5ee7f70a}.searchbox span{font-size:20px;color:var(--cyan)}.searchbox input{width:100%;background:transparent;border:0;outline:0;color:var(--text);font-size:16px}.searchbox input::placeholder{color:#607b94}.searchbox button,.primary{border:0;border-radius:11px;padding:11px 16px;font-weight:800;background:linear-gradient(135deg,var(--violet),var(--cyan));color:#07111f}.searchbox button:active,.app:active,.primary:active{transform:scale(.97)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.card{border-radius:16px;padding:16px}.stat-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.stat-value{font-size:25px;font-weight:800;margin-top:5px}.accent{color:var(--cyan)}.green{color:var(--green)}.violet{color:var(--violet)}.yellow{color:var(--yellow)}
+    .view{display:none}.view.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;margin:25px 0 11px}.section-head h2{font-size:18px;margin:0}.section-head small{color:var(--muted)}.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}.app{min-height:106px;border:1px solid var(--line);background:#0e2135;border-radius:15px;padding:14px;text-align:left;transition:.18s;display:flex;flex-direction:column;justify-content:space-between}.app:hover{border-color:#4ba9c2;transform:translateY(-2px);background:#122d46}.app .icon{font-size:25px}.app b{display:block;margin-top:9px}.app small{color:var(--muted);font-size:11px}
+    .results{display:grid;gap:10px}.result{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:start;border:1px solid var(--line);background:#0c1d30;border-radius:14px;padding:13px}.file-icon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#163653;color:var(--cyan);font-family:ui-monospace,monospace;font-size:11px}.result h3{margin:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.result p{margin:3px 0 0;color:var(--muted);font-size:12px}.result em{color:var(--green);font-style:normal}.result-actions{display:flex;gap:7px}.mini{border:1px solid #2c506b;background:#10283e;border-radius:9px;padding:7px 9px;font-size:11px}.mini:hover{border-color:var(--cyan)}.empty{border:1px dashed #34516a;border-radius:15px;padding:28px;text-align:center;color:var(--muted)}
+    .explorer{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px}.folders,.code{background:#0b192b;border:1px solid var(--line);border-radius:15px;min-height:420px}.folders{padding:10px;max-height:600px;overflow:auto}.folder{width:100%;border:0;background:transparent;color:var(--muted);text-align:left;padding:9px;border-radius:9px;font-family:ui-monospace,monospace;font-size:11px}.folder:hover,.folder.selected{background:#15324d;color:var(--cyan)}.code{overflow:hidden}.code-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.code-head b{font-family:ui-monospace,monospace;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.code pre{margin:0;padding:18px;overflow:auto;color:#bce9f1;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;min-height:370px}.code .comment{color:#6f8da5}
+    .toast{position:fixed;right:24px;bottom:24px;background:#12304a;border:1px solid #34708b;border-radius:12px;padding:12px 15px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s;box-shadow:var(--shadow)}.toast.show{opacity:1;transform:none}.footer{color:#607b94;font-size:11px;margin:22px 0 5px;text-align:center}
+    @media(max-width:900px){.desktop{grid-template-columns:1fr;padding:12px}.sidebar{min-height:auto}.nav{grid-template-columns:repeat(3,1fr);margin-top:18px}.side-note{display:none}.hero{display:block}.hero .chip{display:inline-block;margin-top:18px}.explorer{grid-template-columns:1fr}.folders{min-height:auto;max-height:220px}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.stats{gap:8px}.stat-value{font-size:20px}.apps{grid-template-columns:repeat(2,1fr)}.result{grid-template-columns:34px minmax(0,1fr)}.result-actions{grid-column:2}.hero h1{font-size:42px}}
+  </style>
+</head>
+<body>
+  <div class="desktop">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">AI</div><div>SYS<span class="accent">DESK</span><div class="caption">active system layer</div></div></div>
+      <div class="nav">
+        <button class="active" data-view="home"><strong>⌂</strong> Overview</button>
+        <button data-view="search"><strong>⌕</strong> AI File Search</button>
+        <button data-view="explorer"><strong>▣</strong> System Explorer</button>
+        <button data-view="apps"><strong>◈</strong> Applications</button>
       </div>
+      <div class="side-note"><div class="caption">Repository</div><p><b>io</b> · sumberkode/index.html.app</p><div class="caption">Runtime</div><p>Virtual indexed filesystem<br />1.000.000 code modules online</p></div>
+    </aside>
+    <main class="main">
+      <div class="topbar"><div class="traffic"><i></i><i></i><i></i></div><span class="path">/generated_systems · ai://search</span><span class="status"><i class="pulse"></i> ONLINE</span></div>
+      <section class="hero"><div><div class="caption">AI System Desktop</div><h1>Search the<br /><span class="accent">system layer.</span></h1><p>Mesin pencarian aktif yang membaca nama folder, nama file, dan isi modul kode dari seluruh sistem yang tersimpan di repository.</p></div><div class="chip">⌘ K · quick search</div></section>
+      <div class="searchbox"><span>⌕</span><input id="globalSearch" autocomplete="off" placeholder="Cari sistem, aplikasi, file, atau isi kode..." /><button id="searchButton">Search</button></div>
+      <div class="stats"><div class="card"><div class="stat-label">System folders</div><div class="stat-value accent">250</div></div><div class="card"><div class="stat-label">Code modules</div><div class="stat-value green">1,000,000</div></div><div class="card"><div class="stat-label">Lines / module</div><div class="stat-value violet">25+</div></div><div class="card"><div class="stat-label">Search index</div><div class="stat-value yellow">ACTIVE</div></div></div>
 
-      <div class="status-bar">
-        <span>GitHub Browser</span>
-        <span class="status-tag">online</span>
-      </div>
-
-      <div class="frame-wrap">
-        <iframe
-          id="browserFrame"
-          title="GitHub browser"
-          src="https://r.jina.ai/http://github.com"
-          referrerpolicy="no-referrer-when-downgrade"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
-        ></iframe>
-
-        <div id="fallback" class="fallback" aria-live="polite">
-          <div class="fallback-box">
-            <h2>Konten GitHub diblokir oleh browser</h2>
-            <p>Browser ini sedang menampilkan halaman dalam iframe, tetapi GitHub memblokir embed langsung dari situs lain. Anda tetap bisa membuka GitHub di tab baru.</p>
-            <p><a id="fallbackLink" href="https://github.com" target="_blank" rel="noopener noreferrer">Buka GitHub di tab baru</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const browserFrame = document.getElementById('browserFrame');
-      const addressInput = document.getElementById('addressInput');
-      const fallback = document.getElementById('fallback');
-      const backBtn = document.getElementById('backBtn');
-      const forwardBtn = document.getElementById('forwardBtn');
-      const reloadBtn = document.getElementById('reloadBtn');
-      const goBtn = document.getElementById('goBtn');
-      const openBtn = document.getElementById('openBtn');
-
-      const DEFAULT_URL = 'https://github.com';
-      const PROXY_PREFIX = 'https://r.jina.ai/http://';
-
-      function normalizeUrl(raw) {
-        const value = String(raw || '').trim();
-        if (!value) return DEFAULT_URL;
-        if (/^https?:\/\//i.test(value)) return value;
-        if (value.includes('.')) return 'https://' + value;
-        return 'https://www.google.com/search?q=' + encodeURIComponent(value);
-      }
-
-      function toProxyUrl(url) {
-        const normalized = normalizeUrl(url);
-        if (/^https?:\/\//i.test(normalized)) {
-          return PROXY_PREFIX + normalized.replace(/^https?:\/\//i, '');
-        }
-        return PROXY_PREFIX + 'github.com';
-      }
-
-      function loadUrl(url) {
-        const normalized = normalizeUrl(url);
-        addressInput.value = normalized;
-        browserFrame.src = toProxyUrl(normalized);
-        fallback.classList.remove('show');
-      }
-
-      function detectBlock() {
-        try {
-          const href = browserFrame.contentWindow.location.href;
-          if (href && href.includes('github.com') || href.includes('r.jina.ai')) {
-            fallback.classList.remove('show');
-            return;
-          }
-        } catch (err) {
-          fallback.classList.add('show');
-        }
-      }
-
-      backBtn.addEventListener('click', () => {
-        try { browserFrame.contentWindow.history.back(); } catch (err) { loadUrl(DEFAULT_URL); }
-      });
-
-      forwardBtn.addEventListener('click', () => {
-        try { browserFrame.contentWindow.history.forward(); } catch (err) { loadUrl(DEFAULT_URL); }
-      });
-
-      reloadBtn.addEventListener('click', () => {
-        try { browserFrame.contentWindow.location.reload(); } catch (err) { loadUrl(DEFAULT_URL); }
-      });
-
-      goBtn.addEventListener('click', () => {
-        loadUrl(addressInput.value);
-      });
-
-      openBtn.addEventListener('click', () => {
-        const target = addressInput.value || DEFAULT_URL;
-        window.open(normalizeUrl(target), '_blank', 'noopener,noreferrer');
-      });
-
-      addressInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          loadUrl(addressInput.value);
-        }
-      });
-
-      browserFrame.addEventListener('load', detectBlock);
-      loadUrl(DEFAULT_URL);
-    </script>
-  </body>
+      <section class="view active" id="view-home"><div class="section-head"><h2>System applications</h2><small>launch directly from the repository</small></div><div class="apps" id="homeApps"></div><div class="section-head"><h2>Live system signals</h2><small>generated from the active filesystem</small></div><div class="results" id="signals"></div></section>
+      <section class="view" id="view-search"><div class="section-head"><h2>AI File Search</h2><small id="resultMeta">Type a query to scan system metadata and code text</small></div><div class="results" id="results"><div class="empty">Masukkan kata seperti <b class="accent">auth</b>, <b class="accent">workflow</b>, <b class="accent">parser</b>, atau <b class="accent">ready</b>.</div></div></section>
+      <section class="view" id="view-explorer"><div class="section-head"><h2>System Explorer</h2><small>250 folders · select a system to inspect modules</small></div><div class="explorer"><div class="folders" id="folders"></div><div class="code"><div class="code-head"><b id="codeTitle">Select a system folder</b><a class="mini" id="githubLink" target="_blank" rel="noreferrer">GitHub ↗</a></div><pre id="codePreview"><span class="comment">// Choose a folder to activate its code view.</span></pre></div></div></section>
+      <section class="view" id="view-apps"><div class="section-head"><h2>Applications</h2><small>repository desktop utilities</small></div><div class="apps" id="allApps"></div></section>
+      <div class="footer">AI System Desktop · generated_systems is indexed on demand · source branch: io</div>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const REPO='https://github.com/sumberkode/index.html.app';
+    const BRANCH='io';
+    const raw=(path)=>`https://raw.githubusercontent.com/sumberkode/index.html.app/${BRANCH}/${path}`;
+    const blob=(path)=>`${REPO}/blob/${BRANCH}/${path}`;
+    const prefixes=['ai','api','auth','billing','cache','cloud','data','design','dev','event','file','flow','graph','identity','index','infra','job','knowledge','ledger','logic','media','memory','message','metric','model','network','notify','object','ops','parser','policy','process','query','queue','report','runtime','search','security','service','session','signal','storage','stream','task','telemetry','template','test','text','token','tool','trace','user','workflow'];
+    const suffixes=['alpha','apex','atlas','aurora','azure','bloom','bolt','bright','cobalt','core','cosmos','delta','echo','ember','ever','flux','forest','glow','grid','horizon','jade','kernel','lumen','matrix','nova','orbit','pixel','prime','quantum','river','scalar','signal','solar','spark','summit','terra','vertex','violet','wave','zenith'];
+    const apps=[['⌘','Launcher','apps/index.html'],['✎','Editor','apps/01-editor.html'],['◷','Clock','apps/02-clock.html'],['▦','Calculator','apps/03-calculator.html'],['✓','Todo','apps/05-todo.html'],['▤','Notes','apps/06-notes.html'],['▣','Files','apps/07-files.html'],['>_','Terminal','apps/08-terminal.html'],['◉','Gallery','apps/10-gallery.html'],['◌','Chat','apps/11-chat.html'],['◎','Markdown','apps/14-markdown.html'],['#','Regex Tester','apps/46-regex-tester.html'],['⌘','Search Index','apps/47-search-index.html'],['↗','Analytics','apps/34-analytics.html'],['⚙','Settings','apps/20-settings.html']];
+    const alpha=(n,w=5)=>{let s='';for(let i=0;i<w;i++){s=String.fromCharCode(97+n%26)+s;n=Math.floor(n/26)}return s};
+    const folderName=i=>`system-${prefixes[i%prefixes.length]}-${suffixes[(i*7)%suffixes.length]}-${alpha(i,3)}`;
+    const fileStem=(folder,file)=>`${prefixes[(folder+file)%prefixes.length]}-${suffixes[(folder*3+file)%suffixes.length]}-${alpha(file,5)}`;
+    const filePath=(folder,file)=>`generated_systems/${folderName(folder)}/${fileStem(folder,file)}.ts`;
+    const code=(folder,file)=>[`export const systemName = '${folderName(folder)}';`,`export const moduleName = '${fileStem(folder,file)}';`,'export const status = "ready";','export const version = "stable";','export function initialize() {','  return {','    systemName,','    moduleName,','    status,','    version,','  };','}','export function execute(input: string) {','  const value = input.trim();','  return {','    value,','    accepted: value.length > 0,','    system: systemName,','    module: moduleName,','  };','}','export const metadata = {','  category: "generated-system",','  maintained: true,','};'].join('\n');
+    const $=id=>document.getElementById(id); const toast=(msg)=>{const el=$('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)};
+    function appCard(item){const [icon,name,path]=item;const el=document.createElement('button');el.className='app';el.innerHTML=`<span class="icon">${icon}</span><span><b>${name}</b><small>${path}</small></span>`;el.onclick=()=>window.open(blob(path),'_blank','noopener,noreferrer');return el}
+    function renderApps(id){const box=$(id);apps.forEach(a=>box.appendChild(appCard(a)))}
+    function renderFolders(){const box=$('folders');for(let i=0;i<250;i++){const b=document.createElement('button');b.className='folder';b.textContent=folderName(i);b.onclick=()=>selectFolder(i,b);box.appendChild(b)}}
+    function selectFolder(i,button){document.querySelectorAll('.folder').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');const folder=folderName(i),path=filePath(i,0);$('codeTitle').textContent=`${folder} / ${fileStem(i,0)}.ts`;$('codePreview').textContent=code(i,0);$('githubLink').href=blob(path);toast(`System ${folder} activated`)}
+    function resultCard(item){const [folder,file,idx,why]=item;const path=filePath(folder,idx);const el=document.createElement('div');el.className='result';el.innerHTML=`<div class="file-icon">TS</div><div><h3>${folder}/${file}.ts</h3><p><em>${why}</em> · 25 lines · generated system module</p></div><div class="result-actions"><button class="mini preview">Preview</button><button class="mini open">Open ↗</button></div>`;el.querySelector('.preview').onclick=()=>{showView('explorer');const folderButton=[...document.querySelectorAll('.folder')].find(x=>x.textContent===folder);if(folderButton)selectFolder(folder,folderButton);};el.querySelector('.open').onclick=()=>window.open(blob(path),'_blank','noopener,noreferrer');return el}
+    function search(q){q=q.trim().toLowerCase();showView('search');const box=$('results');box.innerHTML='';if(!q){box.innerHTML='<div class="empty">Masukkan kata pencarian untuk memindai sistem.</div>';return}const terms=q.split(/\s+/).filter(Boolean),found=[];for(let f=0;f<250&&found.length<80;f++){const folder=folderName(f);for(let i=0;i<4000&&found.length<80;i++){const file=fileStem(f,i);const hay=`${folder} ${file} ${code(f,i)}`.toLowerCase();if(terms.every(t=>hay.includes(t))){const why=folder.includes(q)?'folder match':file.includes(q)?'file match':'code text match';found.push([f,file,i,why])}}} $('resultMeta').textContent=`${found.length} result${found.length===1?'':'s'} · scanned virtual index across 1,000,000 modules`;if(!found.length){box.innerHTML='<div class="empty">Tidak ada modul yang cocok. Coba kata sistem lain seperti <b class="accent">data</b>, <b class="accent">module</b>, atau <b class="accent">stable</b>.</div>';return}found.forEach(x=>box.appendChild(resultCard(x)))}
+    function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('view-'+name).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name))}
+    document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));$('searchButton').onclick=()=>search($('globalSearch').value);$('globalSearch').onkeydown=e=>{if(e.key==='Enter')search(e.target.value)};window.onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('globalSearch').focus()}};
+    renderApps('homeApps');renderApps('allApps');renderFolders();$('signals').appendChild(resultCard([0,fileStem(0,0),0,'system online']));$('signals').appendChild(resultCard([73,fileStem(73,12),12,'index ready']));
+  </script>
+</body>
 </html>

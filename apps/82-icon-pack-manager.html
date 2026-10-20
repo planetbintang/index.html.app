@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Icon Pack Manager</title>
+  <style>
+    :root {
+      --bg: #0d111a;
+      --panel: rgba(15,23,42,0.8);
+      --card: rgba(17,24,39,0.9);
+      --text: #edf6ff;
+      --muted: #9db0c9;
+      --line: rgba(148,163,184,0.2);
+      --accent: #7dd3fc;
+      --accent-2: #67e8f9;
+      --shadow: rgba(2,6,23,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, rgba(34,211,238,0.18), transparent 25%), linear-gradient(135deg, #090d17 0%, #020817 100%); color: var(--text);
+    }
+    .app { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .brand { font-size: 1.8rem; font-weight: 800; }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav a {
+      background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; text-decoration: none; font-size: 0.8rem;
+    }
+    .nav a.active { background: rgba(14,116,144,0.18); border-color: rgba(125,211,252,0.6); }
+    .layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 18px; }
+    .panel { background: rgba(15,23,42,0.8); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 12px 32px var(--shadow); }
+    .left { padding: 18px; }
+    .right { padding: 18px; }
+    .title { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .list { display: grid; gap: 12px; }
+    .row {
+      display: flex; align-items: center; justify-content: space-between; background: rgba(30,41,59,0.5); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+    }
+    .row strong { font-size: 0.96rem; }
+    .badge { color: var(--accent-2); font-size: 0.72rem; border: 1px solid rgba(103,232,249,0.45); padding: 4px 8px; border-radius: 999px; }
+    .gallery {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px;
+      margin-top: 18px;
+    }
+    .icon-card {
+      background: linear-gradient(180deg, rgba(15,23,42,0.9), rgba(17,24,39,0.8)); border: 1px solid var(--line); border-radius: 14px; padding: 18px 10px; text-align: center; min-height: 110px;
+    }
+    .icon-card .icon { font-size: 2rem; margin-bottom: 8px; }
+    .icon-card .name { font-size: 0.78rem; color: var(--muted); }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    .button {
+      background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 9px 14px; font-weight: 700;
+    }
+    .button.primary { background: linear-gradient(135deg, rgba(14,116,144,0.8), rgba(59,130,246,0.8)); border-color: rgba(125,211,252,0.8); }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Icon Pack Manager</div>
+      <div class="nav">
+        <a href="../index.html">Home</a>
+        <a href="81-font-manager.html">Font</a>
+        <a href="83-clipboard-manager.html">Clipboard</a>
+        <a href="84-task-manager.html">Task</a>
+        <a href="82-icon-pack-manager.html" class="active">Icon Pack</a>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="panel left">
+        <div class="title">Library</div>
+        <div class="list">
+          <div class="row"><strong>App Icons</strong><span class="badge">120</span></div>
+          <div class="row"><strong>System Icons</strong><span class="badge">58</span></div>
+          <div class="row"><strong>Emoji</strong><span class="badge">99</span></div>
+          <div class="row"><strong>Line Icons</strong><span class="badge">210</span></div>
+          <div class="row"><strong>Solid Icons</strong><span class="badge">310</span></div>
+        </div>
+      </aside>
+
+      <main class="panel right">
+        <div class="title">Pack Preview</div>
+        <div class="gallery">
+          <div class="icon-card"><div class="icon">🖼️</div><div class="name">Gallery</div></div>
+          <div class="icon-card"><div class="icon">💬</div><div class="name">Chat</div></div>
+          <div class="icon-card"><div class="icon">📁</div><div class="name">Files</div></div>
+          <div class="icon-card"><div class="icon">⏰</div><div class="name">Clock</div></div>
+          <div class="icon-card"><div class="icon">⚙️</div><div class="name">Settings</div></div>
+          <div class="icon-card"><div class="icon">🔒</div><div class="name">Secure</div></div>
+          <div class="icon-card"><div class="icon">🔔</div><div class="name">Bell</div></div>
+          <div class="icon-card"><div class="icon">🎧</div><div class="name">Audio</div></div>
+          <div class="icon-card"><div class="icon">🎨</div><div class="name">Theme</div></div>
+          <div class="icon-card"><div class="icon">🔋</div><div class="name">Battery</div></div>
+        </div>
+        <div class="toolbar">
+          <button class="button primary">Download Pack</button>
+          <button class="button">Refresh</button>
+          <button class="button">Export</button>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

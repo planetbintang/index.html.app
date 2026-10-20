@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Manager</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #111827;
+      --panel: rgba(15,23,42,0.74);
+      --panel-strong: rgba(15,23,42,0.9);
+      --card: rgba(30,41,59,0.75);
+      --text: #e5edf7;
+      --muted: #9aa8be;
+      --soft: #c7d2fe;
+      --accent: #7dd3fc;
+      --accent-2: #34d399;
+      --gold: #fbbf24;
+      --line: rgba(148,163,184,0.22);
+      --shadow: rgba(2,6,23,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, rgba(56,189,248,0.16), transparent 25%), linear-gradient(135deg, #070d1c 0%, #020817 100%);
+      color: var(--text);
+    }
+    .app {
+      max-width: 1280px; margin: 0 auto; padding: 24px;
+    }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-size: 1.1rem; font-weight: 700;
+    }
+    .nav {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .nav a, .nav button {
+      background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; text-decoration: none; font-size: 0.8rem; cursor: pointer;
+    }
+    .nav a.active { border-color: rgba(125,211,252,0.8); background: rgba(14,116,144,0.18); }
+    .workspace {
+      display: grid; grid-template-columns: 260px 1fr; gap: 18px;
+    }
+    .panel {
+      background: rgba(15, 23, 42, 0.8); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 30px var(--shadow); overflow: hidden;
+    }
+    .side {
+      padding: 16px; background: rgba(6,11,22,0.7);
+    }
+    .side h3 {
+      margin: 0 0 14px; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .menu-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .menu-item {
+      display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 10px; background: rgba(148,163,184,0.04); border: 1px solid transparent; color: var(--text);
+    }
+    .menu-item.active {
+      background: rgba(14,116,144,0.18); border-color: rgba(125,211,252,0.6);
+    }
+    .content {
+      padding: 18px;
+    }
+    .content-box {
+      background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(15,23,42,0.9)); border: 1px solid var(--line); border-radius: 16px; padding: 18px;
+    }
+    .content-box h2 {
+      margin: 0 0 18px; font-size: 1.8rem; font-weight: 800;
+    }
+    .font-preview {
+      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(17,24,39,0.7)); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin-bottom: 18px;
+    }
+    .font-preview .big {
+      font-size: clamp(2.3rem, 6vw, 4.2rem); line-height: 1.1; font-weight: 750; letter-spacing: -0.05em;
+    }
+    .font-preview .small {
+      margin-top: 12px; color: var(--muted); font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .controls {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px;
+    }
+    .pill {
+      background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 10px 15px; font-weight: 600;
+    }
+    .pill.primary {
+      background: linear-gradient(135deg, rgba(14,116,144,0.8), rgba(59,130,246,0.8)); border-color: rgba(125,211,252,0.8);
+    }
+    .font-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px;
+    }
+    .font-card {
+      background: rgba(15,23,42,0.6); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+    }
+    .font-card .name { font-weight: 700; margin-bottom: 4px; }
+    .font-card .sample { font-size: 1.5rem; margin: 10px 0; }
+    .font-card .meta { color: var(--muted); font-size: 0.8rem; }
+    @media (max-width: 860px) { .workspace { grid-template-columns: 1fr; } .font-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Font Manager</div>
+      <div class="nav">
+        <a href="../index.html">Home</a>
+        <a href="82-icon-pack-manager.html">Icon Pack</a>
+        <a href="83-clipboard-manager.html">Clipboard</a>
+        <a href="84-task-manager.html">Task</a>
+        <a href="81-font-manager.html" class="active">Font</a>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <aside class="panel side">
+        <h3>Menu</h3>
+        <div class="menu-list">
+          <div class="menu-item active"><span>Font Manager</span><span>•</span></div>
+          <div class="menu-item"><span>Font Preview</span><span>▣</span></div>
+          <div class="menu-item"><span>Install Fonts</span><span>+</span></div>
+          <div class="menu-item"><span>Manage Family</span><span>◌</span></div>
+          <div class="menu-item"><span>Sync Library</span><span>↻</span></div>
+        </div>
+      </aside>
+
+      <main class="panel content">
+        <div class="content-box">
+          <h2>Font Weight</h2>
+          <div class="font-preview">
+            <div class="big">Font Weight</div>
+            <div class="small">Preview System</div>
+          </div>
+          <div class="controls">
+            <button class="pill primary">Font Preview</button>
+            <button class="pill">Install Font</button>
+            <button class="pill">Reset Style</button>
+          </div>
+
+          <div class="font-grid">
+            <div class="font-card">
+              <div class="name">Sans</div>
+              <div class="sample" style="font-weight: 700;">Aa</div>
+              <div class="meta">Default UI</div>
+            </div>
+            <div class="font-card">
+              <div class="name">Serif</div>
+              <div class="sample" style="font-family: Georgia, serif;">Aa</div>
+              <div class="meta">Elegant</div>
+            </div>
+            <div class="font-card">
+              <div class="name">Mono</div>
+              <div class="sample" style="font-family: 'Courier New', monospace;">Aa</div>
+              <div class="meta">Code</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

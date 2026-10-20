@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clipboard Manager</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: rgba(15,23,42,0.8);
+      --card: rgba(17,24,39,0.86);
+      --text: #ecf4ff;
+      --muted: #a3b5c8;
+      --accent: #7dd3fc;
+      --accent-2: #67e8f9;
+      --line: rgba(148,163,184,0.2);
+      --shadow: rgba(2,6,23,0.35);
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: linear-gradient(135deg, #0a0f1d, #020817); color: var(--text); }
+    .app { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .brand { font-size: 1.8rem; font-weight: 800; }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav a { background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; text-decoration: none; font-size: 0.8rem; }
+    .nav a.active { background: rgba(14,116,144,0.18); border-color: rgba(125,211,252,0.6); }
+    .layout { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 18px; }
+    .panel { background: rgba(15,23,42,0.82); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 30px var(--shadow); }
+    .left { padding: 18px; }
+    .right { padding: 18px; }
+    .title { color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.76rem; margin-bottom: 14px; }
+    .list { display: grid; gap: 12px; }
+    .clip-item {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; background: rgba(30,41,59,0.52); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    }
+    .info { flex: 1; }
+    .info strong { display: block; margin-bottom: 4px; }
+    .info span { color: var(--muted); font-size: 0.8rem; }
+    .actions { display: flex; gap: 8px; }
+    .chip {
+      border: 1px solid rgba(125,211,252,0.6); background: rgba(14,116,144,0.18); color: var(--accent); border-radius: 999px; padding: 6px 10px; font-size: 0.72rem; font-weight: 700;
+    }
+    .aside { display: grid; gap: 12px; }
+    .mini-card {
+      background: rgba(17,24,39,0.8); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+    }
+    .mini-card h4 { margin: 0 0 10px; }
+    .mini-card ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .button-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .button {
+      border: 1px solid var(--line); background: rgba(15,23,42,0.8); color: var(--text); border-radius: 10px; padding: 9px 14px; font-weight: 700;
+    }
+    .button.primary { background: linear-gradient(135deg, rgba(14,116,144,0.8), rgba(59,130,246,0.8)); border-color: rgba(125,211,252,0.8); }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Clipboard Manager</div>
+      <div class="nav">
+        <a href="../index.html">Home</a>
+        <a href="81-font-manager.html">Font</a>
+        <a href="82-icon-pack-manager.html">Icon Pack</a>
+        <a href="84-task-manager.html">Task</a>
+        <a href="83-clipboard-manager.html" class="active">Clipboard</a>
+      </div>
+    </div>
+
+    <div class="layout">
+      <main class="panel left">
+        <div class="title">Clipboard History</div>
+        <div class="list">
+          <div class="clip-item">
+            <div class="info"><strong>Project Brief</strong><span>UI design summary for mobile app.</span></div>
+            <div class="actions"><span class="chip">Copy</span></div>
+          </div>
+          <div class="clip-item">
+            <div class="info"><strong>API Key</strong><span>sk_live_...d43a9</span></div>
+            <div class="actions"><span class="chip">Secret</span></div>
+          </div>
+          <div class="clip-item">
+            <div class="info"><strong>Meeting Notes</strong><span>Launch review completed, push to prod on Friday.</span></div>
+            <div class="actions"><span class="chip">Paste</span></div>
+          </div>
+          <div class="clip-item">
+            <div class="info"><strong>Hex Palette</strong><span>#7dd3fc #34d399 #fbbf24</span></div>
+            <div class="actions"><span class="chip">Save</span></div>
+          </div>
+          <div class="clip-item">
+            <div class="info"><strong>Merchandise Copy</strong><span>Launch with premium visual system.</span></div>
+            <div class="actions"><span class="chip">Store</span></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="panel right">
+        <div class="title">Tools</div>
+        <div class="aside">
+          <div class="mini-card">
+            <h4>Quick Actions</h4>
+            <ul>
+              <li>Paste as text</li>
+              <li>Format JSON</li>
+              <li>Strip whitespace</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Storage</h4>
+            <ul>
+              <li>History: 28 entries</li>
+              <li>Synced across devices</li>
+              <li>Auto-delete after 30 days</li>
+            </ul>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="button primary">Clear All</button>
+          <button class="button">Pin List</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ringtone Notification Settings</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(15,23,42,0.8);
+      --card: rgba(17,24,39,0.82);
+      --text: #edf6ff;
+      --muted: #9bb1cc;
+      --line: rgba(148,163,184,0.22);
+      --accent: #7dd3fc;
+      --accent-2: #d8b4fe;
+      --shadow: rgba(2,6,23,0.35);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: linear-gradient(135deg, #080d1b, #020817 100%); color: var(--text); }
+    .app { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .brand { font-size: 1.8rem; font-weight: 800; }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav a { background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; text-decoration: none; font-size: 0.8rem; }
+    .nav a.active { background: rgba(14,116,144,0.18); border-color: rgba(125,211,252,0.6); }
+    .layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    .panel { background: rgba(15,23,42,0.82); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 30px var(--shadow); }
+    .left, .right { padding: 18px; }
+    .list { display: grid; gap: 12px; }
+    .row { display: flex; justify-content: space-between; align-items: center; background: rgba(17,24,39,0.8); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+    .switch {
+      width: 42px; height: 24px; border-radius: 999px; background: rgba(148,163,184,0.28); border: 1px solid var(--line); position: relative;
+    }
+    .switch::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 2px; border-radius: 50%; background: #fff; transition: 0.2s ease; }
+    .switch.on { background: rgba(216,180,254,0.32); }
+    .switch.on::before { left: 20px; }
+    .preview {
+      background: linear-gradient(135deg, rgba(168,85,247,0.18), rgba(14,116,144,0.16)); border: 1px solid var(--line); border-radius: 14px; padding: 14px; text-align: center;
+    }
+    .preview .big { font-size: 2.4rem; margin-bottom: 8px; }
+    @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Ringtone Notification settings</div>
+      <div class="nav">
+        <a href="../index.html">Home</a>
+        <a href="87-theme-settings.html">Theme</a>
+        <a href="88-ringtone-settings.html" class="active">Ringtones</a>
+        <a href="89-system-monitor.html">Monitor</a>
+        <a href="90-battery-advanced.html">Battery</a>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="panel left">
+        <div class="list">
+          <div class="row"><span>Ringtone Manager</span><span class="switch on"></span></div>
+          <div class="row"><span>Notification Sounds</span><span class="switch on"></span></div>
+          <div class="row"><span>System Sounds</span><span class="switch"></span></div>
+          <div class="row"><span>Custom Ringtones</span><span class="switch on"></span></div>
+          <div class="row"><span>Favorite Ringtones</span><span class="switch"></span></div>
+        </div>
+      </div>
+
+      <div class="panel right">
+        <div class="preview">
+          <div class="big">🔔</div>
+          <strong>Sample Tone</strong>
+          <p>Chime • Volume 68% • Vibration On</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

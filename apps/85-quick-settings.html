@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Settings Panel</title>
+  <style>
+    :root {
+      --bg: #0a1120;
+      --panel: rgba(15,23,42,0.8);
+      --card: rgba(17,24,39,0.84);
+      --text: #edf7ff;
+      --muted: #99abc7;
+      --line: rgba(148,163,184,0.22);
+      --accent: #7dd3fc;
+      --accent-2: #34d399;
+      --shadow: rgba(2,6,23,0.35);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, rgba(52,211,153,0.1), transparent 30%), linear-gradient(135deg, #070d18 0%, #020817 100%); color: var(--text); }
+    .app { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    .brand { font-size: 1.8rem; font-weight: 800; }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav a { background: rgba(15,23,42,0.8); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; text-decoration: none; font-size: 0.8rem; }
+    .nav a.active { background: rgba(14,116,144,0.18); border-color: rgba(125,211,252,0.6); }
+    .panel { background: rgba(15,23,42,0.82); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 32px var(--shadow); padding: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .tile { background: linear-gradient(180deg, rgba(15,23,42,0.9), rgba(17,24,39,0.7)); border: 1px solid var(--line); border-radius: 14px; padding: 16px; min-height: 120px; }
+    .tile small { display: block; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+    .toggle { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 8px 0; }
+    .switch {
+      width: 42px; height: 24px; border-radius: 999px; background: rgba(148,163,184,0.28); position: relative; border: 1px solid var(--line);
+    }
+    .switch::before {
+      content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: white; top: 2px; left: 3px; transition: 0.2s ease;
+    }
+    .switch.on { background: rgba(52,211,153,0.38); }
+    .switch.on::before { left: 20px; background: #d1fae5; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">Quick Settings Panel</div>
+      <div class="nav">
+        <a href="../index.html">Home</a>
+        <a href="81-font-manager.html">Font</a>
+        <a href="82-icon-pack-manager.html">Icon Pack</a>
+        <a href="84-task-manager.html">Task</a>
+        <a href="85-quick-settings.html" class="active">Quick Settings</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="grid">
+        <div class="tile">
+          <small>Connectivity</small>
+          <div class="toggle"><span>Wi‑Fi</span><span class="switch on"></span></div>
+          <div class="toggle"><span>Bluetooth</span><span class="switch on"></span></div>
+          <div class="toggle"><span>Hotspot</span><span class="switch"></span></div>
+        </div>
+        <div class="tile">
+          <small>Display</small>
+          <div class="toggle"><span>Night Light</span><span class="switch on"></span></div>
+          <div class="toggle"><span>Auto Rotate</span><span class="switch"></span></div>
+          <div class="toggle"><span>Focus Mode</span><span class="switch on"></span></div>
+        </div>
+        <div class="tile">
+          <small>System</small>
+          <div class="toggle"><span>Sound</span><span class="switch on"></span></div>
+          <div class="toggle"><span>Vibration</span><span class="switch on"></span></div>
+          <div class="toggle"><span>Power Saver</span><span class="switch"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

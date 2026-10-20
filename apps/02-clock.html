@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jam</title>
+    <style>
+      body { margin: 0; display: grid; place-items: center; min-height: 100vh; background: #020817; color: #e2e8f0; font-family: Arial, sans-serif; }
+      .box { text-align: center; background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.2); padding: 30px; border-radius: 18px; }
+      #clock { font-size: 4rem; font-weight: 700; }
+      a { color: #7dd3fc; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div id="clock">00:00:00</div>
+      <div id="date">--</div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      function update() {
+        const now = new Date();
+        document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID');
+        document.getElementById('date').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      }
+      update(); setInterval(update, 1000);
+    </script>
+  </body>
+</html>

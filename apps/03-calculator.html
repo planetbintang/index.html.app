@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator</title>
+    <style>
+      body { margin: 0; background: #0f172a; color: #e2e8f0; font-family: Arial, sans-serif; display: grid; place-items: center; min-height: 100vh; }
+      .calc { width: 320px; background: rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius: 16px; padding: 20px; }
+      input { width: 100%; height: 52px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.2); background:#020817; color:#fff; font-size: 1.5rem; padding: 10px; }
+      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      button { padding: 16px 0; border:none; border-radius: 8px; background:#1e293b; color:#fff; font-weight:700; cursor:pointer; }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="calc">
+      <input id="display" value="0" readonly />
+      <div class="grid">
+        <button onclick="append('7')">7</button><button onclick="append('8')">8</button><button onclick="append('9')">9</button><button onclick="append('/')">/</button>
+        <button onclick="append('4')">4</button><button onclick="append('5')">5</button><button onclick="append('6')">6</button><button onclick="append('*')">×</button>
+        <button onclick="append('1')">1</button><button onclick="append('2')">2</button><button onclick="append('3')">3</button><button onclick="append('-')">−</button>
+        <button onclick="append('0')">0</button><button onclick="append('.')">.</button><button onclick="calc()">=</button><button onclick="append('+')">+</button>
+        <button onclick="clearDisplay()" style="grid-column: span 4;">Clear</button>
+      </div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      const display = document.getElementById('display');
+      function append(v){ display.value = display.value === '0' && !['+','-','*','/','.'].includes(v) ? v : display.value + v; }
+      function clearDisplay(){ display.value = '0'; }
+      function calc(){ try { display.value = Function('"use strict"; return (' + display.value + ')')(); } catch { display.value = 'Error'; } }
+    </script>
+  </body>
+</html>

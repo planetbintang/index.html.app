@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catatan</title>
+    <style>
+      body { margin:0; min-height:100vh; background:#020817; color:#e2e8f0; font-family: Arial; display:grid; place-items:center; }
+      .box { width:min(760px,90vw); background: rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:18px; }
+      textarea { width:100%; min-height: 300px; background:#0f172a; color:#e2e8f0; border:1px solid rgba(148,163,184,0.2); border-radius:10px; padding:12px; }
+      a { color:#7dd3fc; text-decoration:none; }
+      button { background:#2563eb; color:#fff; padding:10px 14px; border:none; border-radius:10px; cursor:pointer; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Catatan</h2>
+      <textarea id="notes"></textarea>
+      <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+        <button onclick="saveNotes()">Simpan</button>
+        <a href="../index.html">← Kembali</a>
+      </div>
+    </div>
+    <script>
+      const notes = document.getElementById('notes');
+      notes.value = localStorage.getItem('mini-notes') || 'Catatan baru';
+      function saveNotes(){ localStorage.setItem('mini-notes', notes.value); alert('Catatan tersimpan'); }
+    </script>
+  </body>
+</html>

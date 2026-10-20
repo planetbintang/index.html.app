@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalender</title>
+    <style>
+      body { margin: 0; background: #020817; color: #e2e8f0; font-family: Arial; display: grid; place-items: center; min-height: 100vh; }
+      .box { background: rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius: 16px; padding: 20px; }
+      .month { text-align:center; font-size:1.2rem; margin-bottom: 10px; font-weight:700; }
+      table { border-collapse: collapse; }
+      th, td { width: 42px; height: 38px; text-align:center; }
+      td.today { background: #1d4ed8; border-radius: 8px; }
+      a { color: #7dd3fc; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="month" id="month"></div>
+      <table>
+        <thead><tr><th>Min</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th></tr></thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      const now = new Date();
+      const year = now.getFullYear(); const month = now.getMonth();
+      const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0);
+      const firstWeekDay = (firstDay.getDay() + 6) % 7; const totalDays = lastDay.getDate();
+      document.getElementById('month').textContent = now.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+      const body = document.getElementById('calendarBody');
+      let row = document.createElement('tr');
+      for (let i = 0; i < firstWeekDay; i++) row.appendChild(document.createElement('td'));
+      for (let d = 1; d <= totalDays; d++) {
+        const cell = document.createElement('td');
+        if (d === now.getDate()) cell.classList.add('today');
+        cell.textContent = d; row.appendChild(cell);
+        if (row.children.length === 7) { body.appendChild(row); row = document.createElement('tr'); }
+      }
+      while (row.children.length < 7) row.appendChild(document.createElement('td'));
+      body.appendChild(row);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do</title>
+    <style>
+      body { margin:0; font-family: Arial, sans-serif; background:#0f172a; color:#e2e8f0; display:grid; place-items:center; min-height:100vh; }
+      .box { width: min(520px, 90vw); background: rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:20px; }
+      input { width: 75%; padding: 12px; border-radius: 10px; border: 1px solid rgba(148,163,184,0.2); background:#020817; color:#fff; }
+      button { padding: 12px 14px; border:none; border-radius: 10px; background:#2563eb; color:#fff; cursor:pointer; }
+      ul { list-style: none; padding:0; }
+      li { display:flex; justify-content:space-between; align-items:center; background:#111827; margin-top:8px; padding:10px 12px; border-radius:10px; }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>To-Do List</h2>
+      <div style="display:flex; gap:8px; margin-bottom: 10px;">
+        <input id="taskInput" placeholder="Tambah tugas..." />
+        <button onclick="addTask()">Add</button>
+      </div>
+      <ul id="taskList"></ul>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      const list = document.getElementById('taskList');
+      const tasks = JSON.parse(localStorage.getItem('todo-app') || '[]');
+      function render(){ list.innerHTML=''; tasks.forEach((task, index) => { const li=document.createElement('li'); li.innerHTML=`<span>${task}</span><button onclick="deleteTask(${index})">X</button>`; list.appendChild(li); }); }
+      function addTask(){ const task = document.getElementById('taskInput').value.trim(); if(!task) return; tasks.push(task); localStorage.setItem('todo-app', JSON.stringify(tasks)); render(); document.getElementById('taskInput').value=''; }
+      function deleteTask(index){ tasks.splice(index,1); localStorage.setItem('todo-app', JSON.stringify(tasks)); render(); }
+      render();
+    </script>
+  </body>
+</html>

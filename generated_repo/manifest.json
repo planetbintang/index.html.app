@@ -1,9 +1,0 @@
-{
-  "total_systems": 2,
-  "total_files": 6,
-  "structure": "system folders with src modules, todo.md, README.md",
-  "notes": [
-    "Setiap sistem dibuat untuk berdiri sendiri namun dapat diintegrasikan ke repo yang lebih besar.",
-    "Semua file Python berisi konten yang valid dan siap untuk review atau pengembangan lanjutan."
-  ]
-}

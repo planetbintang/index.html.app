@@ -3,1117 +3,274 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Machine OS Launcher</title>
+    <title>App Hub Desktop</title>
     <style>
       :root {
-        --bg: #f5f7fb;
-        --bg-2: #edf3ff;
-        --bg-3: #dfeafc;
-        --panel: rgba(255,255,255,0.74);
-        --panel-strong: rgba(255,255,255,0.9);
-        --panel-alt: rgba(232,240,255,0.9);
-        --surface: rgba(11, 18, 36, 0.92);
-        --surface-2: rgba(17, 24, 39, 0.9);
-        --surface-3: rgba(30, 41, 59, 0.88);
-        --text: #0f172a;
-        --text-2: #1e293b;
-        --muted: #475569;
-        --soft: #64748b;
-        --line: rgba(100, 116, 139, 0.22);
-        --line-strong: rgba(37, 99, 235, 0.28);
-        --cyan: #0ea5e9;
-        --blue: #2563eb;
-        --indigo: #4f46e5;
-        --pink: #ec4899;
-        --purple: #8b5cf6;
-        --green: #16a34a;
-        --lime: #84cc16;
-        --amber: #f59e0b;
-        --orange: #f97316;
-        --red: #ef4444;
-        --shadow: rgba(15, 23, 42, 0.14);
-        --dot: rgba(37, 99, 235, 0.16);
-        --taskbar: rgba(255,255,255,0.8);
-        --input: rgba(240,245,255,0.9);
+        --bg: #0f172a;
+        --bg-2: #111827;
+        --panel: rgba(15, 23, 42, 0.8);
+        --card: rgba(15, 23, 42, 0.68);
+        --card-2: rgba(30, 41, 59, 0.75);
+        --text: #e2e8f0;
+        --muted: #9ca3af;
+        --accent: #7dd3fc;
+        --accent-2: #34d399;
+        --accent-3: #fbbf24;
+        --danger: #f87171;
+        --border: rgba(148,163,184,.25);
       }
-
       * { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        min-height: 100%;
-        font-family: "Segoe UI", Arial, sans-serif;
-        background:
-          radial-gradient(circle at 15% 10%, rgba(14,165,233,0.18), transparent 20%),
-          radial-gradient(circle at 80% 8%, rgba(168,85,247,0.18), transparent 18%),
-          radial-gradient(circle at 65% 80%, rgba(59,130,246,0.10), transparent 22%),
-          linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
-        color: var(--text);
+      html, body { margin: 0; min-height: 100%; font-family: Arial, Helvetica, sans-serif; background: radial-gradient(circle at top, #172554 0%, var(--bg) 35%, #020817 100%); color: var(--text); }
+      body { padding: 24px; }
+      a { color: var(--accent); text-decoration: none; }
+      .container { max-width: 1440px; margin: 0 auto; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+      .brand { font-size: clamp(1.6rem, 2vw, 2.4rem); font-weight: 800; }
+      .brand small { color: var(--accent-2); font-weight: 700; }
+      .domain-display { font-weight: 700; color: var(--accent); letter-spacing: 0.04em; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      button { border: 1px solid var(--border); background: rgba(30,41,59,.8); color: var(--text); padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+      button:hover { transform: translateY(-1px); border-color: rgba(125,211,252,.8); }
+      .desktop {
+        display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 18px; margin-bottom: 20px;
       }
-
-      body {
-        overflow-x: hidden;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      button, input {
-        font: inherit;
-      }
-
-      .desktop-shell {
-        min-height: calc(100vh - 72px);
-        display: flex;
-        flex-direction: column;
-        padding: 18px 18px 88px;
-      }
-
-      .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 900;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--text-2);
-      }
-
-      .brand-mark {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        background:
-          linear-gradient(145deg, rgba(37,99,235,.14), rgba(14,165,233,.08));
-        border: 1px solid var(--line-strong);
-        position: relative;
-        box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 12px 22px rgba(37,99,235,0.08);
-      }
-
-      .brand-mark::before,
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 7px;
-        border-radius: 10px;
-        background-image:
-          radial-gradient(circle, rgba(37,99,235,0.5) 0 1.8px, transparent 2px),
-          linear-gradient(rgba(14,165,233,0.2), rgba(14,165,233,0.2));
-        background-size: 12px 12px, 100% 100%;
-        opacity: 0.9;
-      }
-
-      .brand .name {
-        font-size: clamp(1.1rem, 2vw, 1.7rem);
-      }
-
-      .brand .name .dot {
-        color: var(--blue);
-      }
-
-      .sysbar {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        padding: 8px 14px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.6);
-        box-shadow: 0 10px 20px rgba(15,23,42,0.04);
-      }
-
-      .sys-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        color: var(--muted);
-        font-size: 0.68rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        background: rgba(255,255,255,0.6);
-        border: 1px solid var(--line);
-      }
-
-      .dot-live {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 14px rgba(22,163,74,0.75);
-      }
-
-      .desktop-grid {
-        display: grid;
-        grid-template-columns: 300px minmax(0, 1fr) 320px;
-        gap: 18px;
-        min-height: 0;
-      }
-
       .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: 0 18px 34px rgba(15, 23, 42, 0.08);
+        background: var(--panel); border: 1px solid var(--border); border-radius: 18px; padding: 18px;
+        box-shadow: 0 12px 30px rgba(2,6,23,.35);
       }
-
-      .panel-inner {
-        padding: 14px;
+      .status-grid { display: grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap: 12px; }
+      .metric { background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+      .metric .label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+      .metric .value { font-size: 1.15rem; font-weight: 700; }
+      .quick { display: flex; flex-wrap: wrap; gap: 10px; }
+      .tool { background: rgba(15,118,110,.14); border: 1px solid rgba(52,211,153,.42); padding: 9px 12px; border-radius: 10px; }
+      .launcher {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;
+        margin-top: 20px;
       }
-
-      .left-stack,
-      .right-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .widget {
-        padding: 14px;
-      }
-
-      .widget-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .widget-title {
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--muted);
-        font-weight: 800;
-      }
-
-      .tiny-tag {
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        padding: 4px 8px;
-        font-size: 0.62rem;
-        color: var(--soft);
-        background: rgba(255,255,255,0.4);
-      }
-
-      .machine-block {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .machine-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.35);
-      }
-
-      .machine-row .name {
-        font-weight: 800;
-        letter-spacing: 0.04em;
-      }
-
-      .machine-row .alias {
-        font-size: 0.72rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .signal {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .bars {
-        display: flex;
-        align-items: flex-end;
-        gap: 3px;
-        height: 20px;
-      }
-
-      .bars span {
-        display: block;
-        width: 4px;
-        border-radius: 3px 3px 0 0;
-        background: linear-gradient(180deg, var(--cyan), var(--blue));
-      }
-
-      .bars span:nth-child(1) { height: 7px; }
-      .bars span:nth-child(2) { height: 12px; }
-      .bars span:nth-child(3) { height: 16px; }
-      .bars span:nth-child(4) { height: 20px; }
-
-      .status-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .mini-card {
-        background: rgba(255,255,255,0.34);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 9px 10px;
-      }
-
-      .mini-label {
-        display: block;
-        font-size: 0.62rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--muted);
-        margin-bottom: 8px;
-      }
-
-      .mini-value {
-        font-weight: 800;
-        font-size: 1rem;
-      }
-
-      .apps-area {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-      }
-
-      .hero {
-        padding: 18px;
-        border-radius: var(--radius);
-        background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(238,245,255,0.8));
-        border: 1px solid var(--line);
-        box-shadow: 0 18px 35px rgba(15,23,42,0.08);
-      }
-
-      .hero-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      .hero-title {
-        font-size: clamp(1.6rem, 3vw, 2.7rem);
-        font-weight: 900;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .hero-title .accent {
-        color: var(--blue);
-      }
-
-      .hero-sub {
-        color: var(--muted);
-        font-size: 0.92rem;
-        margin-top: 8px;
-      }
-
-      .hero-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .action-btn {
-        border: 1px solid var(--line-strong);
-        background: rgba(255,255,255,0.65);
-        color: var(--text-2);
-        padding: 9px 12px;
-        border-radius: 10px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-
-      .action-btn.primary {
-        background: linear-gradient(180deg, rgba(37,99,235,0.12), rgba(14,165,233,0.08));
-      }
-
-      .launch-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 12px;
-        margin-top: 16px;
-      }
-
       .app-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 136px;
-        padding: 13px 12px;
-        border-radius: 16px;
-        border: 1px solid var(--line);
-        background: linear-gradient(180deg, rgba(255,255,255,0.66), rgba(235,242,255,0.9));
-        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
-        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        background: linear-gradient(180deg, rgba(31,41,55,.95), rgba(17,24,39,.9));
+        border: 1px solid var(--border); border-radius: 14px; padding: 14px 12px; min-height: 120px;
+        display: flex; flex-direction: column; justify-content: space-between;
+        transition: .22s ease;
       }
-
-      .app-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(37,99,235,0.35);
-        box-shadow: 0 18px 32px rgba(37,99,235,0.08);
+      .app-card:hover { transform: translateY(-2px); border-color: rgba(125,211,252,.8); }
+      .app-icon { font-size: 1.7rem; }
+      .app-name { font-weight: 700; margin-top: 8px; }
+      .app-tag { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+      .section-title { margin: 22px 0 12px; font-size: 1.08rem; font-weight: 700; }
+      .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+      .module-link {
+        display: block; background: rgba(15,23,42,.68); border: 1px solid var(--border); color: var(--text);
+        border-radius: 12px; padding: 12px; transition: .2s ease;
       }
-
-      .app-icon {
-        font-size: 1.9rem;
-      }
-
-      .app-name {
-        margin-top: 10px;
-        font-weight: 800;
-        font-size: 0.98rem;
-        color: var(--text-2);
-      }
-
-      .app-tag {
-        margin-top: 8px;
-        color: var(--muted);
-        font-size: 0.63rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .desktop-rows {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-      }
-
-      .terminal-box {
-        position: relative;
-        padding: 14px;
-        border-radius: var(--radius);
-        background: linear-gradient(180deg, rgba(2,6,23,0.96), rgba(15,23,42,0.94));
-        border: 1px solid rgba(148,163,184,0.3);
-        box-shadow: 0 18px 35px rgba(15,23,42,0.1);
-      }
-
-      .terminal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 12px;
-      }
-
-      .traffic {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .traffic span {
-        display: block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-      }
-
-      .traffic .red { background: #f87171; }
-      .traffic .yellow { background: #fbbf24; }
-      .traffic .green { background: #34d399; }
-
-      .terminal-area {
-        min-height: 240px;
-        max-height: 340px;
-        overflow: auto;
-        background: rgba(2,6,23,0.86);
-        border: 1px solid rgba(148,163,184,0.18);
-        border-radius: 12px;
-        padding: 12px;
-        font-family: Consolas, "Courier New", monospace;
-        color: #dbeafe;
-      }
-
-      .terminal-line {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 4px;
-        white-space: pre-wrap;
-        word-break: break-word;
-      }
-
-      .prompt {
-        color: var(--green);
-        font-weight: 800;
-      }
-
-      .terminal-input {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 12px;
-        background: rgba(2,6,23,0.78);
-        border: 1px solid rgba(148,163,184,0.18);
-        border-radius: 10px;
-        padding: 8px 10px;
-      }
-
-      .terminal-input .symbol {
-        color: var(--cyan);
-        font-weight: 800;
-      }
-
-      .terminal-input input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: #dbeafe;
-        font-family: Consolas, "Courier New", monospace;
-      }
-
-      .weather-box,
-      .notification-box,
-      .log-box {
-        padding: 14px;
-      }
-
-      .weather-header,
-      .section-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .weather-main {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 12px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.56), rgba(221,236,255,0.86));
-      }
-
-      .weather-icon {
-        font-size: 2.4rem;
-      }
-
-      .weather-temp {
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
-        font-weight: 900;
-      }
-
-      .weather-meta {
-        color: var(--muted);
-        font-size: 0.8rem;
-        margin-top: 6px;
-      }
-
-      .weather-small-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        margin-top: 12px;
-      }
-
-      .small-box {
-        background: rgba(255,255,255,0.35);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 8px 10px;
-      }
-
-      .small-box .label {
-        display: block;
-        color: var(--muted);
-        font-size: 0.62rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-      }
-
-      .small-box .value {
-        font-weight: 800;
-      }
-
-      .notification-list,
-      .log-list {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .notif-item,
-      .log-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 10px 11px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.36);
-      }
-
-      .notif-badge {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-top: 5px;
-      }
-
-      .notif-badge.blue { background: var(--blue); }
-      .notif-badge.green { background: var(--green); }
-      .notif-badge.orange { background: var(--orange); }
-      .notif-badge.pink { background: var(--pink); }
-
-      .notif-text,
-      .log-text {
-        flex: 1;
-        line-height: 1.5;
-      }
-
-      .notif-time,
-      .log-time {
-        color: var(--muted);
-        font-size: 0.68rem;
-        white-space: nowrap;
-      }
-
-      .log-item {
-        align-items: center;
-      }
-
-      .log-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--purple);
-      }
-
-      .activity-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 14px;
-      }
-
-      .taskbar {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 72px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        padding: 10px 16px;
-        background: rgba(255,255,255,0.8);
-        border-top: 1px solid var(--line);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 -10px 24px rgba(15,23,42,0.08);
-      }
-
-      .taskbar-left,
-      .taskbar-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .start-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: 1px solid var(--line-strong);
-        background: linear-gradient(180deg, rgba(37,99,235,0.08), rgba(14,165,233,0.08));
-        color: var(--text-2);
-        padding: 10px 14px;
-        border-radius: 12px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .task-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.64);
-        font-weight: 700;
-      }
-
-      .clock-mini {
-        font-family: Consolas, "Courier New", monospace;
-        font-weight: 800;
-        color: var(--text-2);
-      }
-
-      @media (max-width: 1100px) {
-        .desktop-grid {
-          grid-template-columns: 240px 1fr;
-        }
-
-        .right-stack {
-          grid-column: 1 / -1;
-        }
-      }
-
-      @media (max-width: 820px) {
-        .desktop-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .desktop-rows {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      @media (max-width: 540px) {
-        .topbar {
-          align-items: flex-start;
-        }
-
-        .taskbar {
-          padding-left: 10px;
-          padding-right: 10px;
-        }
-
-        .taskbar-left, .taskbar-right {
-          gap: 6px;
-        }
-
-        .task-chip {
-          padding: 7px 8px;
-          font-size: 0.72rem;
-        }
-      }
+      .module-link:hover { border-color: rgba(125,211,252,.8); transform: translateY(-2px); }
+      .workspace { display: grid; grid-template-columns: 1.35fr 0.65fr; gap: 18px; margin-top: 20px; }
+      .editor-box { border: 1px solid var(--border); background: #020817; border-radius: 12px; overflow: hidden; }
+      .editor-toolbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #0f172a; border-bottom: 1px solid var(--border); }
+      textarea { width: 100%; min-height: 280px; resize: vertical; border: none; background: #020817; color: #e2e8f0; padding: 14px; font-family: Consolas, monospace; line-height: 1.5; }
+      .todo-list, .calendar-box, .calc-box, .clock-box { background: rgba(2,6,23,.35); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+      .todo-list ul { list-style: none; padding: 0; margin: 8px 0 0; }
+      .todo-list li { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .calendar-box table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      .calendar-box th, .calendar-box td { width: 14.28%; text-align: center; padding: 8px 4px; border-radius: 6px; }
+      .calendar-box td.today { background: rgba(56,189,248,.18); border: 1px solid rgba(56,189,248,.4); }
+      .calc-box input { width: 100%; background: #0f172a; color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 10px; font-size: 1.1rem; }
+      .calc-btns { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .calc-btns button { padding: 12px 0; }
+      .clock-box { text-align: center; }
+      #clock { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin: 10px 0; }
+      @media (max-width: 860px){ .desktop, .workspace { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
-    <div class="desktop-shell">
+    <div class="container">
       <div class="topbar">
-        <div class="brand">
-          <div class="brand-mark"></div>
-          <div class="name">Machine <span class="dot">.</span> OS</div>
-        </div>
-
-        <div class="sysbar">
-          <div class="sys-pill"><span class="dot-live"></span> online</div>
-          <div class="sys-pill">runtime stable</div>
-          <div class="sys-pill">kernel 0.9.2</div>
-          <div class="sys-pill" id="topDate">--</div>
+        <div class="brand">AppHub <small>Desktop Pack</small></div>
+        <div class="domain-display"><span>.</span> = <span id="domainAlias">domain</span></div>
+        <div class="actions">
+          <button onclick="toggleTheme()">Tema</button>
+          <button onclick="saveEditor()">Simpan</button>
+          <button onclick="window.location.reload()">Muat Ulang</button>
         </div>
       </div>
 
-      <div class="desktop-grid">
-        <aside class="left-stack">
-          <div class="panel widget">
-            <div class="widget-header">
-              <div class="widget-title">System</div>
-              <div class="tiny-tag">live</div>
-            </div>
-            <div class="machine-block">
-              <div class="machine-row">
-                <div>
-                  <div class="alias">alias</div>
-                  <div class="name">.=localhost</div>
-                </div>
-                <div class="signal">
-                  <div class="bars"><span></span><span></span><span></span><span></span></div>
-                </div>
-              </div>
-
-              <div class="machine-row">
-                <div>
-                  <div class="alias">origin</div>
-                  <div class="name">.=github.com/sumberkode</div>
-                </div>
-                <div class="tiny-tag">repo</div>
-              </div>
-
-              <div class="machine-row">
-                <div>
-                  <div class="alias">runtime</div>
-                  <div class="name">.=runtime</div>
-                </div>
-                <div class="tiny-tag">boot</div>
-              </div>
-            </div>
+      <div class="desktop">
+        <div class="panel">
+          <h2>Package Sistem</h2>
+          <div class="status-grid">
+            <div class="metric"><span class="label">Status</span><span class="value" style="color: var(--accent-2);">Online</span></div>
+            <div class="metric"><span class="label">Server</span><span class="value">localhost:8080</span></div>
+            <div class="metric"><span class="label">Platform</span><span class="value">HTML5</span></div>
           </div>
-
-          <div class="panel widget">
-            <div class="widget-header">
-              <div class="widget-title">Core</div>
-              <div class="tiny-tag">status</div>
-            </div>
-            <div class="status-grid">
-              <div class="mini-card">
-                <span class="mini-label">cpu</span>
-                <div class="mini-value">90%</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">mem</span>
-                <div class="mini-value">68%</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">net</span>
-                <div class="mini-value">ok</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">disk</span>
-                <div class="mini-value">1.2T</div>
-              </div>
-            </div>
+          <div class="quick" style="margin-top: 18px;">
+            <span class="tool">Desktop</span><span class="tool">Launcher</span><span class="tool">Editor</span><span class="tool">Tools</span>
+            <span class="tool">Jam</span><span class="tool">Kalender</span><span class="tool">Kalkulator</span><span class="tool">Apps</span>
           </div>
-
-          <div class="panel widget">
-            <div class="widget-header">
-              <div class="widget-title">Modules</div>
-              <div class="tiny-tag">10</div>
-            </div>
-            <div class="status-grid">
-              <div class="mini-card"><span class="mini-label">kernel</span><div class="mini-value">on</div></div>
-              <div class="mini-card"><span class="mini-label">txt</span><div class="mini-value">on</div></div>
-              <div class="mini-card"><span class="mini-label">shell</span><div class="mini-value">on</div></div>
-              <div class="mini-card"><span class="mini-label">apps</span><div class="mini-value">40</div></div>
-            </div>
+        </div>
+        <div class="panel">
+          <h3>Quick Launch</h3>
+          <div class="quick">
+            <button onclick="openModule('apps/01-editor.html')">Editor</button>
+            <button onclick="openModule('apps/21-timer.html')">Timer</button>
+            <button onclick="openModule('apps/22-stopwatch.html')">Stopwatch</button>
+            <button onclick="openModule('apps/25-unit.html')">Unit</button>
+            <button onclick="openModule('apps/31-workspace.html')">Workspace</button>
           </div>
-        </aside>
-
-        <main class="apps-area">
-          <div class="hero panel">
-            <div class="hero-top">
-              <div>
-                <div class="hero-title">Machine <span class="accent">Launch</span></div>
-                <div class="hero-sub">Desktop OS launcher / runtime / coretxt / kernel / dots & components</div>
-              </div>
-              <div class="hero-actions">
-                <button class="action-btn primary">Open shell</button>
-                <button class="action-btn">Refresh</button>
-              </div>
-            </div>
-            <div class="launch-grid" id="appGrid"></div>
-          </div>
-
-          <div class="desktop-rows">
-            <div class="panel terminal-box">
-              <div class="terminal-header">
-                <div class="widget-title">Terminal</div>
-                <div class="traffic">
-                  <span class="red"></span>
-                  <span class="yellow"></span>
-                  <span class="green"></span>
-                </div>
-              </div>
-              <div class="terminal-area" id="terminalArea"></div>
-              <div class="terminal-input">
-                <div class="symbol">$</div>
-                <input id="terminalInput" type="text" placeholder="type command..." spellcheck="false" />
-              </div>
-            </div>
-
-            <div class="panel weather-box">
-              <div class="weather-header">
-                <div class="widget-title">Weather</div>
-                <div class="tiny-tag">bandung</div>
-              </div>
-
-              <div class="weather-main">
-                <div>
-                  <div class="weather-icon">☀️</div>
-                </div>
-                <div>
-                  <div class="weather-temp">28°</div>
-                  <div class="weather-meta">Sunny & bright</div>
-                </div>
-              </div>
-
-              <div class="weather-small-grid">
-                <div class="small-box">
-                  <span class="label">wind</span>
-                  <div class="value">7 km/h</div>
-                </div>
-                <div class="small-box">
-                  <span class="label">humidity</span>
-                  <div class="value">61%</div>
-                </div>
-                <div class="small-box">
-                  <span class="label">rain</span>
-                  <div class="value">12%</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-
-        <aside class="right-stack">
-          <div class="panel widget notification-box">
-            <div class="section-head">
-              <div class="widget-title">Notifications</div>
-              <div class="tiny-tag">3</div>
-            </div>
-            <div class="notification-list" id="notificationList"></div>
-          </div>
-
-          <div class="panel widget log-box">
-            <div class="section-head">
-              <div class="widget-title">Activity log</div>
-              <div class="tiny-tag">live</div>
-            </div>
-            <div class="log-list" id="logList"></div>
-          </div>
-
-          <div class="panel widget">
-            <div class="section-head">
-              <div class="widget-title">Quick status</div>
-              <div class="tiny-tag">dot</div>
-            </div>
-            <div class="status-grid">
-              <div class="mini-card">
-                <span class="mini-label">aliases</span>
-                <div class="mini-value">6</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">theme</span>
-                <div class="mini-value">light</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">launch</span>
-                <div class="mini-value">ok</div>
-              </div>
-              <div class="mini-card">
-                <span class="mini-label">text</span>
-                <div class="mini-value">32</div>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </div>
-    </div>
-
-    <div class="taskbar">
-      <div class="taskbar-left">
-        <button class="start-btn">start</button>
-        <div class="task-chip">.=localhost</div>
-        <div class="task-chip">.=runtime</div>
-        <div class="task-chip">.=kernel</div>
+        </div>
       </div>
 
-      <div class="taskbar-right">
-        <div class="task-chip">wifi</div>
-        <div class="task-chip">battery 92%</div>
-        <div class="clock-mini" id="clockMini">00:00:00</div>
+      <div class="section-title">Launcher Desktop</div>
+      <div class="launcher" id="launcher"></div>
+
+      <div class="section-title">Modul Tambahan</div>
+      <div class="module-grid">
+        <a class="module-link" href="apps/01-editor.html">01 Editor</a>
+        <a class="module-link" href="apps/02-clock.html">02 Jam</a>
+        <a class="module-link" href="apps/03-calculator.html">03 Kalkulator</a>
+        <a class="module-link" href="apps/04-calendar.html">04 Kalender</a>
+        <a class="module-link" href="apps/05-todo.html">05 To-Do</a>
+        <a class="module-link" href="apps/06-notes.html">06 Catatan</a>
+        <a class="module-link" href="apps/07-files.html">07 File</a>
+        <a class="module-link" href="apps/08-terminal.html">08 Terminal</a>
+        <a class="module-link" href="apps/09-music.html">09 Musik</a>
+        <a class="module-link" href="apps/10-gallery.html">10 Galeri</a>
+        <a class="module-link" href="apps/11-chat.html">11 Chat</a>
+        <a class="module-link" href="apps/12-weather.html">12 Cuaca</a>
+        <a class="module-link" href="apps/13-translator.html">13 Translator</a>
+        <a class="module-link" href="apps/14-markdown.html">14 Markdown</a>
+        <a class="module-link" href="apps/15-uuid.html">15 UUID</a>
+        <a class="module-link" href="apps/16-qr.html">16 QR</a>
+        <a class="module-link" href="apps/17-paint.html">17 Paint</a>
+        <a class="module-link" href="apps/18-kanban.html">18 Kanban</a>
+        <a class="module-link" href="apps/19-ssh.html">19 SSH</a>
+        <a class="module-link" href="apps/20-settings.html">20 Settings</a>
+        <a class="module-link" href="apps/21-timer.html">21 Timer</a>
+        <a class="module-link" href="apps/22-stopwatch.html">22 Stopwatch</a>
+        <a class="module-link" href="apps/23-password.html">23 Password</a>
+        <a class="module-link" href="apps/24-randomizer.html">24 Random</a>
+        <a class="module-link" href="apps/25-unit.html">25 Unit</a>
+        <a class="module-link" href="apps/26-color.html">26 Color</a>
+        <a class="module-link" href="apps/27-dictionary.html">27 Dict</a>
+        <a class="module-link" href="apps/28-currency.html">28 Currency</a>
+        <a class="module-link" href="apps/29-json.html">29 JSON</a>
+        <a class="module-link" href="apps/30-bmi.html">30 BMI</a>
+        <a class="module-link" href="apps/31-workspace.html">31 Workspace</a>
+        <a class="module-link" href="apps/32-lottery.html">32 Lottery</a>
+        <a class="module-link" href="apps/33-speech.html">33 Speech</a>
+        <a class="module-link" href="apps/34-analytics.html">34 Analytics</a>
+        <a class="module-link" href="apps/35-password-check.html">35 Check</a>
+        <a class="module-link" href="apps/36-base64.html">36 Base64</a>
+        <a class="module-link" href="apps/37-encoder.html">37 Encoder</a>
+        <a class="module-link" href="apps/38-image-scaler.html">38 Resize</a>
+        <a class="module-link" href="apps/39-quote.html">39 Quote</a>
+        <a class="module-link" href="apps/40-launcher.html">40 Launcher</a>
+      </div>
+
+      <div class="workspace">
+        <div class="panel">
+          <h3>Editor Kode / Teks</h3>
+          <div class="editor-box">
+            <div class="editor-toolbar"><span>main.txt</span><span id="statusText">Autosave aktif</span></div>
+            <textarea id="textEditor" spellcheck="false"># AppHub Console
+# Sistem package mini
+
+print('Hello from AppHub')
+# gunakan untuk catatan, snippet, dan kode
+
+- launch
+- timer
+- randomizer
+- color
+- widget
+</textarea>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Widget</h3>
+          <div class="clock-box"><div id="clock">00:00:00</div><div id="dateLabel">--</div></div>
+          <div class="calendar-box" style="margin-top:12px;">
+            <div id="calendarMonth"></div>
+            <table><thead><tr><th>Min</th><th>Sen</th><th>Sel</th><th>Rab</th><th>Kam</th><th>Jum</th><th>Sab</th></tr></thead><tbody id="calendarBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Alat Sistem</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px;">
+        <div class="panel">
+          <h3>Kalkulator Sederhana</h3>
+          <div class="calc-box">
+            <input id="calcDisplay" value="0" readonly />
+            <div class="calc-btns">
+              <button onclick="appendCalc('7')">7</button><button onclick="appendCalc('8')">8</button><button onclick="appendCalc('9')">9</button><button onclick="appendCalc('/')">/</button>
+              <button onclick="appendCalc('4')">4</button><button onclick="appendCalc('5')">5</button><button onclick="appendCalc('6')">6</button><button onclick="appendCalc('*')">×</button>
+              <button onclick="appendCalc('1')">1</button><button onclick="appendCalc('2')">2</button><button onclick="appendCalc('3')">3</button><button onclick="appendCalc('-')">−</button>
+              <button onclick="appendCalc('0')">0</button><button onclick="appendCalc('.')">.</button><button onclick="calculateResult()">=</button><button onclick="appendCalc('+')">+</button>
+              <button onclick="clearCalc()" style="grid-column: span 4;">Clear</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Catatan & Agenda</h3>
+          <div class="todo-list">
+            <ul>
+              <li><input type="checkbox" checked/> <span>Mulai launcher</span></li>
+              <li><input type="checkbox" checked/> <span>Siapkan modul</span></li>
+              <li><input type="checkbox"/> <span>Aktifkan workspace</span></li>
+              <li><input type="checkbox"/> <span>Publikasi Pages</span></li>
+              <li><input type="checkbox"/> <span>Uji link utama</span></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      const appData = [
-        { name: 'Editor', file: 'apps/01-editor.html', icon: '📝' },
-        { name: 'Clock', file: 'apps/02-clock.html', icon: '⏰' },
-        { name: 'Calc', file: 'apps/03-calculator.html', icon: '🧮' },
-        { name: 'Calendar', file: 'apps/04-calendar.html', icon: '📅' },
-        { name: 'To-Do', file: 'apps/05-todo.html', icon: '✅' },
-        { name: 'Notes', file: 'apps/06-notes.html', icon: '📒' },
-        { name: 'Files', file: 'apps/07-files.html', icon: '📁' },
-        { name: 'Terminal', file: 'apps/08-terminal.html', icon: '💻' },
-        { name: 'Music', file: 'apps/09-music.html', icon: '🎵' },
-        { name: 'Gallery', file: 'apps/10-gallery.html', icon: '🖼️' },
-        { name: 'Chat', file: 'apps/11-chat.html', icon: '💬' },
-        { name: 'Weather', file: 'apps/12-weather.html', icon: '⛅' },
-        { name: 'Translator', file: 'apps/13-translator.html', icon: '🌐' },
-        { name: 'MD', file: 'apps/14-markdown.html', icon: '📄' },
-        { name: 'UUID', file: 'apps/15-uuid.html', icon: '🧩' },
-        { name: 'QR', file: 'apps/16-qr.html', icon: '📷' },
-        { name: 'Paint', file: 'apps/17-paint.html', icon: '🎨' },
-        { name: 'Kanban', file: 'apps/18-kanban.html', icon: '📋' },
-        { name: 'SSH', file: 'apps/19-ssh.html', icon: '🔐' },
-        { name: 'Settings', file: 'apps/20-settings.html', icon: '⚙️' },
-        { name: 'Timer', file: 'apps/21-timer.html', icon: '⏱️' },
-        { name: 'Stopwatch', file: 'apps/22-stopwatch.html', icon: '⏲️' },
-        { name: 'Pass', file: 'apps/23-password.html', icon: '🔑' },
-        { name: 'Random', file: 'apps/24-randomizer.html', icon: '🎲' },
-        { name: 'Unit', file: 'apps/25-unit.html', icon: '📏' },
-        { name: 'Color', file: 'apps/26-color.html', icon: '🎯' },
-        { name: 'Dict', file: 'apps/27-dictionary.html', icon: '📚' },
-        { name: 'Currency', file: 'apps/28-currency.html', icon: '💰' },
-        { name: 'JSON', file: 'apps/29-json.html', icon: '{} ' },
-        { name: 'BMI', file: 'apps/30-bmi.html', icon: '📊' },
-        { name: 'Workspace', file: 'apps/31-workspace.html', icon: '🧰' },
-        { name: 'Lottery', file: 'apps/32-lottery.html', icon: '🎰' },
-        { name: 'Speech', file: 'apps/33-speech.html', icon: '🔊' },
-        { name: 'Analytics', file: 'apps/34-analytics.html', icon: '📈' },
-        { name: 'Check', file: 'apps/35-password-check.html', icon: '🛡️' },
-        { name: 'Base64', file: 'apps/36-base64.html', icon: '🔤' },
-        { name: 'Encoder', file: 'apps/37-encoder.html', icon: '🧠' },
-        { name: 'Scaler', file: 'apps/38-image-scaler.html', icon: '🖍️' },
-        { name: 'Quote', file: 'apps/39-quote.html', icon: '💬' },
-        { name: 'Launcher', file: 'apps/40-launcher.html', icon: '🚀' }
+      const appNames = [
+        'Text Editor','Jam','Kalender','Kalkulator','Catatan','Server','File System','Terminal','Music','Gallery','Chat','Cuaca','Translator','Markdown','UUID','QR','Paint','Kanban','SSH','Settings','Timer','Stopwatch','Password','Random','Unit','Color','Dictionary','Currency','JSON','BMI','Workspace','Lottery','Speech','Analytics','Check','Base64','Encoder','Resize','Quote','Launcher'
       ];
-
-      const notifications = [
-        { text: 'runtime scan completed successfully.', time: 'now', color: 'blue' },
-        { text: 'launch sequence synchronized with repo.', time: '2m', color: 'green' },
-        { text: 'weather sensor refreshed for Bandung.', time: '8m', color: 'orange' }
-      ];
-
-      const logs = [
-        { text: 'startup: kernel initialized', time: '09:14:02' },
-        { text: 'gateway: repo synced to github.com/sumberkode', time: '09:14:18' },
-        { text: 'shell: launcher ready for input', time: '09:14:31' },
-        { text: 'service: local apps loaded', time: '09:14:43' },
-        { text: 'weather refresh: values updated', time: '09:15:02' }
-      ];
-
-      const terminalHistory = [
-        'boot machine',
-        'status runtime',
-        'list apps',
-        'weather',
-        'help'
-      ];
-
-      const terminalArea = document.getElementById('terminalArea');
-      const terminalInput = document.getElementById('terminalInput');
-
-      function renderApps() {
-        const grid = document.getElementById('appGrid');
-        appData.forEach((app) => {
-          const a = document.createElement('a');
-          a.href = app.file;
-          a.className = 'app-card';
-          a.innerHTML = `
-            <div>
-              <div class="app-icon">${app.icon}</div>
-              <div class="app-name">${app.name}</div>
-            </div>
-            <div class="app-tag">launch</div>
-          `;
-          grid.appendChild(a);
+      const icons = ['📝','⏰','📅','🧮','📁','🖥️','📦','💻','🎵','🖼️','💬','⛅','🌐','📝','🧩','📷','🎨','📋','🔐','⚙️','⏱️','⏲️','🔑','🎲','📏','🎨','📚','💱','🧾','⚖️','📁','🎯','🗣️','📊','✅','🔒','🔄','🖼️','💬','🧭'];
+      const launcher = document.getElementById('launcher');
+      appNames.forEach((name, index) => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.innerHTML = `
+          <div>
+            <div class="app-icon">${icons[index % icons.length]}</div>
+            <div class="app-name">${name}</div>
+          </div>
+          <div class="app-tag">app #${index + 1}</div>
+        `;
+        card.addEventListener('click', () => {
+          const href = moduleMap[index] || 'apps/01-editor.html';
+          openModule(href);
         });
-      }
-
-      function renderNotifications() {
-        const list = document.getElementById('notificationList');
-        notifications.forEach((n) => {
-          const item = document.createElement('div');
-          item.className = 'notif-item';
-          item.innerHTML = `
-            <div class="notif-badge ${n.color}"></div>
-            <div class="notif-text">${n.text}</div>
-            <div class="notif-time">${n.time}</div>
-          `;
-          list.appendChild(item);
-        });
-      }
-
-      function renderLogs() {
-        const list = document.getElementById('logList');
-        logs.forEach((l) => {
-          const item = document.createElement('div');
-          item.className = 'log-item';
-          item.innerHTML = `
-            <div class="log-dot"></div>
-            <div class="log-text">${l.text}</div>
-            <div class="log-time">${l.time}</div>
-          `;
-          list.appendChild(item);
-        });
-      }
-
-      function updateClock() {
-        const now = new Date();
-        const time = now.toLocaleTimeString('id-ID', { hour12: false });
-        document.getElementById('clockMini').textContent = time;
-        document.getElementById('topDate').textContent = now.toLocaleDateString('id-ID', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric'
-        });
-      }
-
-      function addTerminalLine(text, colorClass = '') {
-        const line = document.createElement('div');
-        line.className = 'terminal-line';
-        line.innerHTML = `<span class="prompt">$</span><span class="${colorClass}">${text}</span>`;
-        terminalArea.appendChild(line);
-        terminalArea.scrollTop = terminalArea.scrollHeight;
-      }
-
-      function processCommand(input) {
-        const cmd = input.trim();
-        if (!cmd) return;
-
-        const lower = cmd.toLowerCase();
-        addTerminalLine(cmd, 'cyan');
-
-        if (lower === 'help') {
-          addTerminalLine('commands: help, status, weather, list apps, open editor, clear, time, theme', 'green');
-        } else if (lower === 'status' || lower === 'system status') {
-          addTerminalLine('runtime: stable | kernel: active | coretxt: online | launcher: ready', 'green');
-        } else if (lower === 'weather') {
-          addTerminalLine('Bandung: 28°C, sunny, humidity 61%, wind 7 km/h', 'yellow');
-        } else if (lower === 'list apps' || lower === 'apps') {
-          addTerminalLine('apps available: editor, calculator, clock, workspace, notes, weather, terminal, launcher', 'cyan');
-        } else if (lower === 'open editor' || lower === 'editor') {
-          window.location.href = 'apps/01-editor.html';
-        } else if (lower === 'time') {
-          addTerminalLine(new Date().toLocaleTimeString('id-ID', { hour12: false }), 'yellow');
-        } else if (lower === 'theme') {
-          document.body.style.filter = 'contrast(1.04) saturate(1.1)';
-          addTerminalLine('theme switched to light machine palette', 'pink');
-        } else if (lower === 'clear') {
-          terminalArea.innerHTML = '';
-          return;
-        } else {
-          addTerminalLine(`command not found: ${cmd}`, 'red');
-        }
-      }
-
-      terminalInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          const value = terminalInput.value;
-          processCommand(value);
-          terminalInput.value = '';
-        }
+        launcher.appendChild(card);
       });
-
-      function initTerminal() {
-        terminalArea.innerHTML = '';
-        terminalHistory.forEach((item) => {
-          addTerminalLine(item, 'green');
-        });
-        addTerminalLine('welcome to machine shell. type "help" to begin.', 'cyan');
-      }
-
-      renderApps();
-      renderNotifications();
-      renderLogs();
-      updateClock();
-      initTerminal();
-      setInterval(updateClock, 1000);
+      const moduleMap = {
+        0: 'apps/01-editor.html', 1: 'apps/02-clock.html', 2: 'apps/04-calendar.html', 3: 'apps/03-calculator.html', 4: 'apps/06-notes.html',
+        5: 'apps/08-terminal.html', 6: 'apps/07-files.html', 7: 'apps/08-terminal.html', 8: 'apps/09-music.html', 9: 'apps/10-gallery.html',
+        10: 'apps/11-chat.html', 11: 'apps/12-weather.html', 12: 'apps/13-translator.html', 13: 'apps/14-markdown.html', 14: 'apps/15-uuid.html',
+        15: 'apps/16-qr.html', 16: 'apps/17-paint.html', 17: 'apps/18-kanban.html', 18: 'apps/19-ssh.html', 19: 'apps/20-settings.html',
+        20: 'apps/21-timer.html', 21: 'apps/22-stopwatch.html', 22: 'apps/23-password.html', 23: 'apps/24-randomizer.html', 24: 'apps/25-unit.html',
+        25: 'apps/26-color.html', 26: 'apps/27-dictionary.html', 27: 'apps/28-currency.html', 28: 'apps/29-json.html', 29: 'apps/30-bmi.html',
+        30: 'apps/31-workspace.html', 31: 'apps/32-lottery.html', 32: 'apps/33-speech.html', 33: 'apps/34-analytics.html', 34: 'apps/35-password-check.html',
+        35: 'apps/36-base64.html', 36: 'apps/37-encoder.html', 37: 'apps/38-image-scaler.html', 38: 'apps/39-quote.html', 39: 'apps/40-launcher.html'
+      };
+      function openModule(path) { window.location.href = path; }
+      function showApp(name) { const editor = document.getElementById('textEditor'); const current = editor.value.trim(); editor.value = current + '\n\n# ' + name + '\n- aktif\n- siap digunakan\n'; editor.focus(); }
+      function updateClock() { const now = new Date(); const hh = String(now.getHours()).padStart(2,'0'); const mm = String(now.getMinutes()).padStart(2,'0'); const ss = String(now.getSeconds()).padStart(2,'0'); document.getElementById('clock').textContent = `${hh}:${mm}:${ss}`; document.getElementById('dateLabel').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+      function renderCalendar(){ const now = new Date(); const year = now.getFullYear(); const month = now.getMonth(); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const firstWeekDay = (firstDay.getDay() + 6) % 7; const totalDays = lastDay.getDate(); document.getElementById('calendarMonth').textContent = now.toLocaleDateString('id-ID', { month:'long', year:'numeric' }); const body = document.getElementById('calendarBody'); body.innerHTML=''; let row=document.createElement('tr'); for(let i=0;i<firstWeekDay;i++) row.appendChild(document.createElement('td')); for(let d=1; d<=totalDays; d++){ const cell = document.createElement('td'); if(d===now.getDate()) cell.classList.add('today'); cell.textContent = d; row.appendChild(cell); if(row.children.length===7){ body.appendChild(row); row=document.createElement('tr'); } } while(row.children.length<7) row.appendChild(document.createElement('td')); body.appendChild(row); }
+      function clearCalc(){ document.getElementById('calcDisplay').value='0'; }
+      function appendCalc(val){ const display = document.getElementById('calcDisplay'); const current = display.value; display.value = current === '0' && !['+','-','*','/','.'].includes(val) ? val : current + val; }
+      function calculateResult(){ const display = document.getElementById('calcDisplay'); try { display.value = Function('"use strict"; return (' + display.value + ')')(); } catch { display.value = 'Error'; } }
+      function saveEditor(){ const text = document.getElementById('textEditor').value; localStorage.setItem('apphub-editor', text); document.getElementById('statusText').textContent = 'Disimpan di browser'; }
+      function loadEditor(){ const saved = localStorage.getItem('apphub-editor'); if(saved) document.getElementById('textEditor').value = saved; }
+      function toggleTheme(){ const root = document.documentElement; const isDark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0f172a'; root.style.setProperty('--bg', isDark ? '#f8fafc' : '#0f172a'); root.style.setProperty('--panel', isDark ? 'rgba(255,255,255,.8)' : 'rgba(15,23,42,.8)'); root.style.setProperty('--text', isDark ? '#0f172a' : '#e2e8f0'); root.style.setProperty('--muted', isDark ? '#475569' : '#9ca3af'); }
+      const isLocal = ['localhost','127.0.0.1'].includes(window.location.hostname);
+      document.getElementById('domainAlias').textContent = isLocal ? 'localhost' : 'github.com/sumberkode';
+      updateClock(); renderCalendar(); loadEditor(); setInterval(updateClock, 1000);
     </script>
   </body>
 </html>

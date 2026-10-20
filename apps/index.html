@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Launcher Apps</title>
+  <title>Machine Launcher</title>
   <style>
     :root {
       --bg: #020817;
@@ -21,7 +21,8 @@
     }
     * { box-sizing: border-box; }
     html, body {
-      margin: 0; min-height: 100%;
+      margin: 0;
+      min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
       background: radial-gradient(circle at top, rgba(59,130,246,0.18), transparent 30%), linear-gradient(135deg, var(--bg) 0%, #020817 100%);
       color: var(--text);
@@ -29,48 +30,26 @@
     body { padding: 24px; }
     a { color: inherit; text-decoration: none; }
     .container { max-width: 1280px; margin: 0 auto; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px;
-    }
-    .brand {
-      font-size: clamp(1.5rem, 2vw, 2.5rem);
-      font-weight: 800; letter-spacing: 0.06em;
-    }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+    .brand { font-size: clamp(1.5rem, 2vw, 2.5rem); font-weight: 800; letter-spacing: 0.06em; }
     .brand span { color: var(--accent-2); }
-    .status {
-      display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 12px; border-radius: 999px; background: rgba(15, 23, 42, 0.85); color: var(--muted); font-size: 0.9rem;
-    }
-    .dot {
-      width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 16px rgba(52, 211, 153, 0.8);
-    }
-    .machine-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 22px;
-    }
-    .machine {
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
-      border: 1px solid var(--line); border-radius: 18px; padding: 18px; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 16px 36px rgba(2, 6, 23, 0.35);
-    }
+    .status { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 8px 12px; border-radius: 999px; background: rgba(15, 23, 42, 0.85); color: var(--muted); font-size: 0.9rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 16px rgba(52, 211, 153, 0.8); }
+    .machine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .machine { background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9)); border: 1px solid var(--line); border-radius: 18px; padding: 18px; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 16px 36px rgba(2, 6, 23, 0.35); }
     .machine .label { font-size: 0.74rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
     .machine .name { font-weight: 800; font-size: clamp(1.2rem, 2vw, 1.7rem); margin: 10px 0; }
     .machine .meta { color: var(--accent); font-size: 0.96rem; font-weight: 700; }
     .machine .tag { width: fit-content; border: 1px solid rgba(125,211,252,.4); background: rgba(14,116,144,.18); color: var(--accent); border-radius: 999px; padding: 6px 10px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
     .section-title { margin: 26px 0 12px; font-size: 1.08rem; font-weight: 700; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
-    .launcher-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;
-    }
-    .app-card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease, border-color 0.2s ease;
-    }
+    .launcher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+    .app-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease, border-color 0.2s ease; }
     .app-card:hover { transform: translateY(-2px); border-color: rgba(125, 211, 252, 0.75); }
     .app-icon { font-size: 1.8rem; }
     .app-name { font-size: 1rem; font-weight: 700; margin-top: 10px; }
     .app-tag { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
-    .panel {
-      background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-top: 18px;
-    }
-    .shell {
-      background: #020817; border: 1px solid var(--line); border-radius: 12px; color: #cbd5e1; padding: 12px 14px; font-family: Consolas, monospace; line-height: 1.6; white-space: pre-wrap;
-    }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; margin-top: 18px; }
+    .shell { background: #020817; border: 1px solid var(--line); border-radius: 12px; color: #cbd5e1; padding: 12px 14px; font-family: Consolas, monospace; line-height: 1.6; white-space: pre-wrap; }
     .shell .green { color: var(--accent-2); }
     .shell .blue { color: var(--accent); }
     .shell .yellow { color: var(--accent-3); }
@@ -161,8 +140,18 @@
       { name: 'Battery', path: '90-battery-advanced.html', icon: '🔋' }
     ];
 
+    const extraApps = Array.from({ length: 150 }, (_, i) => {
+      const num = i + 91;
+      return {
+        name: `Menu ${String(num).padStart(3, '0')}`,
+        path: `menu-${String(num).padStart(3, '0')}.html`,
+        icon: '▣'
+      };
+    });
+
+    const allApps = [...apps, ...extraApps];
     const launcher = document.getElementById('appLauncher');
-    apps.forEach((app) => {
+    allApps.forEach((app) => {
       const card = document.createElement('a');
       card.href = app.path;
       card.className = 'app-card';

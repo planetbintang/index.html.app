@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMI Checker</title>
+    <style>
+      body { margin:0; background:#020817; color:#e2e8f0; font-family:Arial; display:grid; place-items:center; min-height:100vh; }
+      .box { width:min(560px,90vw); background:rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:20px; }
+      input { width:100%; padding:10px; background:#0f172a; color:#fff; border:1px solid rgba(148,163,184,0.2); border-radius:10px; }
+      button { padding:10px 14px; background:#2563eb; color:#fff; border:none; border-radius:10px; cursor:pointer; }
+      .result { margin-top:16px; font-size: 1.2rem; font-weight: 700; }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>BMI Checker</h2>
+      <input id="berat" type="number" value="70" placeholder="Berat (kg)" /><br><br>
+      <input id="tinggi" type="number" value="170" placeholder="Tinggi (cm)" /><br><br>
+      <button onclick="check()">Hitung</button>
+      <div id="result" class="result">BMI: 24.2 - normal</div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      function check(){ const berat = Number(document.getElementById('berat').value) || 0; const tinggi = Number(document.getElementById('tinggi').value) || 0; const bmi = berat / ((tinggi / 100) ** 2); let label = 'normal'; if(bmi < 18.5) label = 'kurus'; else if(bmi > 25) label='gemuk'; document.getElementById('result').textContent = `BMI: ${bmi.toFixed(1)} - ${label}`; }
+      check();
+    </script>
+  </body>
+</html>

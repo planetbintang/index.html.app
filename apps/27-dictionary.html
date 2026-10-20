@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dictionary</title>
+    <style>
+      body { margin:0; background:#020817; color:#e2e8f0; font-family:Arial; display:grid; place-items:center; min-height:100vh; }
+      .box { width:min(700px,90vw); background:rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:20px; }
+      input { width: 78%; padding: 10px; border-radius:10px; background:#0f172a; border:1px solid rgba(148,163,184,0.2); color:#fff; }
+      button { padding:10px 14px; background:#2563eb; color:#fff; border:none; border-radius:10px; cursor:pointer; }
+      .result { margin-top:16px; background:#0f172a; border-radius:10px; padding:14px; border:1px solid rgba(148,163,184,0.2); }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Dictionary Mini</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input id="word" value="app" />
+        <button onclick="lookup()">Cari</button>
+      </div>
+      <div class="result" id="output">App = aplikasi / program / alat.</div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      const data = { app:'aplikasi / program / alat', timer:'alat untuk menghitung mundur', color:'citra visual berdasarkan cahaya', editor:'alat untuk mengedit teks atau kode' };
+      function lookup(){ const value = document.getElementById('word').value.toLowerCase().trim(); document.getElementById('output').textContent = data[value] || 'Kata tidak ditemukan di data demo.'; }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit Converter</title>
+    <style>
+      body { margin:0; background:#020817; color:#e2e8f0; font-family:Arial; display:grid; place-items:center; min-height:100vh; }
+      .box { width:min(620px,90vw); background:rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:20px; }
+      input, select { width:100%; padding:10px; background:#0f172a; color:#fff; border:1px solid rgba(148,163,184,0.2); border-radius:10px; }
+      button { background:#2563eb; color:#fff; padding:10px 14px; border:none; border-radius:10px; cursor:pointer; }
+      .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Unit Converter</h2>
+      <div class="row">
+        <div><input id="value" value="1" /></div>
+        <div><select id="unit"><option value="cm">Cm</option><option value="m">Meter</option><option value="km">Km</option></select></div>
+      </div>
+      <div style="margin-top:12px; text-align:center;"><button onclick="convert()">Convert</button></div>
+      <div id="result" style="margin-top:18px; font-size:1.4rem; font-weight:700;">Hasil: 0.01 m</div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      function convert(){ const v = Number(document.getElementById('value').value) || 0; const u = document.getElementById('unit').value; const map = { cm: v/100, m: v, km: v*1000 }; const out = map[u]; document.getElementById('result').textContent = `Hasil: ${out} ${u}`; }
+      convert();
+    </script>
+  </body>
+</html>

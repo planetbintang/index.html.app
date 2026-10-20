@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timer</title>
+    <style>
+      body { margin: 0; background: #020817; color: #e2e8f0; font-family: Arial, sans-serif; display: grid; place-items: center; min-height: 100vh; }
+      .box { width: min(540px, 90vw); background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.2); border-radius: 16px; padding: 22px; text-align: center; }
+      #display { font-size: 3rem; font-weight: 700; margin: 20px 0; }
+      .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+      button { padding: 10px 14px; border: none; border-radius: 10px; background: #2563eb; color: white; cursor: pointer; }
+      input { width: 110px; padding: 10px; border-radius: 10px; border: 1px solid rgba(148,163,184,0.2); background: #0f172a; color: white; }
+      a { color: #7dd3fc; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Timer</h2>
+      <div id="display">00:00</div>
+      <div class="controls">
+        <input id="minutes" type="number" min="0" max="99" value="5" />
+        <button onclick="startTimer()">Mulai</button>
+        <button onclick="stopTimer()">Stop</button>
+      </div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      let interval = null; let totalSeconds = 300;
+      function render(){ const m = String(Math.floor(totalSeconds / 60)).padStart(2,'0'); const s = String(totalSeconds % 60).padStart(2,'0'); document.getElementById('display').textContent = `${m}:${s}`; }
+      function startTimer(){ if(interval) return; const val = Number(document.getElementById('minutes').value) || 0; totalSeconds = Math.max(0, val * 60); render(); interval = setInterval(() => { if(totalSeconds <= 0){ clearInterval(interval); interval = null; return; } totalSeconds--; render(); }, 1000); }
+      function stopTimer(){ if(interval){ clearInterval(interval); interval = null; } }
+      render();
+    </script>
+  </body>
+</html>

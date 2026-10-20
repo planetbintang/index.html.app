@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Currency Converter</title>
+    <style>
+      body { margin:0; background:#020817; color:#e2e8f0; font-family:Arial; display:grid; place-items:center; min-height:100vh; }
+      .box { width:min(620px,90vw); background:rgba(15,23,42,0.8); border:1px solid rgba(148,163,184,0.2); border-radius:16px; padding:20px; }
+      input, select { width:100%; padding:10px; background:#0f172a; color:#fff; border:1px solid rgba(148,163,184,0.2); border-radius:10px; }
+      button { padding:10px 14px; background:#2563eb; color:#fff; border:none; border-radius:10px; cursor:pointer; }
+      .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+      a { color:#7dd3fc; text-decoration:none; }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Currency Converter</h2>
+      <div class="row">
+        <div><input id="amount" value="100" /></div>
+        <div><select id="from"><option value="IDR">IDR</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div>
+      </div>
+      <div style="margin-top:12px;" class="row">
+        <div><select id="to"><option value="USD">USD</option><option value="IDR">IDR</option><option value="EUR">EUR</option></select></div>
+        <div><button onclick="convert()">Convert</button></div>
+      </div>
+      <div id="result" style="margin-top:18px; font-size:1.3rem; font-weight:700;">Hasil: 0</div>
+      <p><a href="../index.html">← Kembali</a></p>
+    </div>
+    <script>
+      const rates = { IDR:1, USD:0.000065, EUR:0.000059 };
+      function convert(){ const amt = Number(document.getElementById('amount').value) || 0; const from = document.getElementById('from').value; const to = document.getElementById('to').value; const result = amt * (rates[to] / rates[from]); document.getElementById('result').textContent = `Hasil: ${result.toFixed(2)} ${to}`; }
+      convert();
+    </script>
+  </body>
+</html>

@@ -569,6 +569,13 @@ print('Hello from AppHub')
         root.style.setProperty('--card-alt', isDark ? '#f1f5f9' : '#0b1220');
       }
 
+      const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      const domain = isLocal ? 'localhost' : 'github.com/sumberkode';
+      const domainNode = document.getElementById('domain');
+      if (domainNode) {
+        domainNode.textContent = domain;
+      }
+
       updateClock();
       renderCalendar();
       loadEditor();

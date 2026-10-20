@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Generate a todo-driven code system from 10,000 source files.
+"""Generate a todo-driven code system with 50,000 source files.
 
-This script creates a repository-like structure with 100 systems.
-Each system contains 100 Python source files, giving a total of 10,000 files.
-Each generated file also has a real implementation scaffold so the generated
-system can be used as a template for an AI-assisted project backlog.
+This script creates a repository-like structure with 500 systems.
+Each system contains 100 Python source files, giving a total of 50,000 files.
+It is designed to generate large-scale scaffolding for AI-managed project
+backlogs, validation pipelines, and modular repository layouts.
 """
 
 from __future__ import annotations
@@ -12,9 +12,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-SYSTEM_COUNT = 100
-FILES_PER_SYSTEM = 100
-TOTAL_FILES = SYSTEM_COUNT * FILES_PER_SYSTEM
+DEFAULT_SYSTEM_COUNT = 500
+DEFAULT_FILES_PER_SYSTEM = 100
 
 
 def system_name(index: int) -> str:
@@ -78,12 +77,12 @@ All tasks are implemented in the generated source files for this system.
 '''
 
 
-def build_system_readme(system_id: int) -> str:
+def build_system_readme(system_id: int, total_systems: int, files_per_system: int) -> str:
     name = system_name(system_id)
     return f'''# {name}
 
-This folder is one of {SYSTEM_COUNT} generated systems in the repository.
-Each system contains {FILES_PER_SYSTEM} source-code files and follows the same
+This folder is one of {total_systems} generated systems in the repository.
+Each system contains {files_per_system} source-code files and follows the same
 AI-assisted todo workflow.
 
 ## Generated Structure
@@ -97,35 +96,35 @@ modular, scalable, and deployable.
 '''
 
 
-def generate_system(base_dir: Path, system_id: int) -> None:
+def generate_system(base_dir: Path, system_id: int, total_systems: int, files_per_system: int) -> None:
     name = system_name(system_id)
     system_dir = base_dir / name
     system_dir.mkdir(parents=True, exist_ok=True)
 
     (system_dir / "todo.md").write_text(build_todo_markdown(system_id), encoding="utf-8")
-    (system_dir / "README.md").write_text(build_system_readme(system_id), encoding="utf-8")
+    (system_dir / "README.md").write_text(build_system_readme(system_id, total_systems, files_per_system), encoding="utf-8")
 
     src_dir = system_dir / "src"
     src_dir.mkdir(parents=True, exist_ok=True)
 
-    for module_id in range(1, FILES_PER_SYSTEM + 1):
+    for module_id in range(1, files_per_system + 1):
         file_path = src_dir / f"{module_name(module_id)}.py"
         file_path.write_text(build_module(system_id, module_id), encoding="utf-8")
 
 
-def generate_root_docs(base_dir: Path) -> None:
+def generate_root_docs(base_dir: Path, total_files: int, total_systems: int, files_per_system: int) -> None:
     overview = f'''# Todo-driven code system
 
-This repo was generated as a code ecosystem with a total of {TOTAL_FILES} source files.
+This repo was generated as a code ecosystem with a total of {total_files} source files.
 
 ## Structure
-- {SYSTEM_COUNT} generated systems
-- {FILES_PER_SYSTEM} source files per system
+- {total_systems} generated systems
+- {files_per_system} source files per system
 - Each file contains valid Python code and metadata about the system
 
 ## Commands
 ```bash
-python generate_todo_system.py --root . --output-dir generated_todo_system
+python generate_todo_system.py --root . --output-dir generated_todo_system --systems 500 --files-per-system 100
 ```
 
 ## Objective
@@ -136,24 +135,27 @@ modular source-code inventory that follows todo-based development.
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate 10,000 todo-based source files.")
+    parser = argparse.ArgumentParser(description="Generate 50,000 todo-based source files.")
     parser.add_argument("--root", type=str, default=".", help="Repository root")
     parser.add_argument("--output-dir", type=str, default="generated_todo_system", help="Directory to generate")
-    parser.add_argument("--systems", type=int, default=SYSTEM_COUNT, help="Number of systems to generate")
-    parser.add_argument("--files-per-system", type=int, default=FILES_PER_SYSTEM, help="Source files per system")
+    parser.add_argument("--systems", type=int, default=DEFAULT_SYSTEM_COUNT, help="Number of systems to generate")
+    parser.add_argument("--files-per-system", type=int, default=DEFAULT_FILES_PER_SYSTEM, help="Source files per system")
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
     output_dir = root / args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    for system_id in range(1, args.systems + 1):
-        generate_system(output_dir, system_id)
+    total_systems = args.systems
+    files_per_system = args.files_per_system
 
-    generate_root_docs(root)
+    for system_id in range(1, total_systems + 1):
+        generate_system(output_dir, system_id, total_systems, files_per_system)
 
-    print(f"Generated {args.systems} systems with {args.files_per_system} files each.")
-    print(f"Total files: {args.systems * args.files_per_system}")
+    generate_root_docs(root, total_systems * files_per_system, total_systems, files_per_system)
+
+    print(f"Generated {total_systems} systems with {files_per_system} files each.")
+    print(f"Total files: {total_systems * files_per_system}")
     print(f"Output: {output_dir}")
 
 

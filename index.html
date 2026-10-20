@@ -6,22 +6,24 @@
     <title>GitHub Browser</title>
     <style>
       :root {
-        --bg: #0b1020;
+        --bg: #09111d;
         --bg-2: #111827;
         --panel: rgba(15, 23, 42, 0.9);
         --toolbar: rgba(15, 23, 42, 0.96);
+        --toolbar-2: rgba(30, 41, 59, 0.8);
         --text: #e5e7eb;
         --muted: #9ca3af;
         --accent: #7dd3fc;
+        --accent-2: #34d399;
         --border: rgba(148, 163, 184, 0.22);
-        --shadow: rgba(2, 6, 23, 0.6);
+        --shadow: rgba(2, 6, 23, 0.65);
       }
 
       * { box-sizing: border-box; }
       html, body {
         margin: 0;
         height: 100%;
-        background: linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
+        background: linear-gradient(180deg, var(--bg) 0%, #0f172a 100%);
         color: var(--text);
         font-family: Arial, Helvetica, sans-serif;
       }
@@ -30,26 +32,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 100vh;
         padding: 24px;
       }
 
-      .browser {
+      .browser-shell {
         width: min(100%, 1500px);
         height: min(92vh, 980px);
-        background: rgba(15, 23, 42, 0.86);
+        background: rgba(15, 23, 42, 0.9);
         border: 1px solid var(--border);
         border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 20px 50px var(--shadow);
+        box-shadow: 0 24px 50px var(--shadow);
       }
 
       .toolbar {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
+        padding: 12px 14px;
         background: var(--toolbar);
         border-bottom: 1px solid var(--border);
-        padding: 12px 16px;
       }
 
       .traffic {
@@ -69,45 +72,21 @@
       .traffic .yellow { background: #fbbf24; }
       .traffic .green { background: #34d399; }
 
-      .address {
-        flex: 1;
+      .nav-buttons {
         display: flex;
         align-items: center;
-        gap: 10px;
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        color: var(--text);
-        padding: 9px 14px;
-        min-width: 0;
-      }
-
-      .lock {
-        color: var(--accent);
-        font-weight: 700;
-      }
-
-      .address-text {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 0.96rem;
-      }
-
-      .browser-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        gap: 8px;
+        margin-left: 8px;
       }
 
       button {
         border: 1px solid var(--border);
-        background: rgba(30, 41, 59, 0.8);
+        background: rgba(30, 41, 59, 0.75);
         color: var(--text);
-        border-radius: 10px;
         padding: 9px 12px;
+        border-radius: 10px;
         cursor: pointer;
-        font-weight: 600;
+        font-weight: 700;
       }
 
       button:hover {
@@ -115,58 +94,121 @@
         transform: translateY(-1px);
       }
 
-      .status {
+      .address-bar {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 9px 14px;
+        min-width: 0;
+      }
+
+      .lock {
+        color: var(--accent);
+        font-size: 0.95rem;
+      }
+
+      .address-input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-bar {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 10px 16px;
-        background: rgba(15, 23, 42, 0.72);
+        padding: 10px 14px;
+        background: rgba(15, 23, 42, 0.7);
         border-bottom: 1px solid var(--border);
         color: var(--muted);
-        font-size: 0.82rem;
-        letter-spacing: 0.02em;
+        font-size: 0.8rem;
       }
 
-      .status .tag {
-        color: var(--accent);
+      .status-tag {
+        color: var(--accent-2);
         font-weight: 700;
+      }
+
+      .frame-wrap {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 96px);
+        background: #fff;
       }
 
       iframe {
         width: 100%;
-        height: calc(100% - 110px);
+        height: 100%;
         border: 0;
         background: white;
         display: block;
       }
 
       .fallback {
+        position: absolute;
+        inset: 0;
         display: none;
-        padding: 18px 16px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 30px;
+        background: rgba(15, 23, 42, 0.95);
         color: var(--text);
-        background: rgba(15, 23, 42, 0.8);
-        border-top: 1px solid var(--border);
       }
 
       .fallback.show {
-        display: block;
+        display: flex;
+      }
+
+      .fallback-box {
+        max-width: 560px;
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 26px 22px;
+      }
+
+      .fallback h2 {
+        margin: 0 0 10px;
+        font-size: clamp(1.2rem, 2vw, 1.8rem);
+      }
+
+      .fallback p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.6;
       }
 
       .fallback a {
         color: var(--accent);
+        text-decoration: none;
+        font-weight: 700;
       }
 
-      @media (max-width: 720px) {
+      @media (max-width: 760px) {
         body { padding: 12px; }
         .toolbar { gap: 8px; padding: 10px 12px; }
-        button { padding: 8px 10px; }
-        .browser-actions button:nth-child(2) { display: none; }
+        .nav-buttons { display: none; }
+        .actions button:nth-child(2) { display: none; }
       }
     </style>
   </head>
   <body>
-    <div class="browser" role="application" aria-label="GitHub browser">
+    <div class="browser-shell" role="application" aria-label="GitHub browser">
       <div class="toolbar">
         <div class="traffic" aria-hidden="true">
           <span class="red"></span>
@@ -174,68 +216,115 @@
           <span class="green"></span>
         </div>
 
-        <div class="address" aria-label="Alamat situs">
-          <span class="lock">🔒</span>
-          <span class="address-text" id="addressText">https://github.com</span>
+        <div class="nav-buttons">
+          <button id="backBtn" type="button" aria-label="Kembali">←</button>
+          <button id="forwardBtn" type="button" aria-label="Maju">→</button>
+          <button id="reloadBtn" type="button" aria-label="Muat ulang">↻</button>
         </div>
 
-        <div class="browser-actions">
-          <button id="reloadBtn" type="button">Refresh</button>
+        <div class="address-bar">
+          <span class="lock">🔒</span>
+          <input id="addressInput" class="address-input" type="text" value="https://github.com" aria-label="URL browser" />
+        </div>
+
+        <div class="actions">
+          <button id="goBtn" type="button">Go</button>
           <button id="openBtn" type="button">Open</button>
         </div>
       </div>
 
-      <div class="status">
+      <div class="status-bar">
         <span>GitHub Browser</span>
-        <span class="tag">online</span>
+        <span class="status-tag">online</span>
       </div>
 
-      <iframe id="browserFrame" src="https://github.com" title="GitHub browser" loading="lazy"></iframe>
+      <div class="frame-wrap">
+        <iframe id="browserFrame" title="GitHub browser" src="https://github.com"></iframe>
 
-      <div class="fallback" id="fallbackBox">
-        Embedding GitHub diblokir oleh browser. <a href="https://github.com" target="_blank" rel="noopener noreferrer">Buka GitHub di tab baru</a>
+        <div id="fallback" class="fallback" aria-live="polite">
+          <div class="fallback-box">
+            <h2>Konten GitHub diblokir oleh browser</h2>
+            <p>Browser ini sedang menampilkan halaman dalam iframe, tetapi GitHub memblokir embed dari situs lain. Anda tetap bisa membuka GitHub di tab baru.</p>
+            <p><a id="fallbackLink" href="https://github.com" target="_blank" rel="noopener noreferrer">Buka GitHub di tab baru</a></p>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      const addressText = document.getElementById('addressText');
       const browserFrame = document.getElementById('browserFrame');
+      const addressInput = document.getElementById('addressInput');
+      const fallback = document.getElementById('fallback');
+      const backBtn = document.getElementById('backBtn');
+      const forwardBtn = document.getElementById('forwardBtn');
       const reloadBtn = document.getElementById('reloadBtn');
+      const goBtn = document.getElementById('goBtn');
       const openBtn = document.getElementById('openBtn');
-      const fallbackBox = document.getElementById('fallbackBox');
-      const targetUrl = 'https://github.com';
 
-      function setAddress(url) {
+      const DEFAULT_URL = 'https://github.com';
+
+      function normaliseUrl(value) {
+        const trimmed = value.trim();
+        if (!trimmed) return DEFAULT_URL;
+        if (/^https?:\/\//i.test(trimmed)) return trimmed;
+        if (trimmed.includes('.')) return 'https://' + trimmed;
+        return 'https://www.google.com/search?q=' + encodeURIComponent(trimmed);
+      }
+
+      function loadUrl(url) {
+        const safeUrl = normaliseUrl(url);
+        addressInput.value = safeUrl;
+        browserFrame.src = safeUrl;
+        fallback.classList.remove('show');
+      }
+
+      function tryToCheckFrame() {
         try {
-          const value = new URL(url).href;
-          addressText.textContent = value;
-        } catch {
-          addressText.textContent = url;
+          const href = browserFrame.contentWindow.location.href;
+          if (href && href !== 'about:blank') {
+            addressInput.value = href;
+            fallback.classList.remove('show');
+          }
+        } catch (err) {
+          fallback.classList.add('show');
         }
       }
 
-      function loadGithub() {
-        browserFrame.src = targetUrl;
-        setAddress(targetUrl);
-        fallbackBox.classList.remove('show');
-      }
+      backBtn.addEventListener('click', () => {
+        if (browserFrame.contentWindow && browserFrame.contentWindow.history) {
+          browserFrame.contentWindow.history.back();
+        }
+      });
 
-      reloadBtn.addEventListener('click', loadGithub);
+      forwardBtn.addEventListener('click', () => {
+        if (browserFrame.contentWindow && browserFrame.contentWindow.history) {
+          browserFrame.contentWindow.history.forward();
+        }
+      });
+
+      reloadBtn.addEventListener('click', () => {
+        browserFrame.contentWindow.location.reload();
+      });
+
+      goBtn.addEventListener('click', () => {
+        loadUrl(addressInput.value);
+      });
+
       openBtn.addEventListener('click', () => {
-        window.open(targetUrl, '_blank', 'noopener,noreferrer');
+        window.open(addressInput.value || DEFAULT_URL, '_blank', 'noopener,noreferrer');
+      });
+
+      addressInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          loadUrl(addressInput.value);
+        }
       });
 
       browserFrame.addEventListener('load', () => {
-        try {
-          const href = browserFrame.contentWindow.location.href;
-          setAddress(href);
-          fallbackBox.classList.remove('show');
-        } catch (error) {
-          fallbackBox.classList.add('show');
-        }
+        tryToCheckFrame();
       });
 
-      loadGithub();
+      loadUrl(DEFAULT_URL);
     </script>
   </body>
 </html>

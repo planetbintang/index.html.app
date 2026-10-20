@@ -7,10 +7,8 @@
     <style>
       :root {
         --bg: #09111d;
-        --bg-2: #111827;
         --panel: rgba(15, 23, 42, 0.9);
         --toolbar: rgba(15, 23, 42, 0.96);
-        --toolbar-2: rgba(30, 41, 59, 0.8);
         --text: #e5e7eb;
         --muted: #9ca3af;
         --accent: #7dd3fc;
@@ -268,30 +266,37 @@
       const openBtn = document.getElementById('openBtn');
 
       const DEFAULT_URL = 'https://github.com';
-      const PROXY_URL = 'https://r.jina.ai/http://github.com';
+      const PROXY_PREFIX = 'https://r.jina.ai/http://';
 
-      function normaliseUrl(value) {
-        const trimmed = value.trim();
-        if (!trimmed) return DEFAULT_URL;
-        if (/^https?:\/\//i.test(trimmed)) return trimmed;
-        if (trimmed.includes('.')) return 'https://' + trimmed;
-        return 'https://www.google.com/search?q=' + encodeURIComponent(trimmed);
+      function normalizeUrl(raw) {
+        const value = String(raw || '').trim();
+        if (!value) return DEFAULT_URL;
+        if (/^https?:\/\//i.test(value)) return value;
+        if (value.includes('.')) return 'https://' + value;
+        return 'https://www.google.com/search?q=' + encodeURIComponent(value);
+      }
+
+      function toProxyUrl(url) {
+        const normalized = normalizeUrl(url);
+        if (/^https?:\/\//i.test(normalized)) {
+          return PROXY_PREFIX + normalized.replace(/^https?:\/\//i, '');
+        }
+        return PROXY_PREFIX + 'github.com';
       }
 
       function loadUrl(url) {
-        const safeUrl = normaliseUrl(url);
-        const frameUrl = safeUrl === DEFAULT_URL ? PROXY_URL : ('https://r.jina.ai/http://' + safeUrl.replace(/^https?:\/\//i, ''));
-        addressInput.value = safeUrl;
-        browserFrame.src = frameUrl;
+        const normalized = normalizeUrl(url);
+        addressInput.value = normalized;
+        browserFrame.src = toProxyUrl(normalized);
         fallback.classList.remove('show');
       }
 
-      function tryToCheckFrame() {
+      function detectBlock() {
         try {
           const href = browserFrame.contentWindow.location.href;
-          if (href && href !== 'about:blank') {
-            addressInput.value = href.replace(/^https?:\/\/r\.jina\.ai\/http\//i, 'https://');
+          if (href && href.includes('github.com') || href.includes('r.jina.ai')) {
             fallback.classList.remove('show');
+            return;
           }
         } catch (err) {
           fallback.classList.add('show');
@@ -299,27 +304,15 @@
       }
 
       backBtn.addEventListener('click', () => {
-        try {
-          browserFrame.contentWindow.history.back();
-        } catch (err) {
-          loadUrl(DEFAULT_URL);
-        }
+        try { browserFrame.contentWindow.history.back(); } catch (err) { loadUrl(DEFAULT_URL); }
       });
 
       forwardBtn.addEventListener('click', () => {
-        try {
-          browserFrame.contentWindow.history.forward();
-        } catch (err) {
-          loadUrl(DEFAULT_URL);
-        }
+        try { browserFrame.contentWindow.history.forward(); } catch (err) { loadUrl(DEFAULT_URL); }
       });
 
       reloadBtn.addEventListener('click', () => {
-        try {
-          browserFrame.contentWindow.location.reload();
-        } catch (err) {
-          loadUrl(DEFAULT_URL);
-        }
+        try { browserFrame.contentWindow.location.reload(); } catch (err) { loadUrl(DEFAULT_URL); }
       });
 
       goBtn.addEventListener('click', () => {
@@ -327,7 +320,8 @@
       });
 
       openBtn.addEventListener('click', () => {
-        window.open(addressInput.value || DEFAULT_URL, '_blank', 'noopener,noreferrer');
+        const target = addressInput.value || DEFAULT_URL;
+        window.open(normalizeUrl(target), '_blank', 'noopener,noreferrer');
       });
 
       addressInput.addEventListener('keydown', (event) => {
@@ -336,10 +330,7 @@
         }
       });
 
-      browserFrame.addEventListener('load', () => {
-        tryToCheckFrame();
-      });
-
+      browserFrame.addEventListener('load', detectBlock);
       loadUrl(DEFAULT_URL);
     </script>
   </body>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sitemap Builder</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: linear-gradient(135deg, #020617, #111827); color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,.7); color:#e2e8f0; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#f97316; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(249,115,22,0.08); border:1px solid rgba(251,146,60,0.25); border-radius:12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>66 • Sitemap Builder</h1>
+      <p>Buat struktur sitemap dasar untuk website.</p>
+      <input id="site" value="https://example.com" />
+      <div class="row">
+        <button id="build">Build</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Sitemap hasil rendring akan muncul di sini.</div>
+    </div>
+    <script>
+      const siteEl = document.getElementById('site');
+      const outputEl = document.getElementById('output');
+      document.getElementById('build').addEventListener('click', () => {
+        const site = siteEl.value.trim() || 'https://example.com';
+        const pages = ['/', '/about', '/docs', '/pricing', '/contact'];
+        outputEl.textContent = pages.map(page => `${site}${page}`).join('\n');
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        siteEl.value = 'https://example.com';
+        outputEl.textContent = 'Sitemap hasil rendring akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

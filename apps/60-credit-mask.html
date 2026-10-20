@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Credit Mask</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: linear-gradient(135deg, #0f172a, #020617); color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,.7); color:#e2e8f0; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#22c55e; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(34,197,94,0.08); border:1px solid rgba(74,222,128,0.25); border-radius:12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>60 • Credit Mask</h1>
+      <p>Masking nomor kartu agar aman ditampilkan.</p>
+      <input id="card" value="1234567890123456" />
+      <div class="row">
+        <button id="mask">Mask</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Nomor kartu terenkripsi akan muncul di sini.</div>
+    </div>
+    <script>
+      const cardEl = document.getElementById('card');
+      const outputEl = document.getElementById('output');
+      document.getElementById('mask').addEventListener('click', () => {
+        const value = cardEl.value.replace(/\D/g, '');
+        const masked = value.slice(-4).padStart(value.length, '*');
+        outputEl.textContent = `Original: ${value}\nMasked: ${masked}`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        cardEl.value = '1234567890123456';
+        outputEl.textContent = 'Nomor kartu terenkripsi akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

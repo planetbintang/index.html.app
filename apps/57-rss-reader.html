@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSS Reader</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#020617; color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,.7); color:#e2e8f0; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#fbbf24; color:#111827; cursor:pointer; font-weight:800; }
+      button.secondary { background:transparent; }
+      #output { background: rgba(251,191,36,0.08); border:1px solid rgba(252,211,77,0.25); border-radius:12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>57 • RSS Reader</h1>
+      <p>Ringkas feed sederhana ke daftar item berita.</p>
+      <input id="rss" value="AppHub Monday Update" />
+      <div class="row">
+        <button id="read">Baca RSS</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Item RSS akan muncul di sini.</div>
+    </div>
+    <script>
+      const rssEl = document.getElementById('rss');
+      const outputEl = document.getElementById('output');
+      const feed = [
+        'AppHub menambahkan modul baru.',
+        'Desain antarmuka layar diperbarui.',
+        'Fitur publikasi GitHub Pages aktif.'
+      ];
+      document.getElementById('read').addEventListener('click', () => {
+        const name = rssEl.value.trim() || 'AppHub';
+        outputEl.textContent = `${name}\n${feed.map((item, index) => `${index + 1}. ${item}`).join('\n')}`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        rssEl.value = 'AppHub Monday Update';
+        outputEl.textContent = 'Item RSS akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

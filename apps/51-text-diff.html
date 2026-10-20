@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Diff</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: #0f172a; color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      textarea, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      textarea { background: rgba(2,6,23,.7); color:#e2e8f0; min-height:110px; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#10b981; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background:transparent; }
+      #output { background: rgba(16,185,129,0.08); border:1px solid rgba(52,211,153,0.25); border-radius:12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>51 • Text Diff</h1>
+      <p>Bandingkan dua versi teks dan tampilkan baris baru.</p>
+      <textarea id="old">alpha
+beta
+gamma</textarea>
+      <textarea id="new">alpha
+beta
+delta</textarea>
+      <div class="row">
+        <button id="diff">Bandingkan</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Perbedaan akan muncul di sini.</div>
+    </div>
+    <script>
+      const oldEl = document.getElementById('old');
+      const newEl = document.getElementById('new');
+      const outputEl = document.getElementById('output');
+      document.getElementById('diff').addEventListener('click', () => {
+        const oldLines = oldEl.value.split('\n');
+        const newLines = newEl.value.split('\n');
+        const unique = newLines.filter(line => !oldLines.includes(line));
+        outputEl.textContent = unique.length ? `Baris baru:\n${unique.join('\n')}` : 'Tidak ada perubahan.';
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        oldEl.value = 'alpha\nbeta\ngamma';
+        newEl.value = 'alpha\nbeta\ndelta';
+        outputEl.textContent = 'Perbedaan akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

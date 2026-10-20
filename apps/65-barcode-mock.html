@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Barcode Mock</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#020617; color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,.7); color:#e2e8f0; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#14b8a6; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(20,184,166,0.08); border:1px solid rgba(45,212,191,0.25); border-radius:12px; padding:14px; margin-top:14px; }
+      .barcode { display:flex; gap:4px; margin-top:14px; }
+      .bar { flex: 1; height: 60px; background: #e2e8f0; border-radius: 2px; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>65 • Barcode Mock</h1>
+      <p>Buat representasi barcode simple dari nomor.</p>
+      <input id="code" value="A-2048" />
+      <div class="row">
+        <button id="render">Render</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output"></div>
+    </div>
+    <script>
+      const codeEl = document.getElementById('code');
+      const outputEl = document.getElementById('output');
+      document.getElementById('render').addEventListener('click', () => {
+        const code = (codeEl.value.trim() || 'A-2048').split('').map(char => char.charCodeAt(0) % 7 + 1);
+        outputEl.innerHTML = `<div class="barcode">${code.map((value, index) => `<div class="bar" style="height:${value * 8 + 12}px; opacity:${(index % 4) / 2 + 0.5};"></div>`).join('')}</div><p>${codeEl.value}</p>`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        codeEl.value = 'A-2048';
+        outputEl.innerHTML = '';
+      });
+    </script>
+  </body>
+</html>

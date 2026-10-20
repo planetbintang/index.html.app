@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Palette</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: linear-gradient(135deg, #0f172a, #1f2937); color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,.7); color:#e2e8f0; margin:18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background:#f472b6; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(244,114,182,0.08); border:1px solid rgba(249,168,212,0.25); border-radius:12px; padding:14px; margin-top:14px; }
+      .swatches { display:flex; gap:10px; margin-top:10px; }
+      .swatch { width: 60px; height: 60px; border-radius: 12px; border: 1px solid rgba(148,163,184,.25); }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>62 • Color Palette</h1>
+      <p>Generate skema warna dasar untuk UI.</p>
+      <input id="base" value="#7dd3fc" />
+      <div class="row">
+        <button id="generate">Generate</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output"></div>
+    </div>
+    <script>
+      const baseEl = document.getElementById('base');
+      const outputEl = document.getElementById('output');
+      function hexToRgb(hex) {
+        const clean = hex.replace('#', '');
+        const bigint = parseInt(clean, 16);
+        return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+      }
+      document.getElementById('generate').addEventListener('click', () => {
+        const base = baseEl.value.trim() || '#7dd3fc';
+        const { r, g, b } = hexToRgb(base);
+        const colors = [base, `rgb(${r}, ${g}, ${b})`, `rgb(${Math.max(0, r - 30)}, ${Math.max(0, g - 30)}, ${Math.max(0, b - 30)})`, `rgb(${Math.min(255, r + 40)}, ${Math.min(255, g + 40)}, ${Math.min(255, b + 40)})`];
+        outputEl.innerHTML = `<div class="swatches">${colors.map(color => `<div class="swatch" style="background:${color};"></div>`).join('')}</div>`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        baseEl.value = '#7dd3fc';
+        outputEl.innerHTML = '';
+      });
+    </script>
+  </body>
+</html>

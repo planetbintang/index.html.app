@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Locale Clock</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: linear-gradient(135deg, #0f172a, #020617); color:#e2e8f0; font-family:Arial,Helvetica,sans-serif; }
+      .panel { width:min(760px,92vw); background:rgba(15,23,42,.9); border:1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; background:#f59e0b; color:#111827; cursor:pointer; font-weight:900; }
+      #output { background: rgba(245,158,11,0.08); border:1px solid rgba(252,211,77,0.25); border-radius:12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>69 • Locale Clock</h1>
+      <p>Tampilkan waktu lokal dan zona untuk saat ini.</p>
+      <button id="show">Lihat Waktu</button>
+      <div id="output">Waktu lokal akan muncul di sini.</div>
+    </div>
+    <script>
+      const outputEl = document.getElementById('output');
+      document.getElementById('show').addEventListener('click', () => {
+        const now = new Date();
+        outputEl.textContent = `Local: ${now.toLocaleString()}\nUTC: ${now.toUTCString()}\nTimezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`;
+      });
+    </script>
+  </body>
+</html>

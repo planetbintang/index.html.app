@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Index</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background: linear-gradient(135deg, #020617, #172554); color:#e2e8f0; font-family: Arial, Helvetica, sans-serif; }
+      .panel { width: min(760px, 92vw); background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(148,163,184,.25); border-radius:18px; padding:28px; }
+      h1 { margin-top:0; }
+      input, button { width:100%; border-radius:12px; border:1px solid rgba(148,163,184,.25); padding:12px 14px; font-size:1rem; }
+      input { background: rgba(2,6,23,0.7); color:#e2e8f0; margin: 18px 0; }
+      .row { display:flex; gap:10px; }
+      button { background: #3b82f6; color:white; cursor:pointer; font-weight:700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(59,130,246,0.08); border: 1px solid rgba(96,165,250,0.25); border-radius: 12px; padding:14px; margin-top:14px; white-space:pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>47 • Search Index</h1>
+      <p>Cari item dari daftar index lokal.</p>
+      <input id="keyword" value="design" />
+      <div class="row">
+        <button id="search">Cari</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Hasil pencarian akan muncul di sini.</div>
+    </div>
+    <script>
+      const items = ['design', 'editor', 'apphub', 'launcher', 'system', 'network', 'motion', 'storyboard'];
+      const keywordEl = document.getElementById('keyword');
+      const outputEl = document.getElementById('output');
+      document.getElementById('search').addEventListener('click', () => {
+        const keyword = keywordEl.value.trim().toLowerCase();
+        const found = items.filter(item => item.includes(keyword));
+        outputEl.textContent = `Query: ${keyword}\nHasil: ${found.length ? found.join(', ') : 'Tidak ditemukan'}`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        keywordEl.value = 'design';
+        outputEl.textContent = 'Hasil pencarian akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

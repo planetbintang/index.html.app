@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DNS Lookup</title>
+    <style>
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #020617; color: #e2e8f0; font-family: Arial,Helvetica,sans-serif; }
+      .panel { width: min(760px, 92vw); background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(148,163,184,.25); border-radius: 18px; padding: 28px; }
+      h1 { margin-top: 0; }
+      input, button { width: 100%; border-radius: 12px; border: 1px solid rgba(148,163,184,.25); padding: 12px 14px; font-size: 1rem; }
+      input { background: rgba(2, 6, 23, 0.7); color: #e2e8f0; margin: 18px 0; }
+      .row { display: flex; gap: 10px; }
+      button { background: #14b8a6; color: white; cursor: pointer; font-weight: 700; }
+      button.secondary { background: transparent; }
+      #output { background: rgba(20,184,166,0.08); border: 1px solid rgba(45,212,191,0.25); border-radius: 12px; padding: 14px; margin-top: 14px; white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>44 • DNS Lookup</h1>
+      <p>Cek domain target dan tampilkan alias ringkas.</p>
+      <input id="domain" value="github.com" />
+      <div class="row">
+        <button id="lookup">Cari</button>
+        <button class="secondary" id="reset">Reset</button>
+      </div>
+      <div id="output">Hasil lookup akan muncul di sini.</div>
+    </div>
+    <script>
+      const domainEl = document.getElementById('domain');
+      const outputEl = document.getElementById('output');
+      const records = ['github.com: A 140.82.112.4', 'github.com: CNAME github.githubassets.com', 'github.com: MX mail.github.com'];
+      document.getElementById('lookup').addEventListener('click', () => {
+        const domain = domainEl.value.trim() || 'github.com';
+        outputEl.textContent = `Domain: ${domain}\n${records.map(item => item.replace('github.com', domain)).join('\n')}`;
+      });
+      document.getElementById('reset').addEventListener('click', () => {
+        domainEl.value = 'github.com';
+        outputEl.textContent = 'Hasil lookup akan muncul di sini.';
+      });
+    </script>
+  </body>
+</html>

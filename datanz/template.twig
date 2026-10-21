@@ -1,0 +1,9 @@
+{% extends "layout.twig" %}
+{% block title %}Data NZ{% endblock %}
+{% block content %}
+<section class="data-panel" data-endpoint="{{ endpoint|e }}">
+  <h1>Data NZ</h1>
+  <input data-search placeholder="Cari path sistem...">
+  <div data-results></div>
+</section>
+{% endblock %}

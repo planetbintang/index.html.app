@@ -1,0 +1,6 @@
+$ink: #102025; $paper: #f7f5ef; $accent: #d94b32;
+.data-panel { max-width: 1100px; margin: 2rem auto; padding: 2rem; color: $ink; background: $paper; }
+[data-search] { width: 100%; padding: .8rem; border: 1px solid $ink; }
+[data-results] { display: grid; gap: .5rem; margin-top: 1rem; }
+.data-row { padding: .7rem; border-bottom: 1px solid #ddd; font-family: monospace; }
+.data-row button { color: $accent; }

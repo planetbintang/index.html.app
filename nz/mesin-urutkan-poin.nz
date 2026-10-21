@@ -1,0 +1,25 @@
+#!/bin/sh
+# Mesin virtual penyimpanan nz nomor 13.
+# Skrip ini transparan dan tidak membuat kapasitas fisik unlimited.
+KORPUS="nz/korpus-ilmu-pengetahuan-10000.nz"
+MODE="virtual-terbatas"
+BATAS_FISIK="mengikuti-disk-dan-layanan-nyata"
+
+baca_konfigurasi() {
+  echo "mesin=mesin-urutkan-poin"
+  echo "korpus=$KORPUS"
+  echo "mode=$MODE"
+  echo "batas_fisik=$BATAS_FISIK"
+}
+
+validasi_rentang() {
+  awal="${1:-1}"
+  akhir="${2:-10000}"
+  case "$awal" in ''|*[!0-9]*) echo "Rentang awal harus berupa angka" >&2; return 2;; esac
+  case "$akhir" in ''|*[!0-9]*) echo "Rentang akhir harus berupa angka" >&2; return 2;; esac
+  [ "$awal" -ge 1 ] && [ "$akhir" -le 10000 ] && [ "$awal" -le "$akhir"]
+}
+
+baca_konfigurasi
+validasi_rentang "${1:-1}" "${2:-10000}" || exit $?
+echo "Rentang tervalidasi; data dibaca hanya dari corpus yang tersedia."

@@ -1,0 +1,3 @@
+/* Monitoring browser: metrik lokal, bukan monitoring server global. */
+const KEY='datanz-monitor-v1';const read=()=>JSON.parse(localStorage.getItem(KEY)||'{"views":0,"queries":0,"errors":0,"events":[]}');const save=x=>localStorage.setItem(KEY,JSON.stringify(x));
+export function createMonitor(){return {event:(name,meta={})=>{const x=read();x.events.push({name,meta,at:new Date().toISOString()});x.events=x.events.slice(-500);if(name==='view')x.views++;if(name==='query')x.queries++;if(name==='error')x.errors++;save(x)},snapshot:()=>read(),reset:()=>localStorage.removeItem(KEY),export:()=>new Blob([JSON.stringify(read(),null,2)],{type:'application/json'})}}

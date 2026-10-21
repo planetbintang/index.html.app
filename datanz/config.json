@@ -1,0 +1,1 @@
+{"name":"datanz","mode":"static-compatible","manifest":"manifest.jsonl.gz","api_base":"/api/datanz","storage":"browser-local","sync":"queue-and-export","auth":"web-crypto-demo"}

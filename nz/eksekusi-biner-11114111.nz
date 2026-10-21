@@ -1,0 +1,30 @@
+#!/bin/sh
+# Mesin nz: validasi kode dan mode kapasitas virtual.
+KODE_BINER="11114111"
+MODE_PENYIMPANAN="virtual"
+KAPASITAS_LOGIS="tidak-terbatas-secara-teoretis"
+KAPASITAS_FISIK="mengikuti-disk-dan-layanan-nyata"
+
+validasi_biner() {
+  case "$KODE_BINER" in
+    *[!01]*)
+      echo "Kode bukan biner valid: $KODE_BINER" >&2
+      echo "Angka 4 membuat kode ini bukan bilangan biner." >&2
+      return 2
+      ;;
+    *)
+      echo "Kode biner valid: $KODE_BINER"
+      ;;
+  esac
+}
+
+jalankan_mesin_nz() {
+  echo "Mode: $MODE_PENYIMPANAN"
+  echo "Kapasitas logis: $KAPASITAS_LOGIS"
+  echo "Kapasitas fisik: $KAPASITAS_FISIK"
+  echo "Mesin hanya mengolah berkas .nz yang diizinkan."
+  echo "Mesin tidak membuat kapasitas fisik unlimited."
+}
+
+validasi_biner || exit $?
+jalankan_mesin_nz

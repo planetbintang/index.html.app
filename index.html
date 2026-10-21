@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Beranda ilmu pengetahuan AL.L — pencarian, bacaan, media, dan indeks sistem." />
+  <title>AL.L — Pusat Ilmu Pengetahuan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ticker"><span>● LANGSUNG</span><span id="tickerText">Indeks ilmu aktif · memuat pengetahuan lintas bidang</span><span id="clock"></span></div>
+  <header class="masthead">
+    <a class="wordmark" href="#top" aria-label="AL.L beranda"><b>AL</b><i>.</i><b>L</b><small>SCIENCE DESK</small></a>
+    <nav><a class="active" href="#top">Beranda</a><a href="#indeks">Indeks</a><a href="#bacaan">Bacaan</a><a href="#media">Media</a><a href="#monitor">Monitoring</a></nav>
+    <button class="menu" id="menuButton" aria-label="Buka menu">☰</button>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy"><p class="eyebrow">KORAN ILMU · EDISI SISTEM NZ</p><h1>Pengetahuan yang<br /><em>bergerak bersama bukti.</em></h1><p class="lede">Mesin pencari dan ruang baca untuk ribuan poin ilmu pengetahuan dari sistem <strong>AL.L</strong>. Cari judul, telusuri indeks, lalu baca penjelasan per poin.</p><form class="search" id="searchForm"><span>⌕</span><input id="searchInput" placeholder="Cari judul, bidang, atau kata pengetahuan..." autocomplete="off" /><button type="submit">Cari</button></form><div class="quick"><button data-query="fisika">Fisika</button><button data-query="kecerdasan buatan">Kecerdasan buatan</button><button data-query="lingkungan">Lingkungan</button><button data-query="kesehatan">Kesehatan</button></div></div>
+      <div class="hero-art" aria-label="Animasi orbit pengetahuan"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="planet"><span>AL</span></div><span class="orb o1">BIO</span><span class="orb o2">DATA</span><span class="orb o3">ENERGI</span></div>
+    </section>
+    <section class="metrics" id="monitor"><div><b id="viewCount">0</b><span>tampilan sesi ini</span></div><div><b>10.000</b><span>poin dalam korpus</span></div><div><b>100</b><span>baris tiap bacaan</span></div><div><b class="live-dot">●</b><span>indeks aktif di browser</span></div></section>
+    <section class="section" id="bacaan"><div class="section-head"><div><p class="eyebrow">PILIHAN REDAKSI</p><h2>Judul yang sedang dibaca</h2></div><span class="section-note" id="resultNote">24 judul lintas pengetahuan</span></div><div class="story-grid" id="storyGrid"></div></section>
+    <section class="section split" id="indeks"><div><div class="section-head"><div><p class="eyebrow">PETA PENGETAHUAN</p><h2>Indeks bidang</h2></div></div><div class="index-grid" id="indexGrid"></div></div><aside class="side-card"><p class="eyebrow">MESIN NZ</p><h3>Bagaimana sistem membaca?</h3><p>Setiap modul menunjuk ke rentang poin dalam korpus terkompresi. Halaman ini menampilkan indeks secara bertahap agar tetap ringan di GitHub Pages.</p><div class="meter"><span></span></div><small><b id="indexedCount">0</b> judul terindeks pada sesi ini</small></aside></section>
+    <section class="section" id="media"><div class="section-head"><div><p class="eyebrow">LABORATORIUM VISUAL</p><h2>Ilmu dalam gerak</h2></div></div><div class="media-grid"><article class="visual-card visual-image"><div class="constellation"><i></i><i></i><i></i><i></i><svg viewBox="0 0 400 220" aria-hidden="true"><path d="M25 180C115 45 220 230 375 36"/><circle cx="105" cy="92" r="28"/><circle cx="294" cy="105" r="16"/></svg></div><div><span class="tag">GAMBAR · ASTRONOMI</span><h3>Peta hubungan antara bintang dan data</h3></div></article><article class="visual-card video-card"><video muted loop autoplay playsinline poster=""><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" /></video><div class="video-overlay"><span class="play">▶</span><span class="tag">VIDEO · BIOLOGI</span><h3>Perubahan kecil yang membentuk sistem hidup</h3></div></article><article class="visual-card visual-chart"><div class="bars"><i style="height:38%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:88%"></i><i style="height:72%"></i><i style="height:96%"></i></div><div><span class="tag">ANIMASI · DATA</span><h3>Pola, ukuran, dan keputusan</h3></div></article></div></section>
+    <section class="reader" id="reader" hidden><div class="reader-head"><button id="closeReader">← Kembali ke indeks</button><span id="readerMeta"></span></div><div class="reader-layout"><article><p class="eyebrow" id="readerCategory"></p><h2 id="readerTitle"></h2><p class="reader-deck" id="readerDeck"></p><div class="reading" id="reading"></div></article><aside class="reader-aside"><div class="aside-box"><span class="tag">RINGKASAN</span><p>Artikel ini terdiri dari 100 baris pengetahuan. Setiap baris adalah satu poin definisi yang dapat dibaca, dicari, dan dibagikan.</p><button class="share" id="shareButton">Salin tautan bacaan</button></div><div class="aside-box"><span class="tag">RENTANG KORPUS</span><strong id="readerRange">1—100</strong><small>poin ilmu pengetahuan</small></div></aside></div></section>
+  </main>
+  <footer><span>AL.L / NZ SCIENCE DESK</span><span>Berbasis data repository · monitoring sesi lokal</span><span id="footerStatus">siap membaca</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

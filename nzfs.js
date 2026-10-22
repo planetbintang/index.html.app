@@ -1,24 +1,27 @@
-/* Filesystem virtual .nz baca-saja untuk GitHub Pages. */
+/* Filesystem virtual .nz baca-saja untuk GitHub Pages; katalog berisi path file, isi dibaca on-demand. */
 (() => {
   'use strict';
 
   const scriptUrl = document.currentScript?.src || document.baseURI;
   const repoRoot = new URL('./', scriptUrl);
   const textCache = new Map();
-  const corpusPath = 'nz/korpus-ilmu-pengetahuan-10000.nz';
+  const summaryCache = { promise: null };
+  const legacyCorpusPath = 'nz/korpus-ilmu-pengetahuan-10000.nz';
+  const catalogPath = 'datanz/nz-catalog.txt.gz';
+  const summaryPath = 'datanz/nz-catalog-summary.json';
 
   function normalizePath(input) {
     let value = String(input || '').trim().replace(/\\/g, '/');
     value = value.replace(/^(?:\.\/)+/, '');
     const parts = value.split('/');
-    if (!value || value.startsWith('/') || /[?#]/.test(value) || parts.some(part => !part || part === '.' || part === '..')) {
+    if (!value || value.startsWith('/') || /[?#]/.test(value) || value.includes('://') || parts.some(part => !part || part === '.' || part === '..')) {
       throw new Error('Path harus relatif terhadap repository dan tidak boleh keluar dari root.');
     }
     if (!value.toLowerCase().endsWith('.nz')) throw new Error('Filesystem ini hanya membuka file .nz.');
     return value;
   }
 
-  function fileUrl(path) {
+  function urlForPath(path) {
     const safePath = normalizePath(path);
     const encoded = safePath.split('/').map(encodeURIComponent).join('/');
     const url = new URL(encoded, repoRoot);
@@ -32,7 +35,8 @@
     const safePath = normalizePath(path);
     if (textCache.has(safePath)) return textCache.get(safePath);
     const pending = (async () => {
-      const response = await fetch(fileUrl(safePath), { cache: 'force-cache' });
+      if (safePath === legacyCorpusPath) throw new Error('Korpus lama telah dilepas dari beranda; buka file .nz sumber lain.');
+      const response = await fetch(urlForPath(safePath), { cache: 'force-cache' });
       if (!response.ok) throw new Error(`Berkas ${safePath} tidak tersedia (HTTP ${response.status}).`);
       const bytes = new Uint8Array(await response.arrayBuffer());
       let text;
@@ -54,6 +58,98 @@
     }
   }
 
+  async function readSummary() {
+    if (!summaryCache.promise) {
+      summaryCache.promise = fetch(new URL(summaryPath, repoRoot), { cache: 'force-cache' })
+        .then(response => {
+          if (!response.ok) throw new Error(`Ringkasan katalog tidak tersedia (HTTP ${response.status}).`);
+          return response.json();
+        });
+    }
+    return summaryCache.promise;
+  }
+
+  async function* catalogLines() {
+    const response = await fetch(new URL(catalogPath, repoRoot), { cache: 'force-cache' });
+    if (!response.ok) throw new Error(`Katalog file .nz tidak tersedia (HTTP ${response.status}).`);
+    if (!response.body) throw new Error('Browser tidak menyediakan aliran baca untuk katalog.');
+    const sourceReader = response.body.getReader();
+    const firstChunks = [];
+    let firstLength = 0;
+    let sourceEnded = false;
+    while (firstLength < 2 && !sourceEnded) {
+      const item = await sourceReader.read();
+      if (item.done) { sourceEnded = true; break; }
+      firstChunks.push(item.value);
+      firstLength += item.value.length;
+    }
+    let firstPending = null;
+    if (firstLength) {
+      firstPending = new Uint8Array(firstLength);
+      let offset = 0;
+      for (const chunk of firstChunks) { firstPending.set(chunk, offset); offset += chunk.length; }
+    }
+    const startsGzip = !!firstPending && firstPending.length > 1 && firstPending[0] === 0x1f && firstPending[1] === 0x8b;
+    let byteStream = new ReadableStream({
+      async pull(controller) {
+        if (firstPending) {
+          controller.enqueue(firstPending);
+          firstPending = null;
+          return;
+        }
+        const item = await sourceReader.read();
+        if (item.done) controller.close();
+        else controller.enqueue(item.value);
+      },
+      cancel(reason) { return sourceReader.cancel(reason); }
+    });
+    if (startsGzip) {
+      if (typeof DecompressionStream === 'undefined') throw new Error('Browser ini belum mendukung pencarian katalog gzip.');
+      byteStream = byteStream.pipeThrough(new DecompressionStream('gzip'));
+    }
+    const textReader = byteStream.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = '';
+    let completed = false;
+    try {
+      while (true) {
+        const { value, done } = await textReader.read();
+        if (done) { completed = true; break; }
+        buffer += value;
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) if (line) yield line.replace(/\r$/, '');
+      }
+      if (buffer) yield buffer.replace(/\r$/, '');
+    } finally {
+      if (!completed) await textReader.cancel().catch(() => {});
+      textReader.releaseLock();
+    }
+  }
+
+  async function searchFiles(query = '', limit = 24, onProgress = () => {}) {
+    const summary = await readSummary();
+    const q = String(query || '').trim().toLocaleLowerCase('id-ID');
+    const items = [];
+    let scanned = 0;
+    let truncated = false;
+    for await (const path of catalogLines()) {
+      scanned += 1;
+      const matches = q ? path.toLocaleLowerCase('id-ID').includes(q) : path.startsWith('AL.L/');
+      if (matches) {
+        items.push({ path, title: path.split('/').pop().replace(/\.nz$/i, '').replace(/[-_]+/g, ' ') });
+        if (items.length >= limit) {
+          truncated = true;
+          break;
+        }
+      }
+      if (scanned % 50000 === 0) {
+        onProgress({ scanned, total: summary.catalog_file_count });
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+    return { items, total: summary.catalog_file_count, scanned, truncated, query: q };
+  }
+
   function keyValues(text) {
     const out = {};
     for (const line of text.split(/\r?\n/)) {
@@ -71,8 +167,7 @@
     const points = [];
     for (const line of text.split(/\r?\n/)) {
       const match = /^\s*Poin\s+(\d+)\s*:\s*(.*)\s*$/i.exec(line);
-      if (!match) continue;
-      points.push({ number: Number(match[1]), title: null, body: match[2], raw: line.trim(), sources: [] });
+      if (match) points.push({ number: Number(match[1]), title: null, body: match[2], raw: line.trim(), sources: [] });
     }
     return points;
   }
@@ -98,96 +193,58 @@
       if (!current) {
         const field = /^([a-zA-Z0-9_.-]+)\s*=\s*(.*?)\s*$/.exec(line);
         if (field) metadata[field[1].toLowerCase()] = field[2];
-      } else {
-        current.bodyLines.push(line);
-      }
+      } else current.bodyLines.push(line);
     }
     const normalizedPoints = points.map(point => ({
-      number: point.number,
-      title: point.title,
-      body: point.bodyLines.join('\n').trim(),
+      number: point.number, title: point.title, body: point.bodyLines.join('\n').trim(),
       sources: point.sources.length ? point.sources : metadata.sources.slice()
     }));
-    const missingTitles = normalizedPoints.filter(point => !point.title).length;
-    const missingBodies = normalizedPoints.filter(point => !point.body).length;
-    const missingSources = normalizedPoints.filter(point => !point.sources.length).length;
     return {
       type: 'article', path, title: metadata.title || path.split('/').pop().replace(/\.nz$/i, ''),
-      category: metadata.category || '', abstract: metadata.abstract || '',
-      editorialLabel: metadata.status || 'draft', points: normalizedPoints,
-      integrity: { missingTitles, missingBodies, missingSources, parserVerified: false }, metadata
+      category: metadata.category || '', abstract: metadata.abstract || '', editorialLabel: metadata.status || 'draft',
+      points: normalizedPoints,
+      integrity: {
+        missingTitles: normalizedPoints.filter(point => !point.title).length,
+        missingBodies: normalizedPoints.filter(point => !point.body).length,
+        missingSources: normalizedPoints.filter(point => !point.sources.length).length,
+        parserVerified: false
+      }, metadata
     };
-  }
-
-  function rangeFromPointer(value, total) {
-    const match = /^(\d+)\s*-\s*(\d+)$/.exec(String(value || '').trim());
-    if (!match) throw new Error('rentang_poin harus berbentuk angka-awal-angka-akhir, misalnya 1-10.');
-    const start = Number(match[1]);
-    const end = Number(match[2]);
-    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 1 || end < start || end > total) {
-      throw new Error('Rentang poin tidak valid atau melewati jumlah poin sumber.');
-    }
-    return { start, end };
   }
 
   async function read(path) {
     const safePath = normalizePath(path);
+    if (safePath === legacyCorpusPath) throw new Error('Korpus lama tidak ditampilkan. Pilih file .nz dari katalog.');
     const text = await fetchText(safePath);
     const firstLine = (text.split(/\r?\n/, 1)[0] || '').trim();
-
     if (/^#\s*Pointer mesin nz$/i.test(firstLine)) {
       const metadata = keyValues(text);
-      const sourcePath = normalizePath(metadata.corpus || '');
-      const corpusText = await fetchText(sourcePath);
-      const corpusPoints = parseLegacyPoints(corpusText);
-      if (!corpusPoints.length) throw new Error(`Korpus ${sourcePath} tidak berisi baris "Poin N:" yang dikenali.`);
-      const declaredTotal = Number(metadata.jumlah_poin || corpusPoints.length);
-      if (!Number.isSafeInteger(declaredTotal) || declaredTotal !== corpusPoints.length) {
-        throw new Error(`Jumlah poin pada pointer (${metadata.jumlah_poin}) tidak cocok dengan korpus (${corpusPoints.length}).`);
-      }
-      const range = rangeFromPointer(metadata.rentang_poin, declaredTotal);
-      const points = corpusPoints.filter(point => point.number >= range.start && point.number <= range.end);
-      if (points.length !== range.end - range.start + 1) throw new Error('Baris korpus tidak lengkap untuk rentang pointer yang diminta.');
+      let targetPath = null;
+      if (metadata.corpus) targetPath = normalizePath(metadata.corpus);
       return {
-        type: 'pointer', path: safePath, sourcePath, title: metadata.title || safePath.split('/').pop().replace(/\.nz$/i, ''),
-        category: metadata.category || '', metadata, range, totalPoints: declaredTotal, points,
-        integrity: { missingTitles: points.length, missingBodies: 0, missingSources: points.length, parserVerified: false }
+        type: 'pointer', path: safePath, title: metadata.title || safePath.split('/').pop().replace(/\.nz$/i, ''),
+        metadata, targetPath, raw: text, points: [], integrity: { parserVerified: false }
       };
     }
-
     const article = parseArticle(text, safePath);
     if (article) return article;
-
     const points = parseLegacyPoints(text);
     if (points.length) {
       return {
-        type: 'legacy-corpus', path: safePath, title: safePath.split('/').pop().replace(/\.nz$/i, ''),
-        points, totalPoints: points.length,
-        integrity: { missingTitles: points.length, missingBodies: 0, missingSources: points.length, parserVerified: false }
+        type: 'legacy-text', path: safePath, title: safePath.split('/').pop().replace(/\.nz$/i, ''),
+        raw: text, points, integrity: { parserVerified: false }
       };
     }
-
     const metadata = keyValues(text);
     return {
       type: Object.keys(metadata).length ? 'metadata' : 'text', path: safePath,
-      title: metadata.title || firstLine.replace(/^#\s*/, '') || safePath.split('/').pop(),
-      raw: text, metadata, points: [], integrity: { parserVerified: false }
+      title: metadata.title || firstLine.replace(/^#\s*/, '') || safePath.split('/').pop(), raw: text, metadata,
+      points: [], integrity: { parserVerified: false }
     };
   }
 
-  async function searchCorpus(query = '', limit = 24) {
-    const document = await read(corpusPath);
-    const q = String(query || '').trim().toLocaleLowerCase('id-ID');
-    const matches = q
-      ? document.points.filter(point => `${point.number} ${point.raw}`.toLocaleLowerCase('id-ID').includes(q))
-      : document.points;
-    return { path: corpusPath, total: document.points.length, matched: matches.length, items: matches.slice(0, limit) };
-  }
+  function url(path) { return urlForPath(path).href; }
 
-  function url(path) {
-    return fileUrl(path).href;
-  }
-
-  globalThis.NZFS = Object.freeze({ normalizePath, read, searchCorpus, url, corpusPath });
+  globalThis.NZFS = Object.freeze({ normalizePath, read, readSummary, searchFiles, url });
   if (typeof module !== 'undefined' && module.exports) module.exports = globalThis.NZFS;
 })();

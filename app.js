@@ -1,15 +1,16 @@
-const bidang = [
-  ['Fisika', 'Alam dan materi'], ['Kimia', 'Zat dan perubahan'], ['Biologi', 'Kehidupan dan sel'],
-  ['Matematika', 'Pola dan angka'], ['Astronomi', 'Ruang dan semesta'], ['Geografi', 'Bumi dan wilayah'],
-  ['Sejarah', 'Waktu dan peradaban'], ['Bahasa', 'Makna dan komunikasi'], ['Kesehatan', 'Tubuh dan kesejahteraan'],
-  ['Teknologi', 'Alat dan sistem'], ['Ekonomi', 'Sumber daya dan pilihan'], ['Hukum', 'Aturan dan keadilan'],
-  ['Etika', 'Nilai dan tanggung jawab'], ['Sosiologi', 'Masyarakat dan relasi'], ['Lingkungan', 'Bumi dan keberlanjutan'],
-  ['Energi', 'Daya dan perubahan'], ['Pendidikan', 'Belajar dan tumbuh'], ['Seni', 'Bentuk dan ekspresi'],
-  ['Pangan', 'Gizi dan kehidupan'], ['Komunikasi', 'Pesan dan hubungan']
-];
 const $ = id => document.getElementById(id);
-const state = { views: Number(sessionStorage.getItem('all_views') || 0), readerDocument: null, readerOffset: 0, corpusCount: 0 };
+const state = {
+  views: Number(sessionStorage.getItem('all_views') || 0),
+  readerDocument: null,
+  readerOffset: 0,
+  actualNzFiles: 0
+};
 const READER_PAGE_SIZE = 100;
+const sampleFiles = [
+  ['Spesifikasi sistem Ilmu+', 'Metadata target dan status Ilmu+', 'AL.L/ilmu+/sistem-data-utama.nz'],
+  ['Pointer sistem pelaporan', 'Berkas pointer; target lama tidak dimuat', 'AL.L/sistem-pelaporan-alur/modul-analisis-arsip-aman.nz'],
+  ['Konfigurasi storage Biologi', 'Kode konfigurasi .nz', '.io/konfigurasi-biologi.nz']
+];
 
 function updateClock() {
   $('clock').textContent = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -17,21 +18,20 @@ function updateClock() {
 
 function updateMetrics() {
   $('viewCount').textContent = state.views.toLocaleString('id-ID');
-  $('corpusCount').textContent = state.corpusCount.toLocaleString('id-ID');
-  $('indexedCount').textContent = state.corpusCount.toLocaleString('id-ID');
+  $('actualNzFiles').textContent = state.actualNzFiles.toLocaleString('id-ID');
 }
 
-function renderStories(points) {
+function renderFiles(files) {
   const box = $('storyGrid');
   box.replaceChildren();
-  if (!points.length) {
+  if (!files.length) {
     const empty = document.createElement('p');
     empty.className = 'empty-state';
-    empty.textContent = 'Tidak ada baris sumber yang cocok dengan pencarian ini.';
+    empty.textContent = 'Tidak ada path `.nz` yang cocok. Coba nama file atau direktori lain.';
     box.appendChild(empty);
     return;
   }
-  for (const point of points) {
+  for (const file of files) {
     const card = document.createElement('article');
     card.className = 'story';
     const visual = document.createElement('div');
@@ -39,97 +39,81 @@ function renderStories(points) {
     visual.setAttribute('aria-hidden', 'true');
     const tag = document.createElement('span');
     tag.className = 'tag';
-    tag.textContent = `NZ · POIN ${point.number}`;
+    tag.textContent = 'FILE .NZ · NAMA BERKAS';
     const title = document.createElement('h3');
-    title.textContent = `Poin ${point.number} — judul terpisah tidak tersedia`;
+    title.textContent = file.title;
     const body = document.createElement('p');
-    body.textContent = point.body;
-    const read = document.createElement('button');
-    read.className = 'read';
-    read.type = 'button';
-    read.textContent = 'Baca baris sumber →';
-    read.addEventListener('click', () => openPoint(point));
-    card.append(visual, tag, title, body, read);
+    body.className = 'file-path-caption';
+    body.textContent = file.path;
+    const note = document.createElement('small');
+    note.className = 'file-integrity-note';
+    note.textContent = 'Nama berkas bukan judul editorial; isi akan dibaca langsung dari file.';
+    const open = document.createElement('button');
+    open.className = 'read';
+    open.type = 'button';
+    open.textContent = 'Buka file .nz →';
+    open.addEventListener('click', () => openNZFile(file.path));
+    card.append(visual, tag, title, body, note, open);
     box.appendChild(card);
   }
 }
 
-function drawIndex() {
+function drawExamples() {
   const box = $('indexGrid');
   box.replaceChildren();
-  bidang.forEach(([name, description]) => {
+  for (const [titleText, description, path] of sampleFiles) {
     const button = document.createElement('button');
     button.className = 'index-item';
     button.type = 'button';
     const title = document.createElement('b');
-    title.textContent = name;
-    const subtitle = document.createElement('small');
-    subtitle.textContent = `${description} · cari pada teks sumber`;
-    button.append(title, subtitle);
+    title.textContent = titleText;
+    const small = document.createElement('small');
+    small.textContent = `${description} · ${path}`;
+    button.append(title, small);
     button.addEventListener('click', () => {
-      $('searchInput').value = name.toLocaleLowerCase('id-ID');
-      searchCorpus(name);
+      $('nzFilePath').value = path;
+      openNZFile(path);
     });
     box.appendChild(button);
-  });
+  }
 }
 
-function setSearchStatus(query, result) {
-  const label = query ? `“${query}” · ${result.matched.toLocaleString('id-ID')} kecocokan` : `${result.total.toLocaleString('id-ID')} baris sumber`;
-  $('resultNote').textContent = `${label} · menampilkan ${result.items.length}`;
-}
-
-async function searchCorpus(query = '') {
+async function searchFiles(query = '') {
   const normalized = String(query || '').trim();
-  $('footerStatus').textContent = 'mencari pada korpus .nz…';
-  $('resultNote').textContent = 'Membaca sumber .nz…';
+  $('footerStatus').textContent = 'mencari path .nz…';
+  $('resultNote').textContent = 'Menelusuri katalog .nz…';
   try {
-    const result = await NZFS.searchCorpus(normalized, 24);
-    state.corpusCount = result.total;
-    renderStories(result.items);
-    setSearchStatus(normalized, result);
-    $('fileStatus').textContent = `Korpus sumber tersedia: ${result.total.toLocaleString('id-ID')} baris; pencarian membaca teks aktual.`;
-    $('footerStatus').textContent = 'korpus .nz siap';
+    const result = await NZFS.searchFiles(normalized, 24, progress => {
+      $('resultNote').textContent = `Menelusuri ${progress.scanned.toLocaleString('id-ID')} dari ${progress.total.toLocaleString('id-ID')} path…`;
+    });
+    state.actualNzFiles = result.total;
+    renderFiles(result.items);
+    const queryText = normalized ? `Path cocok untuk “${normalized}”: ` : 'File AL.L pertama: ';
+    $('resultNote').textContent = `${queryText}${result.items.length}${result.truncated ? ' (hasil dibatasi; persempit pencarian)' : ''}`;
+    $('fileStatus').textContent = `${result.total.toLocaleString('id-ID')} file .nz tersedia di katalog; angka file bukan jumlah judul unik atau terverifikasi.`;
+    $('footerStatus').textContent = 'katalog path .nz siap';
     updateMetrics();
     if (normalized) $('bacaan').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
-    $('resultNote').textContent = 'Korpus belum dapat dibaca';
+    $('resultNote').textContent = 'Katalog file .nz belum dapat dibaca';
     $('footerStatus').textContent = error.message;
     $('fileStatus').textContent = error.message;
-    renderStories([]);
+    renderFiles([]);
   }
 }
 
-function makeStatus(document) {
-  if (document.type === 'article') {
-    const integrity = document.integrity || {};
-    return `Format artikel .nz; label file: ${document.editorialLabel}. ${integrity.missingTitles || 0} judul, ${integrity.missingBodies || 0} isi, ${integrity.missingSources || 0} sitasi belum lengkap. Parser tidak memverifikasi kebenaran sumber.`;
+function makeStatus(documentData) {
+  if (documentData.type === 'article') {
+    const integrity = documentData.integrity || {};
+    return `File artikel .nz; label file: ${documentData.editorialLabel}. ${integrity.missingTitles || 0} judul, ${integrity.missingBodies || 0} isi, ${integrity.missingSources || 0} sitasi belum lengkap. Parser tidak memverifikasi kebenaran sumber.`;
   }
-  if (document.type === 'pointer') {
-    return `Pointer valid; ${document.points.length} baris dibaca dari ${document.sourcePath}. Format korpus lama tidak menyimpan judul terpisah atau sitasi.`;
+  if (documentData.type === 'pointer') {
+    return `File ini adalah pointer .nz. Metadata ditampilkan apa adanya; target ${documentData.targetPath || 'tidak tercatat'} tidak diambil atau ditampilkan.`;
   }
-  if (document.type === 'legacy-corpus' || document.type === 'legacy-record') {
-    return 'Teks sumber lama ditampilkan apa adanya. File tidak menyediakan judul editorial atau sitasi per poin; statusnya belum diverifikasi.';
+  if (documentData.type === 'legacy-text') {
+    return 'Teks disimpan di file .nz dan ditampilkan apa adanya. Judul editorial serta sitasi tidak disimpulkan otomatis.';
   }
-  return 'File metadata/teks dibuka apa adanya; ini bukan artikel ilmiah terverifikasi.';
-}
-
-function makePointDocument(point) {
-  return {
-    type: 'legacy-record',
-    path: NZFS.corpusPath,
-    sourcePath: NZFS.corpusPath,
-    title: `Poin ${point.number}`,
-    category: 'Korpus .nz · rekaman sumber',
-    abstract: 'Teks di bawah diambil langsung dari baris korpus gzip; judul terpisah tidak tersedia.',
-    points: [point],
-    range: { start: point.number, end: point.number },
-    integrity: { missingTitles: 1, missingBodies: 0, missingSources: 1, parserVerified: false }
-  };
-}
-
-function openPoint(point) {
-  openDocument(makePointDocument(point));
+  return 'Metadata/teks dibaca langsung dari file .nz; ini bukan klaim artikel ilmiah terverifikasi.';
 }
 
 function renderReaderPage() {
@@ -158,7 +142,7 @@ function renderReaderPage() {
     for (const citation of point.sources || []) {
       const source = document.createElement('p');
       source.className = 'point-source';
-      source.textContent = `Sumber tercatat: ${citation}`;
+      source.textContent = `Sumber tercatat di file: ${citation}`;
       content.appendChild(source);
     }
     row.append(number, content);
@@ -173,10 +157,8 @@ function renderReaderPage() {
   state.readerOffset = end;
   $('loadMorePoints').hidden = end >= points.length || !points.length;
   $('loadMorePoints').textContent = `Muat 100 poin berikutnya (${end.toLocaleString('id-ID')}/${points.length.toLocaleString('id-ID')})`;
-  $('readerPointCount').textContent = `${points.length.toLocaleString('id-ID')} poin dalam berkas`;
-  $('readerRange').textContent = documentData.range
-    ? `${documentData.range.start.toLocaleString('id-ID')}—${documentData.range.end.toLocaleString('id-ID')}`
-    : points.length ? `1—${points.length.toLocaleString('id-ID')}` : 'metadata';
+  $('readerPointCount').textContent = `${points.length.toLocaleString('id-ID')} poin dalam file`;
+  $('readerRange').textContent = points.length ? `1—${points.length.toLocaleString('id-ID')}` : 'metadata';
 }
 
 function openDocument(documentData) {
@@ -187,25 +169,15 @@ function openDocument(documentData) {
   updateMetrics();
   $('readerCategory').textContent = documentData.category || documentData.type;
   $('readerTitle').textContent = documentData.title || documentData.path;
-  $('readerDeck').textContent = documentData.abstract || `Isi berkas ${documentData.path} ditampilkan sesuai sumber.`;
+  $('readerDeck').textContent = documentData.abstract || `Isi file ${documentData.path} ditampilkan sesuai data yang tersimpan.`;
   $('readerMeta').textContent = documentData.path;
   $('readerStatus').textContent = makeStatus(documentData);
   $('readerIntegrity').textContent = makeStatus(documentData);
-  const sourcePath = documentData.path || documentData.sourcePath || '';
   const source = $('readerSource');
-  source.textContent = `Buka file sumber: ${sourcePath}`;
-  source.href = NZFS.url(sourcePath);
-  source.title = sourcePath;
-  const corpusLink = $('readerCorpusSource');
-  corpusLink.replaceChildren();
-  if (documentData.sourcePath && documentData.sourcePath !== sourcePath) {
-    const link = document.createElement('a');
-    link.href = NZFS.url(documentData.sourcePath);
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = `Korpus yang dirujuk: ${documentData.sourcePath}`;
-    corpusLink.appendChild(link);
-  }
+  source.textContent = `Buka file sumber: ${documentData.path}`;
+  source.href = NZFS.url(documentData.path);
+  source.title = documentData.path;
+  $('readerCorpusSource').textContent = documentData.targetPath ? `Target pointer (tidak dimuat): ${documentData.targetPath}` : '';
   renderReaderPage();
   $('reader').hidden = false;
   document.querySelectorAll('main>section:not(#reader):not(#accountPanel)').forEach(section => { section.hidden = true; });
@@ -219,7 +191,7 @@ async function openNZFile(path) {
   $('fileStatus').textContent = `Membuka ${normalized}…`;
   try {
     const documentData = await NZFS.read(normalized);
-    $('fileStatus').textContent = `${documentData.path} dibuka · tipe ${documentData.type} · ${documentData.points?.length || 0} poin yang dibaca.`;
+    $('fileStatus').textContent = `${documentData.path} dibuka langsung · tipe ${documentData.type}.`;
     openDocument(documentData);
   } catch (error) {
     $('fileStatus').textContent = error.message;
@@ -297,11 +269,11 @@ window.addEventListener('scroll', () => {
 
 $('searchForm').addEventListener('submit', event => {
   event.preventDefault();
-  searchCorpus($('searchInput').value);
+  searchFiles($('searchInput').value);
 });
 document.querySelectorAll('[data-query]').forEach(button => button.addEventListener('click', () => {
   $('searchInput').value = button.dataset.query;
-  searchCorpus(button.dataset.query);
+  searchFiles(button.dataset.query);
 }));
 $('nzFileForm').addEventListener('submit', event => {
   event.preventDefault();
@@ -319,20 +291,27 @@ $('shareButton').addEventListener('click', async () => {
     if (state.readerDocument?.path) url.searchParams.set('nz', state.readerDocument.path);
     url.hash = 'reader';
     await navigator.clipboard.writeText(url.href);
-    $('footerStatus').textContent = 'tautan bacaan disalin';
+    $('footerStatus').textContent = 'tautan file disalin';
   } catch {
     $('footerStatus').textContent = 'gunakan URL file sumber untuk berbagi';
   }
 });
 
-function start() {
-  drawIndex();
+async function start() {
+  drawExamples();
   updateClock();
   updateMetrics();
   setInterval(updateClock, 1000);
   setActiveNavigation(location.hash || '#top');
+  try {
+    const summary = await NZFS.readSummary();
+    state.actualNzFiles = summary.catalog_nz_file_count;
+    updateMetrics();
+  } catch (error) {
+    $('fileStatus').textContent = error.message;
+  }
   const requestedFile = new URLSearchParams(location.search).get('nz');
   if (requestedFile) openNZFile(requestedFile);
-  else searchCorpus('');
+  else searchFiles('');
 }
 start();

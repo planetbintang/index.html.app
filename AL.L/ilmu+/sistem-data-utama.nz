@@ -1,0 +1,17 @@
+# Spesifikasi sistem data Ilmu+
+id=AL.L/ilmu+
+jenis=sistem-data-pengetahuan
+status=direncanakan
+jumlah_file_target=10000000
+jumlah_folder_target=10000
+file_per_folder_target=1000
+poin_minimum_per_file=100
+perkiraan_baris_per_poin=100
+perkiraan_total_baris=100000000000
+jumlah_file_pengetahuan_aktual=0
+jumlah_folder_data_aktual=0
+backend=object-storage-yang-dikonfigurasi
+lokasi_namespace=datanz/datanz+/objects
+kapasitas=terbatas-pada-backend-fisik
+media_target=gambar,animasi,video
+indeks=manifest-batch-bertahap

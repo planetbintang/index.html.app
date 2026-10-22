@@ -1,0 +1,18 @@
+{
+  "id": "AL.L/ilmu+",
+  "jenis": "sistem-data-pengetahuan",
+  "status": "direncanakan",
+  "target_file_count": 10000000,
+  "target_folder_count": 10000,
+  "target_files_per_folder": 1000,
+  "minimum_points_per_file": 100,
+  "approximate_lines_per_point": 100,
+  "approximate_total_lines": 100000000000,
+  "actual_knowledge_files_created": 0,
+  "actual_data_folders_created": 0,
+  "media_targets": ["gambar", "animasi", "video"],
+  "storage_namespace": "datanz/datanz+/objects",
+  "storage_backend": "belum_dikonfigurasi",
+  "capacity_policy": "dibatasi_kapasitas_backend_fisik",
+  "note": "Dokumen ini mencatat target; bukan bukti bahwa 10 juta file atau konten sudah dibuat."
+}

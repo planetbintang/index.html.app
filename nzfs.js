@@ -212,6 +212,52 @@
     };
   }
 
+  function parseJsonlPoints(text, path) {
+    const rows = text.split(/\r?\n/);
+    if (rows.at(-1) === '') rows.pop();
+    if (!rows.length) return null;
+    let first;
+    try { first = JSON.parse(rows[0]); }
+    catch { return null; }
+    if (first?.format !== 'NZ-POINTS/1') return null;
+    const points = [];
+    for (let i = 0; i < rows.length; i += 1) {
+      const line = rows[i];
+      if (!line.trim()) throw new Error(`Format NZ-POINTS/1: baris ${i + 1} kosong; satu baris harus berisi satu poin.`);
+      let item;
+      try { item = JSON.parse(line); }
+      catch { throw new Error(`Format NZ-POINTS/1: JSON pada baris ${i + 1} tidak valid.`); }
+      if (item?.format !== 'NZ-POINTS/1') throw new Error(`Format NZ-POINTS/1 harus konsisten pada baris ${i + 1}.`);
+      const number = Number(item.nomor);
+      if (!Number.isSafeInteger(number) || number !== i + 1) {
+        throw new Error(`Format NZ-POINTS/1: nomor poin pada baris ${i + 1} harus berurutan (${i + 1}).`);
+      }
+      const title = typeof item.judul === 'string' ? item.judul.trim() : '';
+      const body = typeof item.isi === 'string' ? item.isi.trim() : '';
+      if (!title || !body) throw new Error(`Format NZ-POINTS/1: poin ${number} wajib memiliki judul dan isi.`);
+      const category = typeof item.bidang === 'string' ? item.bidang.trim() : '';
+      if (!category) throw new Error(`Format NZ-POINTS/1: poin ${number} wajib mencantumkan bidang ilmu.`);
+      const sources = Array.isArray(item.sumber)
+        ? item.sumber.filter(source => typeof source === 'string' && source.trim()).map(source => source.trim())
+        : typeof item.sumber === 'string' && item.sumber.trim() ? [item.sumber.trim()] : [];
+      if (!sources.length) throw new Error(`Format NZ-POINTS/1: poin ${number} wajib mencantumkan sumber.`);
+      points.push({ number, title, body, sources, category });
+    }
+    if (!points.length) throw new Error('Format NZ-POINTS/1 harus berisi poin setelah baris format.');
+    return {
+      type: 'article', format: 'NZ-POINTS/1', path,
+      title: path.split('/').pop().replace(/\.nz$/i, '').replace(/[-_]+/g, ' '),
+      category: points.find(point => point.category)?.category || '',
+      abstract: 'Isi poin dibaca baris demi baris langsung dari file .nz.',
+      editorialLabel: 'draf · sumber tercantum, belum diverifikasi', points,
+      integrity: {
+        missingTitles: 0, missingBodies: 0, missingSources: 0,
+        expectedPointCount: 10000, pointCountMatches: points.length === 10000,
+        parserVerified: false
+      }, metadata: {}
+    };
+  }
+
   async function read(path) {
     const safePath = normalizePath(path);
     if (safePath === legacyCorpusPath) throw new Error('Korpus lama tidak ditampilkan. Pilih file .nz dari katalog.');
@@ -226,6 +272,8 @@
         metadata, targetPath, raw: text, points: [], integrity: { parserVerified: false }
       };
     }
+    const jsonlPoints = parseJsonlPoints(text, safePath);
+    if (jsonlPoints) return jsonlPoints;
     const article = parseArticle(text, safePath);
     if (article) return article;
     const points = parseLegacyPoints(text);

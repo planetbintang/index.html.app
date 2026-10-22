@@ -1,36 +1,29 @@
 # Format file `.nz` yang dibaca AL.L
 
-AL.L memakai filesystem virtual **baca-saja** di browser. File dibaca melalui HTTP dari repository statis; GitHub Pages tidak menyediakan operasi tulis. Path absolut, URL eksternal, segmen `..`, dan file korpus lama ditolak oleh reader.
+AL.L memakai filesystem virtual **baca-saja** di browser. File dibaca melalui HTTP dari repository statis; GitHub Pages tidak menyediakan operasi tulis. Path absolut, URL eksternal, segmen `..`, dan file korpus lama ditolak reader.
 
-## Katalog file
+## Katalog dan sumber data
 
-`datanz/nz-catalog.txt.gz` adalah daftar path relatif untuk file `.nz` yang terlacak Git. Beranda mencari **nama/path**, lalu mengambil isi file `.nz` hanya ketika pembaca membukanya. Jumlah path adalah jumlah file, bukan jumlah judul unik atau judul ilmiah terverifikasi. Sasaran `100.000.000+` pada beranda adalah target pengembangan, bukan jumlah yang sudah tercapai.
+`datanz/nz-catalog.txt.gz` memuat path relatif file `.nz` yang terlacak Git. Beranda mencari nama/path, lalu membaca isi file yang dipilih. Jumlah path bukan jumlah judul unik atau judul ilmu pengetahuan yang terverifikasi. Korpus lama `nz/korpus-ilmu-pengetahuan-10000.nz` telah dihapus; pointer historis yang masih mencantumkannya hanya ditampilkan sebagai metadata dan tidak diikuti.
 
-Saat menambahkan file `.nz`, stage file tersebut lalu jalankan:
+Setelah menambahkan file `.nz`, jalankan `python3 datanz/build_nz_catalog.py`, commit katalog beserta file sumbernya, lalu push ke branch Pages. Manifest `datanz/manifest.jsonl.gz` adalah indeks backup; perbarui manifest setelah commit kode atau konten.
 
-```sh
-python3 datanz/build_nz_catalog.py
+## Format satu baris per poin: `NZ-POINTS/1`
+
+Format ini ditujukan untuk artikel ilmu pengetahuan dengan **10.000 baris data, satu record JSON per poin**. Tidak ada baris header terpisah. Setiap baris wajib berisi format, nomor berurutan, bidang ilmu, judul, isi, dan sumber. Sumber dapat berupa URL, DOI, atau rujukan bibliografi yang dapat ditelusuri. String isi yang memiliki pergantian paragraf harus meng-escape newline sebagai `\n` di dalam JSON agar record tetap satu baris fisik.
+
+Cuplikan berikut hanya contoh bentuk dua record; file lengkap harus memiliki tepat 10.000 record bernomor 1 sampai 10.000, bukan hanya dua:
+
+```jsonl
+{"format":"NZ-POINTS/1","nomor":1,"bidang":"Biologi","judul":"Judul poin pertama","isi":"Klaim yang spesifik beserta konteks dan batas berlakunya.","sumber":["https://contoh.org/rujukan-1"]}
+{"format":"NZ-POINTS/1","nomor":2,"bidang":"Biologi","judul":"Judul poin kedua","isi":"Uraian yang dapat ditelusuri dan tidak mengulang poin pertama.","sumber":["https://contoh.org/rujukan-2"]}
 ```
 
-Generator memperbarui katalog dan `datanz/nz-catalog-summary.json`. File korpus historis `nz/korpus-ilmu-pengetahuan-10000.nz` telah dihapus dari repository. Sejumlah pointer `.nz` lama masih menyebut path tersebut di metadata; reader menampilkan pointer sebagai metadata saja dan tidak mengikuti atau mengambil target itu.
+Reader memeriksa JSON, urutan nomor, keberadaan bidang/judul/isi/sumber, dan apakah jumlah record tepat 10.000. Bila jumlahnya berbeda, reader melaporkan file belum memenuhi target jumlah; record tidak ditambah otomatis. Pemeriksaan format **bukan** verifikasi kebenaran ilmiah. Penulis tetap harus menilai sumber, bukti, konteks, tanggal, dan batas klaim.
 
-## Format lama: pointer
+## Format artikel lama: `NZ-ARTICLE/1`
 
-Pointer adalah teks UTF-8 dengan metadata `key=value`, misalnya:
-
-```text
-# Pointer mesin nz
-corpus=nz/korpus-ilmu-pengetahuan-10000.nz
-rentang_poin=1-10
-jumlah_poin=10000
-format=gzip+utf8
-```
-
-Beranda hanya menampilkan isi pointer sebagai metadata. Reader **tidak mengikuti** nilai `corpus`, sehingga data target tidak tersaji seolah-olah berasal dari file pointer itu sendiri.
-
-## Format artikel terstruktur untuk konten baru
-
-Gunakan UTF-8 teks biasa. Setiap bagian `Poin` sebaiknya mempunyai judul khusus, paragraf isi, dan sumber yang bisa ditelusuri. Jangan memberi status editorial terverifikasi tanpa penelaahan sumber yang nyata.
+Format teks lama juga dapat dibaca. Setiap bagian `Poin` memiliki judul, paragraf isi, dan sumber opsional. Berbeda dari `NZ-POINTS/1`, bagian ini tidak menetapkan jumlah 10.000 dan tidak menjamin satu poin satu baris.
 
 ```text
 # NZ-ARTICLE/1
@@ -48,4 +41,8 @@ Paragraf kedua memberi konteks, batasan, atau pengecualian.
 source=https://contoh.org/sumber-poin
 ```
 
-Reader mempertahankan isi yang tersimpan, menampilkan judul/isi/sumber yang ada, dan menghitung elemen yang hilang. Parser tidak melakukan fact-check otomatis. Nama file tidak dianggap sebagai judul editorial, dan rekaman lama tidak diberi judul atau sitasi sintetis.
+## Pointer dan integritas
+
+File pointer/metadata bukan artikel dan tidak boleh diubah menjadi bacaan dengan menebak judul atau isi. Baris lama seperti `Poin 12: ...` tanpa judul terpisah tidak dianggap sebagai poin artikel yang lengkap. Reader menyaring poin tanpa judul atau isi dari kartu bacaan. Jangan memberi label “terverifikasi” tanpa penelaahan sumber nyata.
+
+Audit repository saat spesifikasi ini diperbarui menemukan **0** file `.nz` dalam format artikel terstruktur dan **0** file dengan baris poin lama `Poin N:`. Karena itu tidak ada kumpulan poin ilmu yang dapat dikonversi menjadi 10.000 record bersumber per file. File target 10.000 poin tetap berstatus rencana sampai konten dan rujukannya benar-benar ditulis serta diperiksa.

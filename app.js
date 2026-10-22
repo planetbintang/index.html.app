@@ -184,6 +184,11 @@ async function searchFiles(query = '') {
 }
 
 function makeStatus(documentData) {
+  if (documentData.format === 'NZ-POINTS/1') {
+    const count = documentData.points?.length || 0;
+    const countStatus = documentData.integrity?.pointCountMatches ? 'memenuhi 10.000 poin' : `belum memenuhi 10.000 poin (${count.toLocaleString('id-ID')} ditemukan)`;
+    return `Format satu baris per poin .nz; ${countStatus}. Setiap poin tervalidasi memiliki judul, isi, dan sumber pada file. Parser memeriksa format, bukan kebenaran ilmiah sumber.`;
+  }
   if (documentData.type === 'article') {
     const integrity = documentData.integrity || {};
     return `File artikel .nz; label file: ${documentData.editorialLabel}. ${integrity.missingTitles || 0} judul, ${integrity.missingBodies || 0} isi, ${integrity.missingSources || 0} sitasi belum lengkap. Poin tanpa judul atau isi tidak ditampilkan sebagai bacaan. Parser tidak memverifikasi kebenaran sumber.`;

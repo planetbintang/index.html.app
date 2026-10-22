@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" && pwd)
+. "$SCRIPT_DIR/lib-storage.nz"
+NZ_STORAGE_SHARD=082
+export NZ_STORAGE_SHARD NZ_STORAGE_ROOT
+
+command=${1:-info}
+case "$command" in
+  info) nz_storage_info ;;
+  status) nz_storage_status ;;
+  check) nz_storage_check ;;
+  estimate) [ "$#" -eq 2 ] || nz_storage_help; nz_storage_estimate "$2" ;;
+  put) [ "$#" -eq 3 ] || nz_storage_help; nz_storage_put "$2" "$3" ;;
+  get) [ "$#" -eq 3 ] || nz_storage_help; nz_storage_get "$2" "$3" ;;
+  list) nz_storage_list ;;
+  help|-h|--help) nz_storage_help ;;
+  *) nz_storage_help >&2; exit 2 ;;
+esac

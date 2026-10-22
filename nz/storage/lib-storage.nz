@@ -1,0 +1,118 @@
+#!/bin/sh
+# Pustaka bersama mesin penyimpanan virtual NZ.
+# Kapasitas selalu mengikuti disk atau backend yang benar-benar terpasang.
+
+NZ_STORAGE_ROOT=${NZ_STORAGE_ROOT:-"${HOME:-.}/.nz-storage"}
+NZ_STORAGE_SHARD=${NZ_STORAGE_SHARD:-001}
+
+nz_storage_die() {
+  printf 'galat: %s\n' "$*" >&2
+  exit 2
+}
+
+nz_storage_probe_path() {
+  probe=$1
+  while [ ! -d "$probe" ]; do
+    [ "$probe" = / ] && break
+    probe=${probe%/*}
+    [ -n "$probe" ] || probe=/
+  done
+  printf '%s\n' "$probe"
+}
+
+nz_storage_capacity() {
+  probe=$(nz_storage_probe_path "$1")
+  df -Pk "$probe" | awk 'NR == 2 { printf "total_kb=%s used_kb=%s available_kb=%s\n", $2, $3, $4 }'
+}
+
+nz_storage_status() {
+  probe=$(nz_storage_probe_path "$NZ_STORAGE_ROOT")
+  printf 'mode=virtual-terbatas\nshard=%s\nroot=%s\n' "$NZ_STORAGE_SHARD" "$NZ_STORAGE_ROOT"
+  printf 'batas=kapasitas_disk_atau_backend_aktual\n'
+  df -h "$probe"
+}
+
+nz_storage_info() {
+  printf 'mesin=mesin-ruang-%s\n' "$NZ_STORAGE_SHARD"
+  printf 'mode=virtual-terbatas\nkapasitas=ditentukan_backend_aktual\n'
+  printf 'operasi=status,check,estimate,put,get,list\n'
+  nz_storage_capacity "$NZ_STORAGE_ROOT"
+}
+
+nz_storage_check() {
+  target=$NZ_STORAGE_ROOT/shard-$NZ_STORAGE_SHARD
+  if [ -d "$target" ]; then
+    printf 'shard=siap path=%s\n' "$target"
+  else
+    printf 'shard=belum_dibuat path=%s\n' "$target"
+  fi
+  nz_storage_capacity "$NZ_STORAGE_ROOT"
+}
+
+nz_storage_validate_relative_path() {
+  relative=$1
+  case "$relative" in
+    ''|/*|..|../*|*/../*|*/..)
+      nz_storage_die 'path harus relatif dan tidak boleh keluar dari shard'
+      ;;
+  esac
+  printf '%s\n' "$relative"
+}
+
+nz_storage_available_bytes() {
+  probe=$(nz_storage_probe_path "$1")
+  df -Pk "$probe" | awk 'NR == 2 { printf "%.0f\n", $4 * 1024 }'
+}
+
+nz_storage_estimate() {
+  required=$1
+  case "$required" in ''|*[!0-9]*) nz_storage_die 'ukuran harus bilangan byte non-negatif' ;; esac
+  available=$(nz_storage_available_bytes "$NZ_STORAGE_ROOT")
+  printf 'dibutuhkan_byte=%s\ntersedia_byte=%s\n' "$required" "$available"
+  [ "$required" -le "$available" ] || nz_storage_die 'ruang backend aktual tidak mencukupi'
+}
+
+nz_storage_put() {
+  source_file=$1
+  relative=$(nz_storage_validate_relative_path "$2")
+  [ -f "$source_file" ] || nz_storage_die 'berkas sumber tidak ditemukan'
+  target=$NZ_STORAGE_ROOT/shard-$NZ_STORAGE_SHARD
+  mkdir -p "$target"
+  destination=$target/$relative
+  destination_dir=${destination%/*}
+  mkdir -p "$destination_dir"
+  required=$(wc -c < "$source_file" | tr -d ' ')
+  available=$(nz_storage_available_bytes "$destination_dir")
+  [ "$required" -le "$available" ] || nz_storage_die 'ruang backend aktual tidak mencukupi'
+  temporary=$destination.tmp.$$
+  trap 'rm -f "$temporary"' HUP INT TERM
+  cp "$source_file" "$temporary"
+  mv "$temporary" "$destination"
+  trap - HUP INT TERM
+  printf 'tersimpan=%s\nshard=%s\n' "$destination" "$NZ_STORAGE_SHARD"
+}
+
+nz_storage_get() {
+  relative=$(nz_storage_validate_relative_path "$1")
+  destination=$2
+  [ -n "$destination" ] || nz_storage_die 'tujuan salin wajib diisi'
+  source=$NZ_STORAGE_ROOT/shard-$NZ_STORAGE_SHARD/$relative
+  [ -f "$source" ] || nz_storage_die 'objek tidak ditemukan pada shard'
+  cp "$source" "$destination"
+  printf 'diambil=%s\ntujuan=%s\n' "$source" "$destination"
+}
+
+nz_storage_list() {
+  target=$NZ_STORAGE_ROOT/shard-$NZ_STORAGE_SHARD
+  if [ -d "$target" ]; then
+    find "$target" -type f -print
+  else
+    printf 'shard_kosong=%s\n' "$NZ_STORAGE_SHARD"
+  fi
+}
+
+nz_storage_help() {
+  printf '%s\n' \
+    'Perintah: info | status | check | estimate BYTE | put SUMBER PATH_RELATIF | get PATH_RELATIF TUJUAN | list' \
+    'Kapasitas tidak unlimited; semua operasi dibatasi ruang disk/backend yang tersedia.'
+}

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="AL.L — katalog file .nz dan pembaca yang menampilkan judul serta isi poin yang tersimpan langsung di sumber." />
-  <title>AL.L — Katalog Ilmu Pengetahuan</title>
+  <meta name="description" content="AL.L News Desk — portal jelajah pengetahuan dengan tampilan grid dan daftar, bersumber langsung dari file .nz." />
+  <title>AL.L — News Desk Pengetahuan</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -48,9 +48,10 @@
       <div><b class="live-dot">●</b><span>pembaca file .nz baca-saja</span></div>
     </section>
 
-    <section class="section" id="bacaan">
-      <div class="section-head"><div><p class="eyebrow">SUMBER LANGSUNG</p><h2>Judul dan isi poin `.nz`</h2></div><span class="section-note" id="resultNote" role="status">Memuat daftar file…</span></div>
+    <section class="section news-section" id="bacaan">
+      <div class="section-head news-head"><div><p class="eyebrow">KABAR & SUMBER LANGSUNG</p><h2>Jelajah bacaan</h2><p class="news-deck">Temukan berkas pengetahuan, buka isi sumber, dan baca poin yang tersedia.</p></div><span class="section-note" id="resultNote" role="status">Memuat daftar file…</span></div>
       <p class="point-grid-note" id="pointGridNote">Cari nama/path file, lalu pilih “Lihat poin di grid”. Grid hanya menampilkan judul dan isi yang benar-benar ada di dalam file.</p>
+      <div class="feed-toolbar"><span class="feed-label"><span class="feed-live-dot"></span> KATALOG TERKINI</span><div class="view-switch" role="group" aria-label="Pilih tampilan hasil"><button id="gridViewButton" type="button" aria-pressed="true">▦ Grid</button><button id="listViewButton" type="button" aria-pressed="false">☷ Daftar</button></div></div>
       <div class="story-grid" id="storyGrid" aria-live="polite"></div>
       <button class="load-more" id="loadMoreGridPoints" type="button" hidden>Muat poin berikutnya</button>
     </section>

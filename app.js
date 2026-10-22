@@ -5,7 +5,8 @@ const state = {
   readerOffset: 0,
   actualNzFiles: 0,
   gridDocumentData: null,
-  gridOffset: 0
+  gridOffset: 0,
+  feedView: 'grid'
 };
 const READER_PAGE_SIZE = 100;
 const GRID_PAGE_SIZE = 24;
@@ -22,6 +23,13 @@ function updateClock() {
 function updateMetrics() {
   $('viewCount').textContent = state.views.toLocaleString('id-ID');
   $('actualNzFiles').textContent = state.actualNzFiles.toLocaleString('id-ID');
+}
+
+function setFeedView(view) {
+  state.feedView = view === 'list' ? 'list' : 'grid';
+  $('storyGrid').classList.toggle('list-view', state.feedView === 'list');
+  $('gridViewButton').setAttribute('aria-pressed', String(state.feedView === 'grid'));
+  $('listViewButton').setAttribute('aria-pressed', String(state.feedView === 'list'));
 }
 
 function renderFiles(files) {
@@ -169,7 +177,7 @@ async function searchFiles(query = '') {
     });
     state.actualNzFiles = result.total;
     renderFiles(result.items);
-    const queryText = normalized ? `Path cocok untuk “${normalized}”: ` : 'File AL.L pertama: ';
+    const queryText = normalized ? `Hasil untuk “${normalized}”: ` : 'Pilihan berkas AL.L: ';
     $('resultNote').textContent = `${queryText}${result.items.length}${result.truncated ? ' (hasil dibatasi; persempit pencarian)' : ''}`;
     $('fileStatus').textContent = `${result.total.toLocaleString('id-ID')} file .nz tersedia di katalog; angka file bukan jumlah judul unik atau terverifikasi.`;
     $('footerStatus').textContent = 'katalog path .nz siap';
@@ -378,6 +386,8 @@ $('loadMorePoints').addEventListener('click', renderReaderPage);
 $('loadMoreGridPoints').addEventListener('click', () => {
   if (state.gridDocumentData) renderPointGrid(state.gridDocumentData, true);
 });
+$('gridViewButton').addEventListener('click', () => setFeedView('grid'));
+$('listViewButton').addEventListener('click', () => setFeedView('list'));
 $('shareButton').addEventListener('click', async () => {
   try {
     const url = new URL(location.href);
@@ -394,6 +404,7 @@ async function start() {
   drawExamples();
   updateClock();
   updateMetrics();
+  setFeedView('grid');
   setInterval(updateClock, 1000);
   setActiveNavigation(location.hash || '#top');
   try {

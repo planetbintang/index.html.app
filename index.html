@@ -3,30 +3,117 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Beranda ilmu pengetahuan AL.L — pencarian, bacaan, media, dan indeks sistem." />
+  <meta name="description" content="AL.L — pencarian korpus .nz, penjelajah berkas, dan ruang baca yang menampilkan sumber apa adanya." />
   <title>AL.L — Pusat Ilmu Pengetahuan</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="ticker"><span>● LANGSUNG</span><span id="tickerText">Indeks ilmu aktif · memuat pengetahuan lintas bidang</span><span id="clock"></span></div>
+  <div class="ticker"><span>● LANGSUNG</span><span id="tickerText">Filesystem .nz baca-saja · isi sumber ditampilkan tanpa rekayasa</span><span id="clock"></span></div>
   <header class="masthead">
     <a class="wordmark" href="#top" aria-label="AL.L beranda"><b>AL</b><i>.</i><b>L</b><small>SCIENCE DESK</small></a>
-    <nav><a class="active" href="#top">Beranda</a><a href="#indeks">Indeks</a><a href="#bacaan">Bacaan</a><a href="#media">Media</a><a href="#monitor">Monitoring</a></nav>
-    <button class="menu" id="menuButton" aria-label="Buka menu">☰</button><button class="account-button" id="accountButton">Masuk / Daftar</button>
+    <nav id="mainNav" aria-label="Navigasi utama">
+      <a class="active" href="#top" aria-current="location">Beranda</a>
+      <a href="#indeks">Indeks</a>
+      <a href="#bacaan">Bacaan</a>
+      <a href="#media">Media</a>
+      <a href="#monitor">Monitoring</a>
+    </nav>
+    <button class="menu" id="menuButton" type="button" aria-label="Buka navigasi" aria-controls="mainNav" aria-expanded="false">☰</button>
+    <button class="account-button" id="accountButton" type="button">Masuk / Daftar</button>
   </header>
   <main id="top">
     <section class="hero">
-      <div class="hero-copy"><p class="eyebrow">KORAN ILMU · EDISI SISTEM NZ</p><h1>Pengetahuan yang<br /><em>bergerak bersama bukti.</em></h1><p class="lede">Mesin pencari dan ruang baca untuk ribuan poin ilmu pengetahuan dari sistem <strong>AL.L</strong>. Cari judul, telusuri indeks, lalu baca penjelasan per poin.</p><form class="search" id="searchForm"><span>⌕</span><input id="searchInput" placeholder="Cari judul, bidang, atau kata pengetahuan..." autocomplete="off" /><button type="submit">Cari</button></form><div class="quick"><button data-query="fisika">Fisika</button><button data-query="kecerdasan buatan">Kecerdasan buatan</button><button data-query="lingkungan">Lingkungan</button><button data-query="kesehatan">Kesehatan</button></div></div>
+      <div class="hero-copy">
+        <p class="eyebrow">KORAN ILMU · PEMBACA FILE NZ</p>
+        <h1>Pengetahuan yang<br /><em>setia pada sumber.</em></h1>
+        <p class="lede">Cari teks dalam korpus `.nz`, buka pointer, dan telusuri berkas secara baca-saja. Pembaca menampilkan teks lama apa adanya; judul terpisah dan sitasi yang tidak tersedia tidak akan dibuat-buat.</p>
+        <form class="search" id="searchForm">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" placeholder="Cari kata di dalam korpus .nz..." autocomplete="off" aria-label="Cari teks korpus .nz" />
+          <button type="submit">Cari</button>
+        </form>
+        <div class="quick" aria-label="Pencarian bidang">
+          <button type="button" data-query="fisika">Fisika</button>
+          <button type="button" data-query="kimia">Kimia</button>
+          <button type="button" data-query="biologi">Biologi</button>
+          <button type="button" data-query="lingkungan">Lingkungan</button>
+        </div>
+      </div>
       <div class="hero-art" aria-label="Animasi orbit pengetahuan"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="planet"><span>AL.L</span></div><span class="orb o1">BIO</span><span class="orb o2">DATA</span><span class="orb o3">ENERGI</span></div>
     </section>
-    <section class="metrics" id="monitor"><div><b id="viewCount">0</b><span>tampilan sesi ini</span></div><div><b>1.000.411</b><span>indeks bacaan</span></div><div><b>100</b><span>baris tiap bacaan</span></div><div><b class="live-dot">●</b><span>indeks aktif di browser</span></div></section>
-    <section class="section" id="bacaan"><div class="section-head"><div><p class="eyebrow">PILIHAN REDAKSI</p><h2>Judul yang sedang dibaca</h2></div><span class="section-note" id="resultNote">24 judul lintas pengetahuan</span></div><div class="story-grid" id="storyGrid"></div></section>
-    <section class="section split" id="indeks"><div><div class="section-head"><div><p class="eyebrow">PETA PENGETAHUAN</p><h2>Indeks bidang</h2></div></div><div class="index-grid" id="indexGrid"></div></div><aside class="side-card"><p class="eyebrow">MESIN NZ</p><h3>Bagaimana sistem membaca?</h3><p>Setiap modul menunjuk ke rentang poin dalam korpus terkompresi. Halaman ini menampilkan indeks secara bertahap agar tetap ringan di GitHub Pages.</p><div class="meter"><span></span></div><small><b id="indexedCount">0</b> judul terindeks pada sesi ini</small></aside></section>
-    <section class="section" id="media"><div class="section-head"><div><p class="eyebrow">LABORATORIUM VISUAL</p><h2>Ilmu dalam gerak</h2></div></div><div class="media-grid"><article class="visual-card visual-image"><div class="constellation"><i></i><i></i><i></i><i></i><svg viewBox="0 0 400 220" aria-hidden="true"><path d="M25 180C115 45 220 230 375 36"/><circle cx="105" cy="92" r="28"/><circle cx="294" cy="105" r="16"/></svg></div><div><span class="tag">GAMBAR · ASTRONOMI</span><h3>Peta hubungan antara bintang dan data</h3></div></article><article class="visual-card video-card"><video muted loop autoplay playsinline poster=""><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" /></video><div class="video-overlay"><span class="play">▶</span><span class="tag">VIDEO · BIOLOGI</span><h3>Perubahan kecil yang membentuk sistem hidup</h3></div></article><article class="visual-card visual-chart"><div class="bars"><i style="height:38%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:88%"></i><i style="height:72%"></i><i style="height:96%"></i></div><div><span class="tag">ANIMASI · DATA</span><h3>Pola, ukuran, dan keputusan</h3></div></article></div></section>
-    <section class="reader" id="reader" hidden><div class="reader-head"><button id="closeReader">← Kembali ke indeks</button><span id="readerMeta"></span></div><div class="reader-layout"><article><p class="eyebrow" id="readerCategory"></p><h2 id="readerTitle"></h2><p class="reader-deck" id="readerDeck"></p><div class="reading" id="reading"></div></article><aside class="reader-aside"><div class="aside-box"><span class="tag">RINGKASAN</span><p>Artikel ini terdiri dari 100 baris pengetahuan. Setiap baris adalah satu poin definisi yang dapat dibaca, dicari, dan dibagikan.</p><button class="share" id="shareButton">Salin tautan bacaan</button></div><div class="aside-box"><span class="tag">RENTANG KORPUS</span><strong id="readerRange">1—100</strong><small>poin ilmu pengetahuan</small></div></aside></div></section>
-    <section class="account-panel" id="accountPanel" hidden><div class="account-card"><button class="account-close" id="accountClose">×</button><p class="eyebrow">AKUN DATA NZ</p><h2 id="accountTitle">Masuk ke sistem</h2><p class="account-note">Mode statis: kredensial disimpan lokal dengan Web Crypto. Hubungkan API backend untuk akun permanen lintas perangkat.</p><form id="accountForm"><input id="accountEmail" type="email" placeholder="Email" required><input id="accountPassword" type="password" placeholder="Kata sandi" minlength="8" required><button type="submit" id="accountSubmit">Masuk</button></form><button class="switch-auth" id="switchAuth">Belum punya akun? Daftar</button><p class="account-status" id="accountStatus"></p><div class="monitor-box"><b>Monitoring sesi</b><span id="accountMonitor">0 event · 0 bacaan · 0 pencarian</span></div></div></section>
+
+    <section class="metrics" id="monitor">
+      <div><b id="viewCount">0</b><span>bacaan dibuka sesi ini</span></div>
+      <div><b id="corpusCount">—</b><span>baris terhitung dalam korpus sumber</span></div>
+      <div><b>100</b><span>poin per halaman pembaca</span></div>
+      <div><b class="live-dot">●</b><span>filesystem .nz baca-saja</span></div>
+    </section>
+
+    <section class="section" id="bacaan">
+      <div class="section-head"><div><p class="eyebrow">KORPUS SUMBER</p><h2>Rekaman dari file `.nz`</h2></div><span class="section-note" id="resultNote" role="status">Memuat korpus…</span></div>
+      <div class="story-grid" id="storyGrid" aria-live="polite"></div>
+    </section>
+
+    <section class="section split" id="indeks">
+      <div>
+        <div class="section-head"><div><p class="eyebrow">PETA PENGETAHUAN</p><h2>Indeks bidang</h2></div></div>
+        <div class="index-grid" id="indexGrid"></div>
+        <div class="filesystem-browser" aria-labelledby="filesystemTitle">
+          <p class="eyebrow">FILESYSTEM NZ · BACA-SAJА</p>
+          <h3 id="filesystemTitle">Buka berkas berdasarkan path</h3>
+          <p>Path dibaca dari repository statis; tidak ada perubahan atau penulisan ke GitHub Pages. Pointer akan mengikuti rentang yang tercatat dan memvalidasi jumlah baris.</p>
+          <form id="nzFileForm" class="file-path-form">
+            <label for="nzFilePath">Path repository, akhiran `.nz`</label>
+            <div class="file-path-row"><input id="nzFilePath" value="AL.L/sistem-pelaporan-alur/modul-analisis-arsip-aman.nz" autocomplete="off" spellcheck="false" /><button type="submit">Buka file</button></div>
+          </form>
+          <div class="file-examples" aria-label="Contoh berkas">
+            <button type="button" data-nzpath="AL.L/sistem-pelaporan-alur/modul-analisis-arsip-aman.nz">Pointer korpus</button>
+            <button type="button" data-nzpath="nz/korpus-ilmu-pengetahuan-10000.nz">Korpus gzip</button>
+            <button type="button" data-nzpath="AL.L/ilmu+/sistem-data-utama.nz">Spesifikasi ilmu+</button>
+          </div>
+          <p id="fileStatus" class="file-status" role="status">Masukkan path relatif untuk membuka berkas `.nz`.</p>
+        </div>
+      </div>
+      <aside class="side-card">
+        <p class="eyebrow">MESIN NZ</p>
+        <h3>Bagaimana sistem membaca?</h3>
+        <p>Filesystem browser bersifat baca-saja: ia membaca file teks atau gzip, mengikuti pointer yang aman di dalam repository, lalu menampilkan rentang sumber. Manifest besar tidak dimuat seluruhnya ke memori.</p>
+        <div class="meter"><span></span></div>
+        <small><b id="indexedCount">0</b> rekaman siap dicari di korpus</small>
+      </aside>
+    </section>
+
+    <section class="section" id="media">
+      <div class="section-head"><div><p class="eyebrow">LABORATORIUM VISUAL</p><h2>Ilmu dalam gerak</h2></div></div>
+      <div class="media-grid">
+        <article class="visual-card visual-image"><div class="constellation"><i></i><i></i><i></i><i></i><svg viewBox="0 0 400 220" aria-hidden="true"><path d="M25 180C115 45 220 230 375 36"/><circle cx="105" cy="92" r="28"/><circle cx="294" cy="105" r="16"/></svg></div><div><span class="tag">GAMBAR · ASTRONOMI</span><h3>Peta hubungan antara bintang dan data</h3></div></article>
+        <article class="visual-card video-card"><video muted loop autoplay playsinline poster=""><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" /></video><div class="video-overlay"><span class="play">▶</span><span class="tag">VIDEO · BIOLOGI</span><h3>Perubahan kecil yang membentuk sistem hidup</h3></div></article>
+        <article class="visual-card visual-chart"><div class="bars"><i style="height:38%"></i><i style="height:66%"></i><i style="height:52%"></i><i style="height:88%"></i><i style="height:72%"></i><i style="height:96%"></i></div><div><span class="tag">ANIMASI · DATA</span><h3>Pola, ukuran, dan keputusan</h3></div></article>
+      </div>
+    </section>
+
+    <section class="reader" id="reader" hidden>
+      <div class="reader-head"><button id="closeReader" type="button">← Kembali ke indeks</button><span id="readerMeta"></span></div>
+      <div class="reader-layout">
+        <article>
+          <p class="eyebrow" id="readerCategory"></p>
+          <h2 id="readerTitle"></h2>
+          <p class="reader-deck" id="readerDeck"></p>
+          <p id="readerStatus" class="reader-status" role="status"></p>
+          <p class="reader-file"><a id="readerSource" target="_blank" rel="noopener noreferrer"></a><span id="readerCorpusSource"></span></p>
+          <div class="reading" id="reading" aria-live="polite"></div>
+          <button class="load-more" id="loadMorePoints" type="button" hidden>Muat 100 poin berikutnya</button>
+        </article>
+        <aside class="reader-aside">
+          <div class="aside-box"><span class="tag">INTEGRITAS SUMBER</span><p id="readerIntegrity">Judul, isi, dan sumber ditampilkan sesuai yang benar-benar ada pada file.</p><button class="share" id="shareButton" type="button">Salin tautan bacaan</button></div>
+          <div class="aside-box"><span class="tag">RENTANG</span><strong id="readerRange">—</strong><small id="readerPointCount">poin sumber</small></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="account-panel" id="accountPanel" hidden><div class="account-card"><button class="account-close" id="accountClose" type="button">×</button><p class="eyebrow">AKUN DATA NZ</p><h2 id="accountTitle">Masuk ke sistem</h2><p class="account-note">Mode statis: kredensial disimpan lokal dengan Web Crypto. Hubungkan API backend untuk akun permanen lintas perangkat.</p><form id="accountForm"><input id="accountEmail" type="email" placeholder="Email" required><input id="accountPassword" type="password" placeholder="Kata sandi" minlength="8" required><button type="submit" id="accountSubmit">Masuk</button></form><button class="switch-auth" id="switchAuth" type="button">Belum punya akun? Daftar</button><p class="account-status" id="accountStatus"></p><div class="monitor-box"><b>Monitoring sesi</b><span id="accountMonitor">0 event · 0 bacaan · 0 pencarian</span></div></div></section>
   </main>
-  <footer><span>AL.L / NZ SCIENCE DESK</span><span>Berbasis data repository · monitoring sesi lokal</span><span id="footerStatus">siap membaca</span></footer>
-  <script src="app.js"></script><script src="auth.js"></script>
+  <footer><span>AL.L / NZ SCIENCE DESK</span><span>Filesystem statis baca-saja · konten lama berstatus belum diverifikasi</span><span id="footerStatus">siap membaca</span></footer>
+  <script src="nzfs.js"></script><script src="app.js"></script><script src="auth.js"></script>
 </body>
 </html>

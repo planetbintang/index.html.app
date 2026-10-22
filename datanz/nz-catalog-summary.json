@@ -3,7 +3,6 @@
   "repo_nz_file_count": 1100578,
   "catalog_nz_file_count": 1100578,
   "excluded_legacy_corpus": "nz/korpus-ilmu-pengetahuan-10000.nz",
-  "target_title_count": 100000000,
   "actual_verified_title_count": null,
   "count_note": "Jumlah path file .nz bukan jumlah judul unik atau judul ilmiah terverifikasi.",
   "growth_note": "Tambahkan file .nz ke repository lalu jalankan ulang datanz/build_nz_catalog.py untuk memperbarui katalog."

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="AL.L — katalog file .nz, target 100 juta judul ilmu pengetahuan, dan pembaca yang membuka sumber secara langsung." />
+  <meta name="description" content="AL.L — katalog file .nz dan pembaca yang menampilkan judul serta isi poin yang tersimpan langsung di sumber." />
   <title>AL.L — Katalog Ilmu Pengetahuan</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -26,13 +26,7 @@
       <div class="hero-copy">
         <p class="eyebrow">KATALOG PENGETAHUAN · FILESYSTEM NZ</p>
         <h1>Ilmu bertambah,<br /><em>sumber tetap terlacak.</em></h1>
-        <p class="lede">Jelajahi katalog berdasarkan nama/path file `.nz`, lalu buka isi file sumber secara langsung. Pointer ditampilkan sebagai metadata; konten target lama tidak dimuat otomatis.</p>
-        <div class="target-banner">
-          <span class="eyebrow">TARGET SISTEM</span>
-          <strong>100.000.000+</strong>
-          <span>judul bacaan ilmu pengetahuan</span>
-          <p>Target pengembangan katalog. Data dapat bertambah seiring file `.nz` ditambahkan ke repository dan katalog diperbarui. Target ini bukan jumlah judul unik yang sudah terverifikasi.</p>
-        </div>
+        <p class="lede">Jelajahi katalog berdasarkan nama/path file `.nz`, lalu buka isi file sumber secara langsung. Pointer ditampilkan sebagai metadata tanpa mengikuti alamat rujukannya.</p>
         <form class="search" id="searchForm">
           <span aria-hidden="true">⌕</span>
           <input id="searchInput" placeholder="Cari nama atau path file .nz..." autocomplete="off" aria-label="Cari nama atau path file .nz" />
@@ -51,13 +45,14 @@
     <section class="metrics" id="monitor">
       <div><b id="viewCount">0</b><span>file dibuka sesi ini</span></div>
       <div><b id="actualNzFiles">—</b><span>file `.nz` di katalog; bukan hitungan judul unik</span></div>
-      <div><b>100M+</b><span>target judul katalog</span></div>
       <div><b class="live-dot">●</b><span>pembaca file .nz baca-saja</span></div>
     </section>
 
     <section class="section" id="bacaan">
-      <div class="section-head"><div><p class="eyebrow">SUMBER LANGSUNG</p><h2>File `.nz` dalam katalog</h2></div><span class="section-note" id="resultNote" role="status">Memuat daftar file…</span></div>
+      <div class="section-head"><div><p class="eyebrow">SUMBER LANGSUNG</p><h2>Judul dan isi poin `.nz`</h2></div><span class="section-note" id="resultNote" role="status">Memuat daftar file…</span></div>
+      <p class="point-grid-note" id="pointGridNote">Cari nama/path file, lalu pilih “Lihat poin di grid”. Grid hanya menampilkan judul dan isi yang benar-benar ada di dalam file.</p>
       <div class="story-grid" id="storyGrid" aria-live="polite"></div>
+      <button class="load-more" id="loadMoreGridPoints" type="button" hidden>Muat poin berikutnya</button>
     </section>
 
     <section class="section split" id="indeks">
@@ -120,7 +115,7 @@
 
     <section class="account-panel" id="accountPanel" hidden><div class="account-card"><button class="account-close" id="accountClose" type="button">×</button><p class="eyebrow">AKUN DATA NZ</p><h2 id="accountTitle">Masuk ke sistem</h2><p class="account-note">Mode statis: kredensial disimpan lokal dengan Web Crypto. Hubungkan API backend untuk akun permanen lintas perangkat.</p><form id="accountForm"><input id="accountEmail" type="email" placeholder="Email" required><input id="accountPassword" type="password" placeholder="Kata sandi" minlength="8" required><button type="submit" id="accountSubmit">Masuk</button></form><button class="switch-auth" id="switchAuth" type="button">Belum punya akun? Daftar</button><p class="account-status" id="accountStatus"></p><div class="monitor-box"><b>Monitoring sesi</b><span id="accountMonitor">0 event · 0 bacaan · 0 pencarian</span></div></div></section>
   </main>
-  <footer><span>AL.L / NZ SCIENCE DESK</span><span>100 juta+ adalah target katalog, bukan jumlah terverifikasi</span><span id="footerStatus">siap membaca</span></footer>
+  <footer><span>AL.L / NZ SCIENCE DESK</span><span>Judul dan isi dibaca dari file `.nz`</span><span id="footerStatus">siap membaca</span></footer>
   <script src="nzfs.js"></script><script src="app.js"></script><script src="auth.js"></script>
 </body>
 </html>

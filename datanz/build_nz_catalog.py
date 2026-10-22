@@ -11,7 +11,6 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "datanz" / "nz-catalog.txt.gz"
 SUMMARY = ROOT / "datanz" / "nz-catalog-summary.json"
 LEGACY_CORPUS = "nz/korpus-ilmu-pengetahuan-10000.nz"
-TARGET_TITLE_COUNT = 100_000_000
 
 
 def main() -> None:
@@ -32,7 +31,6 @@ def main() -> None:
         "repo_nz_file_count": len(all_paths),
         "catalog_nz_file_count": len(catalog_paths),
         "excluded_legacy_corpus": LEGACY_CORPUS,
-        "target_title_count": TARGET_TITLE_COUNT,
         "actual_verified_title_count": None,
         "count_note": "Jumlah path file .nz bukan jumlah judul unik atau judul ilmiah terverifikasi.",
         "growth_note": "Tambahkan file .nz ke repository lalu jalankan ulang datanz/build_nz_catalog.py untuk memperbarui katalog."

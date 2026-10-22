@@ -3,12 +3,15 @@ const state = {
   views: Number(sessionStorage.getItem('all_views') || 0),
   readerDocument: null,
   readerOffset: 0,
-  actualNzFiles: 0
+  actualNzFiles: 0,
+  gridDocumentData: null,
+  gridOffset: 0
 };
 const READER_PAGE_SIZE = 100;
+const GRID_PAGE_SIZE = 24;
 const sampleFiles = [
-  ['Spesifikasi sistem Ilmu+', 'Metadata target dan status Ilmu+', 'AL.L/ilmu+/sistem-data-utama.nz'],
-  ['Pointer sistem pelaporan', 'Berkas pointer; target lama tidak dimuat', 'AL.L/sistem-pelaporan-alur/modul-analisis-arsip-aman.nz'],
+  ['Metadata sistem Ilmu+', 'Metadata file .nz', 'AL.L/ilmu+/sistem-data-utama.nz'],
+  ['Pointer sistem pelaporan', 'Metadata pointer; alamat tidak diikuti', 'AL.L/sistem-pelaporan-alur/modul-analisis-arsip-aman.nz'],
   ['Konfigurasi storage Biologi', 'Kode konfigurasi .nz', '.io/konfigurasi-biologi.nz']
 ];
 
@@ -24,6 +27,8 @@ function updateMetrics() {
 function renderFiles(files) {
   const box = $('storyGrid');
   box.replaceChildren();
+  $('loadMoreGridPoints').hidden = true;
+  state.gridDocumentData = null;
   if (!files.length) {
     const empty = document.createElement('p');
     empty.className = 'empty-state';
@@ -47,14 +52,90 @@ function renderFiles(files) {
     body.textContent = file.path;
     const note = document.createElement('small');
     note.className = 'file-integrity-note';
-    note.textContent = 'Nama berkas bukan judul editorial; isi akan dibaca langsung dari file.';
+    note.textContent = 'Nama berkas bukan judul editorial. Poin hanya ditampilkan jika judul dan isi tersimpan di file.';
+    const viewPoints = document.createElement('button');
+    viewPoints.className = 'read';
+    viewPoints.type = 'button';
+    viewPoints.textContent = 'Lihat poin di grid →';
+    viewPoints.addEventListener('click', () => showPointsInGrid(file.path));
     const open = document.createElement('button');
-    open.className = 'read';
+    open.className = 'read secondary-read';
     open.type = 'button';
-    open.textContent = 'Buka file .nz →';
+    open.textContent = 'Buka file lengkap';
     open.addEventListener('click', () => openNZFile(file.path));
-    card.append(visual, tag, title, body, note, open);
+    card.append(visual, tag, title, body, note, viewPoints, open);
     box.appendChild(card);
+  }
+}
+
+function renderPointGrid(documentData, append = false) {
+  const box = $('storyGrid');
+  if (!append) {
+    box.replaceChildren();
+    state.gridDocumentData = documentData;
+    state.gridOffset = 0;
+  }
+  const allPoints = documentData.points || [];
+  const completePoints = allPoints.filter(point => String(point.title || '').trim() && String(point.body || '').trim());
+  $('pointGridNote').textContent = completePoints.length
+    ? `${completePoints.length.toLocaleString('id-ID')} poin lengkap ditemukan di ${documentData.path}. Judul, isi, dan sumber ditampilkan sesuai isi file; tidak ada judul yang dibuat otomatis.`
+    : `Tidak ada poin dengan judul dan isi lengkap di ${documentData.path}. File memuat ${allPoints.length.toLocaleString('id-ID')} poin terurai; poin tanpa judul atau isi tidak ditampilkan sebagai bacaan.`;
+  if (!completePoints.length) {
+    $('loadMoreGridPoints').hidden = true;
+    const empty = document.createElement('p');
+    empty.className = 'empty-state';
+    empty.textContent = 'Belum ada bacaan berpoin yang memenuhi syarat judul dan isi pada file ini. Tambahkan konten bersumber dalam format .nz; sistem tidak membuat isi pengganti.';
+    box.appendChild(empty);
+    $('resultNote').textContent = 'Belum ada poin lengkap pada file terpilih';
+    return;
+  }
+  $('resultNote').textContent = `${completePoints.length.toLocaleString('id-ID')} judul-poin dari file .nz`;
+  const end = Math.min(state.gridOffset + GRID_PAGE_SIZE, completePoints.length);
+  for (const point of completePoints.slice(state.gridOffset, end)) {
+    const card = document.createElement('article');
+    card.className = 'story point-story';
+    const visual = document.createElement('div');
+    visual.className = 'story-visual';
+    visual.setAttribute('aria-hidden', 'true');
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = `${documentData.category || 'SUMBER .NZ'} · POIN ${point.number}`;
+    const heading = document.createElement('h3');
+    heading.textContent = point.title;
+    const content = document.createElement('p');
+    content.className = 'point-story-body';
+    content.textContent = point.body;
+    const source = document.createElement('small');
+    source.className = 'point-story-source';
+    source.textContent = point.sources?.length
+      ? `Sumber pada file: ${point.sources.join(' · ')}`
+      : 'Sumber tidak dicantumkan pada poin/file; belum terverifikasi.';
+    const read = document.createElement('button');
+    read.className = 'read';
+    read.type = 'button';
+    read.textContent = 'Buka bacaan lengkap →';
+    read.addEventListener('click', () => openDocument(documentData));
+    card.append(visual, tag, heading, content, source, read);
+    box.appendChild(card);
+  }
+  state.gridOffset = end;
+  $('loadMoreGridPoints').hidden = end >= completePoints.length;
+  $('loadMoreGridPoints').textContent = `Muat ${GRID_PAGE_SIZE} poin berikutnya (${end.toLocaleString('id-ID')}/${completePoints.length.toLocaleString('id-ID')})`;
+}
+
+async function showPointsInGrid(path) {
+  $('fileStatus').textContent = `Membaca poin yang tersimpan di ${path}…`;
+  $('pointGridNote').textContent = 'Membaca isi langsung dari file .nz…';
+  try {
+    const documentData = await NZFS.read(path);
+    renderPointGrid(documentData);
+    $('fileStatus').textContent = documentData.type === 'pointer'
+      ? 'File ini pointer/metadata, bukan artikel berpoin. Alamat rujukan tidak dimuat.'
+      : `${documentData.path} dibaca langsung; ${documentData.points?.length || 0} poin ditemukan.`;
+    $('bacaan').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    $('pointGridNote').textContent = error.message;
+    $('fileStatus').textContent = error.message;
   }
 }
 
@@ -105,13 +186,13 @@ async function searchFiles(query = '') {
 function makeStatus(documentData) {
   if (documentData.type === 'article') {
     const integrity = documentData.integrity || {};
-    return `File artikel .nz; label file: ${documentData.editorialLabel}. ${integrity.missingTitles || 0} judul, ${integrity.missingBodies || 0} isi, ${integrity.missingSources || 0} sitasi belum lengkap. Parser tidak memverifikasi kebenaran sumber.`;
+    return `File artikel .nz; label file: ${documentData.editorialLabel}. ${integrity.missingTitles || 0} judul, ${integrity.missingBodies || 0} isi, ${integrity.missingSources || 0} sitasi belum lengkap. Poin tanpa judul atau isi tidak ditampilkan sebagai bacaan. Parser tidak memverifikasi kebenaran sumber.`;
   }
   if (documentData.type === 'pointer') {
-    return `File ini adalah pointer .nz. Metadata ditampilkan apa adanya; target ${documentData.targetPath || 'tidak tercatat'} tidak diambil atau ditampilkan.`;
+    return 'File ini adalah pointer .nz. Metadata ditampilkan apa adanya; alamat rujukannya tidak diambil.';
   }
   if (documentData.type === 'legacy-text') {
-    return 'Teks disimpan di file .nz dan ditampilkan apa adanya. Judul editorial serta sitasi tidak disimpulkan otomatis.';
+    return 'File lama tidak memiliki judul terpisah per poin; baris tanpa judul tidak dipromosikan menjadi bacaan. Teks tetap tersedia sebagai sumber mentah.';
   }
   return 'Metadata/teks dibaca langsung dari file .nz; ini bukan klaim artikel ilmiah terverifikasi.';
 }
@@ -121,7 +202,8 @@ function renderReaderPage() {
   const box = $('reading');
   box.replaceChildren();
   if (!documentData) return;
-  const points = documentData.points || [];
+  const allPoints = documentData.points || [];
+  const points = allPoints.filter(point => String(point.title || '').trim() && String(point.body || '').trim());
   const end = Math.min(state.readerOffset + READER_PAGE_SIZE, points.length);
   for (const point of points.slice(state.readerOffset, end)) {
     const row = document.createElement('section');
@@ -131,7 +213,7 @@ function renderReaderPage() {
     const content = document.createElement('div');
     const heading = document.createElement('h3');
     heading.className = 'point-heading';
-    heading.textContent = point.title || `Judul tidak tersedia pada sumber · Poin ${point.number || ''}`;
+    heading.textContent = point.title;
     content.appendChild(heading);
     for (const paragraph of String(point.body || '').split(/\n\s*\n/).filter(Boolean)) {
       const p = document.createElement('p');
@@ -149,15 +231,18 @@ function renderReaderPage() {
     box.appendChild(row);
   }
   if (!points.length && documentData.raw) {
+    const label = document.createElement('p');
+    label.className = 'file-integrity-note';
+    label.textContent = 'Teks mentah sumber berikut tidak mempunyai pasangan judul-isi poin yang lengkap; ditampilkan apa adanya, bukan sebagai artikel.';
     const raw = document.createElement('pre');
     raw.className = 'nz-raw';
     raw.textContent = documentData.raw;
-    box.appendChild(raw);
+    box.append(label, raw);
   }
   state.readerOffset = end;
   $('loadMorePoints').hidden = end >= points.length || !points.length;
   $('loadMorePoints').textContent = `Muat 100 poin berikutnya (${end.toLocaleString('id-ID')}/${points.length.toLocaleString('id-ID')})`;
-  $('readerPointCount').textContent = `${points.length.toLocaleString('id-ID')} poin dalam file`;
+  $('readerPointCount').textContent = `${points.length.toLocaleString('id-ID')} poin lengkap ditampilkan`;
   $('readerRange').textContent = points.length ? `1—${points.length.toLocaleString('id-ID')}` : 'metadata';
 }
 
@@ -177,7 +262,7 @@ function openDocument(documentData) {
   source.textContent = `Buka file sumber: ${documentData.path}`;
   source.href = NZFS.url(documentData.path);
   source.title = documentData.path;
-  $('readerCorpusSource').textContent = documentData.targetPath ? `Target pointer (tidak dimuat): ${documentData.targetPath}` : '';
+  $('readerCorpusSource').textContent = documentData.targetPath ? `Alamat rujukan (tidak dimuat): ${documentData.targetPath}` : '';
   renderReaderPage();
   $('reader').hidden = false;
   document.querySelectorAll('main>section:not(#reader):not(#accountPanel)').forEach(section => { section.hidden = true; });
@@ -285,6 +370,9 @@ document.querySelectorAll('[data-nzpath]').forEach(button => button.addEventList
 }));
 $('closeReader').addEventListener('click', closeReader);
 $('loadMorePoints').addEventListener('click', renderReaderPage);
+$('loadMoreGridPoints').addEventListener('click', () => {
+  if (state.gridDocumentData) renderPointGrid(state.gridDocumentData, true);
+});
 $('shareButton').addEventListener('click', async () => {
   try {
     const url = new URL(location.href);

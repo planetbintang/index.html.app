@@ -1,0 +1,145 @@
+{
+  "mode": "namespace-lokal-terbatas",
+  "konfigurasi": [
+    {
+      "shard": "001",
+      "kategori": "ilmu-umum",
+      "skrip": "datanz/datanz+/konfigurasi-ilmu-umum.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "002",
+      "kategori": "matematika",
+      "skrip": "datanz/datanz+/konfigurasi-matematika.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "003",
+      "kategori": "fisika",
+      "skrip": "datanz/datanz+/konfigurasi-fisika.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "004",
+      "kategori": "kimia",
+      "skrip": "datanz/datanz+/konfigurasi-kimia.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "005",
+      "kategori": "biologi",
+      "skrip": "datanz/datanz+/konfigurasi-biologi.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "006",
+      "kategori": "astronomi",
+      "skrip": "datanz/datanz+/konfigurasi-astronomi.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "007",
+      "kategori": "kesehatan",
+      "skrip": "datanz/datanz+/konfigurasi-kesehatan.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "008",
+      "kategori": "lingkungan",
+      "skrip": "datanz/datanz+/konfigurasi-lingkungan.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "009",
+      "kategori": "komputer",
+      "skrip": "datanz/datanz+/konfigurasi-komputer.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "010",
+      "kategori": "kecerdasan-buatan",
+      "skrip": "datanz/datanz+/konfigurasi-kecerdasan-buatan.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "011",
+      "kategori": "rekayasa",
+      "skrip": "datanz/datanz+/konfigurasi-rekayasa.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "012",
+      "kategori": "energi",
+      "skrip": "datanz/datanz+/konfigurasi-energi.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "013",
+      "kategori": "pertanian",
+      "skrip": "datanz/datanz+/konfigurasi-pertanian.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "014",
+      "kategori": "geografi",
+      "skrip": "datanz/datanz+/konfigurasi-geografi.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "015",
+      "kategori": "sejarah",
+      "skrip": "datanz/datanz+/konfigurasi-sejarah.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "016",
+      "kategori": "bahasa",
+      "skrip": "datanz/datanz+/konfigurasi-bahasa.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "017",
+      "kategori": "sastra",
+      "skrip": "datanz/datanz+/konfigurasi-sastra.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "018",
+      "kategori": "ekonomi",
+      "skrip": "datanz/datanz+/konfigurasi-ekonomi.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "019",
+      "kategori": "pendidikan",
+      "skrip": "datanz/datanz+/konfigurasi-pendidikan.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    },
+    {
+      "shard": "020",
+      "kategori": "media-pembelajaran",
+      "skrip": "datanz/datanz+/konfigurasi-media-pembelajaran.nz",
+      "root_default": "datanz/datanz+/objects",
+      "kapasitas": "backend-aktual-terbatas"
+    }
+  ]
+}

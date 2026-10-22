@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd "$SCRIPT_DIR/../.." && pwd)
+NZ_STORAGE_ROOT=${NZ_STORAGE_ROOT:-"$SCRIPT_DIR/objects"}
+export NZ_STORAGE_ROOT
+exec sh "$REPO_ROOT/.io/konfigurasi-media-pembelajaran.nz" "$@"

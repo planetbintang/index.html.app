@@ -1,0 +1,100 @@
+#!/bin/sh
+set -eu
+PTLNZ_ID=33145
+PTLNZ_KIND=komponen
+PTLNZ_DOMAIN=indeks
+PTLNZ_ALGORITHM=pembatas-nilai
+PTLNZ_VERSION=1
+PTLNZ_LIMIT=1000003
+PTLNZ_STATUS=ready
+PTLNZ_INPUT_MODE=decimal-unsigned
+nz_validate() {
+  case "$1" in
+    ""|*[!0-9]*) return 2 ;;
+    *) return 0 ;;
+  esac
+}
+nz_clamp() {
+  value=$1
+  [ "$value" -lt 0 ] && value=0
+  [ "$value" -gt "$PTLNZ_LIMIT" ] && value=$PTLNZ_LIMIT
+  printf '%s\n' "$value"
+}
+nz_mod() {
+  numerator=$1
+  denominator=$2
+  [ "$denominator" -gt 0 ] || return 2
+  printf '%s\n' "$((numerator % denominator))"
+}
+nz_update() {
+  previous=$1
+  increment=$2
+  factor=$3
+  printf '%s\n' "$(((previous + increment * factor) % PTLNZ_LIMIT))"
+}
+nz_run() {
+  PTLNZ_INPUT=$1
+  nz_validate "$PTLNZ_INPUT" || return 2
+  v000=0
+  v001=$(((v000 + PTLNZ_INPUT % 3 + 244) % PTLNZ_LIMIT))
+  v002=$(((v001 + PTLNZ_INPUT % 4 + 244) % PTLNZ_LIMIT))
+  v003=$(((v002 + PTLNZ_INPUT % 5 + 244) % PTLNZ_LIMIT))
+  v004=$(((v003 + PTLNZ_INPUT % 6 + 244) % PTLNZ_LIMIT))
+  v005=$(((v004 + PTLNZ_INPUT % 7 + 244) % PTLNZ_LIMIT))
+  v006=$(((v005 + PTLNZ_INPUT % 8 + 244) % PTLNZ_LIMIT))
+  v007=$(((v006 + PTLNZ_INPUT % 9 + 244) % PTLNZ_LIMIT))
+  v008=$(((v007 + PTLNZ_INPUT % 10 + 244) % PTLNZ_LIMIT))
+  v009=$(((v008 + PTLNZ_INPUT % 11 + 244) % PTLNZ_LIMIT))
+  v010=$(((v009 + PTLNZ_INPUT % 12 + 244) % PTLNZ_LIMIT))
+  v011=$(((v010 + PTLNZ_INPUT % 13 + 244) % PTLNZ_LIMIT))
+  v012=$(((v011 + PTLNZ_INPUT % 14 + 244) % PTLNZ_LIMIT))
+  v013=$(((v012 + PTLNZ_INPUT % 15 + 244) % PTLNZ_LIMIT))
+  v014=$(((v013 + PTLNZ_INPUT % 16 + 244) % PTLNZ_LIMIT))
+  v015=$(((v014 + PTLNZ_INPUT % 17 + 244) % PTLNZ_LIMIT))
+  v016=$(((v015 + PTLNZ_INPUT % 18 + 244) % PTLNZ_LIMIT))
+  v017=$(((v016 + PTLNZ_INPUT % 19 + 244) % PTLNZ_LIMIT))
+  v018=$(((v017 + PTLNZ_INPUT % 20 + 244) % PTLNZ_LIMIT))
+  v019=$(((v018 + PTLNZ_INPUT % 21 + 244) % PTLNZ_LIMIT))
+  v020=$(((v019 + PTLNZ_INPUT % 22 + 244) % PTLNZ_LIMIT))
+  v021=$(((v020 + PTLNZ_INPUT % 23 + 244) % PTLNZ_LIMIT))
+  v022=$(((v021 + PTLNZ_INPUT % 24 + 244) % PTLNZ_LIMIT))
+  v023=$(((v022 + PTLNZ_INPUT % 25 + 244) % PTLNZ_LIMIT))
+  v024=$(((v023 + PTLNZ_INPUT % 26 + 244) % PTLNZ_LIMIT))
+  v025=$(((v024 + PTLNZ_INPUT % 27 + 244) % PTLNZ_LIMIT))
+  v026=$(((v025 + PTLNZ_INPUT % 28 + 244) % PTLNZ_LIMIT))
+  v027=$(((v026 + PTLNZ_INPUT % 29 + 244) % PTLNZ_LIMIT))
+  v028=$(((v027 + PTLNZ_INPUT % 30 + 244) % PTLNZ_LIMIT))
+  v029=$(((v028 + PTLNZ_INPUT % 31 + 244) % PTLNZ_LIMIT))
+  v030=$(((v029 + PTLNZ_INPUT % 32 + 244) % PTLNZ_LIMIT))
+  v031=$(((v030 + PTLNZ_INPUT % 33 + 244) % PTLNZ_LIMIT))
+  v032=$(((v031 + PTLNZ_INPUT % 34 + 244) % PTLNZ_LIMIT))
+  v033=$(((v032 + PTLNZ_INPUT % 35 + 244) % PTLNZ_LIMIT))
+  v034=$(((v033 + PTLNZ_INPUT % 36 + 244) % PTLNZ_LIMIT))
+  v035=$(((v034 + PTLNZ_INPUT % 37 + 244) % PTLNZ_LIMIT))
+  v036=$(((v035 + PTLNZ_INPUT % 38 + 244) % PTLNZ_LIMIT))
+  v037=$(((v036 + PTLNZ_INPUT % 39 + 244) % PTLNZ_LIMIT))
+  v038=$(((v037 + PTLNZ_INPUT % 40 + 244) % PTLNZ_LIMIT))
+  v039=$(((v038 + PTLNZ_INPUT % 41 + 244) % PTLNZ_LIMIT))
+  v040=$(((v039 + PTLNZ_INPUT % 42 + 244) % PTLNZ_LIMIT))
+  v041=$(((v040 + PTLNZ_INPUT % 43 + 244) % PTLNZ_LIMIT))
+  v042=$(((v041 + PTLNZ_INPUT % 44 + 244) % PTLNZ_LIMIT))
+  v043=$(((v042 + PTLNZ_INPUT % 45 + 244) % PTLNZ_LIMIT))
+  v044=$(((v043 + PTLNZ_INPUT % 46 + 244) % PTLNZ_LIMIT))
+  v045=$(((v044 + PTLNZ_INPUT % 47 + 244) % PTLNZ_LIMIT))
+  v046=$(((v045 + PTLNZ_INPUT % 48 + 244) % PTLNZ_LIMIT))
+  v047=$(((v046 + PTLNZ_INPUT % 49 + 244) % PTLNZ_LIMIT))
+  v048=$(((v047 + PTLNZ_INPUT % 50 + 244) % PTLNZ_LIMIT))
+  v049=$(((v048 + PTLNZ_INPUT % 51 + 244) % PTLNZ_LIMIT))
+  v050=$(((v049 + PTLNZ_INPUT % 52 + 244) % PTLNZ_LIMIT))
+  v051=$(((v050 + PTLNZ_INPUT % 53 + 244) % PTLNZ_LIMIT))
+  v052=$(((v051 + PTLNZ_INPUT % 54 + 244) % PTLNZ_LIMIT))
+  v053=$(((v052 + PTLNZ_INPUT % 55 + 244) % PTLNZ_LIMIT))
+  v054=$(((v053 + PTLNZ_INPUT % 56 + 244) % PTLNZ_LIMIT))
+  v055=$(((v054 + PTLNZ_INPUT % 57 + 244) % PTLNZ_LIMIT))
+  printf 'id=%s\n' "$PTLNZ_ID"
+  printf 'algoritma=%s\n' "$PTLNZ_ALGORITHM"
+  printf 'hasil=%s\n' "$v055"
+}
+nz_run "${1:-$PTLNZ_ID}"
+PTLNZ_COMPLETE=1
+exit 0

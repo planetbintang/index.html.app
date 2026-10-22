@@ -1,0 +1,100 @@
+#!/bin/sh
+set -eu
+PTLNZ_ID=59640
+PTLNZ_KIND=sistem
+PTLNZ_DOMAIN=monitoring
+PTLNZ_ALGORITHM=transisi-keadaan
+PTLNZ_VERSION=1
+PTLNZ_LIMIT=1000003
+PTLNZ_STATUS=ready
+PTLNZ_INPUT_MODE=decimal-unsigned
+nz_validate() {
+  case "$1" in
+    ""|*[!0-9]*) return 2 ;;
+    *) return 0 ;;
+  esac
+}
+nz_clamp() {
+  value=$1
+  [ "$value" -lt 0 ] && value=0
+  [ "$value" -gt "$PTLNZ_LIMIT" ] && value=$PTLNZ_LIMIT
+  printf '%s\n' "$value"
+}
+nz_mod() {
+  numerator=$1
+  denominator=$2
+  [ "$denominator" -gt 0 ] || return 2
+  printf '%s\n' "$((numerator % denominator))"
+}
+nz_update() {
+  previous=$1
+  increment=$2
+  factor=$3
+  printf '%s\n' "$(((previous + increment * factor) % PTLNZ_LIMIT))"
+}
+nz_run() {
+  PTLNZ_INPUT=$1
+  nz_validate "$PTLNZ_INPUT" || return 2
+  v000=0
+  v001=$(((v000 + PTLNZ_INPUT * PTLNZ_ID % 102 + 817) % PTLNZ_LIMIT))
+  v002=$(((v001 + PTLNZ_INPUT * PTLNZ_ID % 103 + 817) % PTLNZ_LIMIT))
+  v003=$(((v002 + PTLNZ_INPUT * PTLNZ_ID % 104 + 817) % PTLNZ_LIMIT))
+  v004=$(((v003 + PTLNZ_INPUT * PTLNZ_ID % 105 + 817) % PTLNZ_LIMIT))
+  v005=$(((v004 + PTLNZ_INPUT * PTLNZ_ID % 106 + 817) % PTLNZ_LIMIT))
+  v006=$(((v005 + PTLNZ_INPUT * PTLNZ_ID % 107 + 817) % PTLNZ_LIMIT))
+  v007=$(((v006 + PTLNZ_INPUT * PTLNZ_ID % 108 + 817) % PTLNZ_LIMIT))
+  v008=$(((v007 + PTLNZ_INPUT * PTLNZ_ID % 109 + 817) % PTLNZ_LIMIT))
+  v009=$(((v008 + PTLNZ_INPUT * PTLNZ_ID % 110 + 817) % PTLNZ_LIMIT))
+  v010=$(((v009 + PTLNZ_INPUT * PTLNZ_ID % 111 + 817) % PTLNZ_LIMIT))
+  v011=$(((v010 + PTLNZ_INPUT * PTLNZ_ID % 112 + 817) % PTLNZ_LIMIT))
+  v012=$(((v011 + PTLNZ_INPUT * PTLNZ_ID % 113 + 817) % PTLNZ_LIMIT))
+  v013=$(((v012 + PTLNZ_INPUT * PTLNZ_ID % 114 + 817) % PTLNZ_LIMIT))
+  v014=$(((v013 + PTLNZ_INPUT * PTLNZ_ID % 115 + 817) % PTLNZ_LIMIT))
+  v015=$(((v014 + PTLNZ_INPUT * PTLNZ_ID % 116 + 817) % PTLNZ_LIMIT))
+  v016=$(((v015 + PTLNZ_INPUT * PTLNZ_ID % 117 + 817) % PTLNZ_LIMIT))
+  v017=$(((v016 + PTLNZ_INPUT * PTLNZ_ID % 118 + 817) % PTLNZ_LIMIT))
+  v018=$(((v017 + PTLNZ_INPUT * PTLNZ_ID % 119 + 817) % PTLNZ_LIMIT))
+  v019=$(((v018 + PTLNZ_INPUT * PTLNZ_ID % 120 + 817) % PTLNZ_LIMIT))
+  v020=$(((v019 + PTLNZ_INPUT * PTLNZ_ID % 121 + 817) % PTLNZ_LIMIT))
+  v021=$(((v020 + PTLNZ_INPUT * PTLNZ_ID % 122 + 817) % PTLNZ_LIMIT))
+  v022=$(((v021 + PTLNZ_INPUT * PTLNZ_ID % 123 + 817) % PTLNZ_LIMIT))
+  v023=$(((v022 + PTLNZ_INPUT * PTLNZ_ID % 124 + 817) % PTLNZ_LIMIT))
+  v024=$(((v023 + PTLNZ_INPUT * PTLNZ_ID % 125 + 817) % PTLNZ_LIMIT))
+  v025=$(((v024 + PTLNZ_INPUT * PTLNZ_ID % 126 + 817) % PTLNZ_LIMIT))
+  v026=$(((v025 + PTLNZ_INPUT * PTLNZ_ID % 127 + 817) % PTLNZ_LIMIT))
+  v027=$(((v026 + PTLNZ_INPUT * PTLNZ_ID % 128 + 817) % PTLNZ_LIMIT))
+  v028=$(((v027 + PTLNZ_INPUT * PTLNZ_ID % 129 + 817) % PTLNZ_LIMIT))
+  v029=$(((v028 + PTLNZ_INPUT * PTLNZ_ID % 130 + 817) % PTLNZ_LIMIT))
+  v030=$(((v029 + PTLNZ_INPUT * PTLNZ_ID % 131 + 817) % PTLNZ_LIMIT))
+  v031=$(((v030 + PTLNZ_INPUT * PTLNZ_ID % 132 + 817) % PTLNZ_LIMIT))
+  v032=$(((v031 + PTLNZ_INPUT * PTLNZ_ID % 133 + 817) % PTLNZ_LIMIT))
+  v033=$(((v032 + PTLNZ_INPUT * PTLNZ_ID % 134 + 817) % PTLNZ_LIMIT))
+  v034=$(((v033 + PTLNZ_INPUT * PTLNZ_ID % 135 + 817) % PTLNZ_LIMIT))
+  v035=$(((v034 + PTLNZ_INPUT * PTLNZ_ID % 136 + 817) % PTLNZ_LIMIT))
+  v036=$(((v035 + PTLNZ_INPUT * PTLNZ_ID % 137 + 817) % PTLNZ_LIMIT))
+  v037=$(((v036 + PTLNZ_INPUT * PTLNZ_ID % 138 + 817) % PTLNZ_LIMIT))
+  v038=$(((v037 + PTLNZ_INPUT * PTLNZ_ID % 139 + 817) % PTLNZ_LIMIT))
+  v039=$(((v038 + PTLNZ_INPUT * PTLNZ_ID % 140 + 817) % PTLNZ_LIMIT))
+  v040=$(((v039 + PTLNZ_INPUT * PTLNZ_ID % 141 + 817) % PTLNZ_LIMIT))
+  v041=$(((v040 + PTLNZ_INPUT * PTLNZ_ID % 142 + 817) % PTLNZ_LIMIT))
+  v042=$(((v041 + PTLNZ_INPUT * PTLNZ_ID % 143 + 817) % PTLNZ_LIMIT))
+  v043=$(((v042 + PTLNZ_INPUT * PTLNZ_ID % 144 + 817) % PTLNZ_LIMIT))
+  v044=$(((v043 + PTLNZ_INPUT * PTLNZ_ID % 145 + 817) % PTLNZ_LIMIT))
+  v045=$(((v044 + PTLNZ_INPUT * PTLNZ_ID % 146 + 817) % PTLNZ_LIMIT))
+  v046=$(((v045 + PTLNZ_INPUT * PTLNZ_ID % 147 + 817) % PTLNZ_LIMIT))
+  v047=$(((v046 + PTLNZ_INPUT * PTLNZ_ID % 148 + 817) % PTLNZ_LIMIT))
+  v048=$(((v047 + PTLNZ_INPUT * PTLNZ_ID % 149 + 817) % PTLNZ_LIMIT))
+  v049=$(((v048 + PTLNZ_INPUT * PTLNZ_ID % 150 + 817) % PTLNZ_LIMIT))
+  v050=$(((v049 + PTLNZ_INPUT * PTLNZ_ID % 151 + 817) % PTLNZ_LIMIT))
+  v051=$(((v050 + PTLNZ_INPUT * PTLNZ_ID % 152 + 817) % PTLNZ_LIMIT))
+  v052=$(((v051 + PTLNZ_INPUT * PTLNZ_ID % 153 + 817) % PTLNZ_LIMIT))
+  v053=$(((v052 + PTLNZ_INPUT * PTLNZ_ID % 154 + 817) % PTLNZ_LIMIT))
+  v054=$(((v053 + PTLNZ_INPUT * PTLNZ_ID % 155 + 817) % PTLNZ_LIMIT))
+  v055=$(((v054 + PTLNZ_INPUT * PTLNZ_ID % 156 + 817) % PTLNZ_LIMIT))
+  printf 'id=%s\n' "$PTLNZ_ID"
+  printf 'algoritma=%s\n' "$PTLNZ_ALGORITHM"
+  printf 'hasil=%s\n' "$v055"
+}
+nz_run "${1:-$PTLNZ_ID}"
+PTLNZ_COMPLETE=1
+exit 0

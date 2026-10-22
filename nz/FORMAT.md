@@ -12,7 +12,7 @@ Saat menambahkan file `.nz`, stage file tersebut lalu jalankan:
 python3 datanz/build_nz_catalog.py
 ```
 
-Generator memperbarui katalog dan `datanz/nz-catalog-summary.json`. File korpus historis `nz/korpus-ilmu-pengetahuan-10000.nz` sengaja dikecualikan dari katalog beranda. File itu tetap disimpan di repository agar pointer lama tidak kehilangan target historis, tetapi pembaca tidak mengambil atau menampilkan isinya.
+Generator memperbarui katalog dan `datanz/nz-catalog-summary.json`. File korpus historis `nz/korpus-ilmu-pengetahuan-10000.nz` telah dihapus dari repository. Sejumlah pointer `.nz` lama masih menyebut path tersebut di metadata; reader menampilkan pointer sebagai metadata saja dan tidak mengikuti atau mengambil target itu.
 
 ## Format lama: pointer
 

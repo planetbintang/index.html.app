@@ -1,6 +1,6 @@
 {
   "schema": "AL.L-NZFS-catalog-v1",
-  "repo_nz_file_count": 1100579,
+  "repo_nz_file_count": 1100578,
   "catalog_nz_file_count": 1100578,
   "excluded_legacy_corpus": "nz/korpus-ilmu-pengetahuan-10000.nz",
   "target_title_count": 100000000,

@@ -1,0 +1,47 @@
+#!/bin/sh
+set -eu
+if [ "$#" -lt 2 ]; then
+  printf '%s\n' 'Penggunaan: router.nz SHARD KATEGORI info|status|check|estimate BYTE|put SUMBER PATH|get PATH TUJUAN|list'
+  exit 2
+fi
+shard=$1
+category=$2
+shift 2
+case "$shard" in 001|002|003|004|005|006|007|008|009|010|011|012|013|014|015|016|017|018|019|020) ;; *) printf '%s\n' 'shard di luar rentang .io' >&2; exit 2 ;; esac
+case "$category" in ''|*[!a-z0-9-]*) printf '%s\n' 'kategori tidak valid' >&2; exit 2 ;; esac
+SCRIPT_DIR=$(CDPATH= cd "$(dirname "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd "$SCRIPT_DIR/.." && pwd)
+STORAGE_ROOT=${NZ_STORAGE_ROOT:-"$REPO_ROOT/datanz/objects"}
+ENGINE="$REPO_ROOT/nz/storage/mesin-ruang-$shard.nz"
+[ -f "$ENGINE" ] || { printf 'mesin shard tidak ditemukan: %s\n' "$ENGINE" >&2; exit 2; }
+engine_call() { NZ_STORAGE_ROOT="$STORAGE_ROOT" sh "$ENGINE" "$@"; }
+command=${1:-info}
+case "$command" in
+  info)
+    printf 'kategori=%s\nshard=%s\nroot=%s\nmode=virtual-terbatas\n' "$category" "$shard" "$STORAGE_ROOT"
+    engine_call info
+    ;;
+  status|check)
+    engine_call "$command"
+    ;;
+  estimate)
+    [ "$#" -eq 2 ] || { printf '%s\n' 'contoh: estimate 1048576' >&2; exit 2; }
+    engine_call estimate "$2"
+    ;;
+  put)
+    [ "$#" -eq 3 ] || { printf '%s\n' 'contoh: put ./sumber.nz catatan/sumber.nz' >&2; exit 2; }
+    engine_call put "$2" "$category/$3"
+    ;;
+  get)
+    [ "$#" -eq 3 ] || { printf '%s\n' 'contoh: get catatan/sumber.nz ./salinan.nz' >&2; exit 2; }
+    engine_call get "$category/$2" "$3"
+    ;;
+  list)
+    engine_call list | awk -v key="/shard-$shard/$category/" 'index($0,key)>0 {print}'
+    ;;
+  help|-h|--help)
+    printf '%s\n' 'Perintah: info | status | check | estimate BYTE | put SUMBER PATH | get PATH TUJUAN | list'
+    printf '%s\n' 'Kapasitas mengikuti backend aktual; GitHub Pages tidak menjalankan skrip shell.'
+    ;;
+  *) printf '%s\n' 'perintah tidak dikenal; gunakan help' >&2; exit 2 ;;
+esac
